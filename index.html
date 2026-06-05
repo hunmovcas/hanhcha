@@ -85,45 +85,45 @@
 
         @keyframes blobMove1 {
             0% {
-                transform: translate(0, 0) scale(1);
+                transform: translate(0, 0) scale(1)
             }
 
             100% {
-                transform: translate(6vw, 8vh) scale(1.12);
+                transform: translate(6vw, 8vh) scale(1.12)
             }
         }
 
         @keyframes blobMove2 {
             0% {
-                transform: translate(0, 0) scale(1);
+                transform: translate(0, 0) scale(1)
             }
 
             100% {
-                transform: translate(-5vw, -6vh) scale(1.09);
+                transform: translate(-5vw, -6vh) scale(1.09)
             }
         }
 
         @keyframes blobMove3 {
             0% {
-                transform: translate(0, 0) scale(1);
+                transform: translate(0, 0) scale(1)
             }
 
             100% {
-                transform: translate(8vw, -7vh) scale(1.15);
+                transform: translate(8vw, -7vh) scale(1.15)
             }
         }
 
         @keyframes blobMove4 {
             0% {
-                transform: translate(0, 0) scale(1);
+                transform: translate(0, 0) scale(1)
             }
 
             100% {
-                transform: translate(-6vw, 9vh) scale(1.1);
+                transform: translate(-6vw, 9vh) scale(1.1)
             }
         }
 
-        /* ── MODAL (greeting) ── */
+        /* ── MODAL greeting ── */
         #modal-overlay {
             position: fixed;
             inset: 0;
@@ -161,11 +161,11 @@
 
         @keyframes hrFloat {
             0% {
-                transform: translateY(0) scale(1) rotate(-8deg);
+                transform: translateY(0) scale(1) rotate(-8deg)
             }
 
             100% {
-                transform: translateY(-6px) scale(1.12) rotate(8deg);
+                transform: translateY(-6px) scale(1.12) rotate(8deg)
             }
         }
 
@@ -174,10 +174,7 @@
             border-radius: 40px;
             padding: 44px;
             text-align: center;
-            box-shadow:
-                0 24px 70px rgba(220, 80, 160, .28),
-                0 4px 16px rgba(220, 80, 160, .14),
-                inset 0 1px 0 rgba(255, 255, 255, .9);
+            box-shadow: 0 24px 70px rgba(220, 80, 160, .28), 0 4px 16px rgba(220, 80, 160, .14), inset 0 1px 0 rgba(255, 255, 255, .9);
             position: relative;
             z-index: 1;
             display: flex;
@@ -186,7 +183,7 @@
             gap: 32px;
         }
 
-        @media (max-width: 768px) {
+        @media (max-width:768px) {
             #modal-box {
                 flex-direction: column;
                 gap: 20px;
@@ -198,8 +195,6 @@
             width: 220px;
             max-width: 100%;
             flex-shrink: 0;
-            /* Đã bỏ animation để ảnh đứng yên */
-            /* Đã bỏ box-shadow và border-radius để xóa viền phông */
         }
 
         .modal-text-content {
@@ -266,10 +261,6 @@
             box-shadow: 0 9px 32px rgba(233, 30, 140, .56);
         }
 
-        #heart-border {
-            display: none !important;
-        }
-
         /* ── POEM MODAL ── */
         #poem-overlay {
             position: fixed;
@@ -294,10 +285,7 @@
             max-width: 440px;
             width: 92%;
             text-align: center;
-            box-shadow:
-                0 20px 60px rgba(220, 80, 160, .3),
-                0 4px 18px rgba(220, 80, 160, .15),
-                inset 0 1px 0 rgba(255, 255, 255, .85);
+            box-shadow: 0 20px 60px rgba(220, 80, 160, .3), 0 4px 18px rgba(220, 80, 160, .15), inset 0 1px 0 rgba(255, 255, 255, .85);
             position: relative;
             animation: popIn .45s cubic-bezier(.34, 1.56, .64, 1);
         }
@@ -396,7 +384,7 @@
             box-shadow: 0 8px 30px rgba(233, 30, 140, .52);
         }
 
-        /* ── SCENE ── */
+        /* ── SCENE (bubbles) ── */
         #scene {
             position: fixed;
             inset: 0;
@@ -405,7 +393,6 @@
             z-index: 1;
         }
 
-        /* ── TITLE ── */
         #title {
             position: absolute;
             top: 50%;
@@ -561,20 +548,20 @@
         @keyframes sparkFade {
             0% {
                 opacity: 0;
-                transform: translateY(0) scale(.6) rotate(0deg);
+                transform: translateY(0) scale(.6) rotate(0deg)
             }
 
             15% {
-                opacity: .65;
+                opacity: .65
             }
 
             85% {
-                opacity: .5;
+                opacity: .5
             }
 
             100% {
                 opacity: 0;
-                transform: translateY(-90px) scale(1.1) rotate(180deg);
+                transform: translateY(-90px) scale(1.1) rotate(180deg)
             }
         }
 
@@ -592,17 +579,465 @@
         @keyframes rainFall {
             0% {
                 transform: translateY(0) rotate(0deg);
-                opacity: 1;
+                opacity: 1
             }
 
             80% {
-                opacity: 1;
+                opacity: 1
             }
 
             100% {
                 transform: translateY(110vh) rotate(360deg);
-                opacity: 0;
+                opacity: 0
             }
+        }
+
+        /* ── DTMF PUZZLE MODAL ── */
+        #dtmf-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(80, 0, 60, 0.45);
+            backdrop-filter: blur(18px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9997;
+        }
+
+        #dtmf-overlay.active {
+            display: flex;
+            animation: fadeIn .3s ease;
+        }
+
+        #dtmf-box {
+            background: linear-gradient(160deg, #fff5fc 0%, #fdf0ff 60%, #fff9fb 100%);
+            border-radius: 36px;
+            padding: 40px 44px 36px;
+            max-width: 480px;
+            width: 93%;
+            text-align: center;
+            box-shadow: 0 24px 70px rgba(180, 0, 120, .35), inset 0 1px 0 rgba(255, 255, 255, .9);
+            animation: popIn .45s cubic-bezier(.34, 1.56, .64, 1);
+            position: relative;
+        }
+
+        #dtmf-box h3 {
+            font-family: 'Pacifico', cursive;
+            color: #c2185b;
+            font-size: 1.3rem;
+            margin-bottom: 8px;
+            text-shadow: 0 2px 12px rgba(194, 24, 91, .18);
+        }
+
+        #dtmf-box .dtmf-sub {
+            color: #6b21a8;
+            font-size: .95rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            line-height: 1.7;
+        }
+
+        #dtmf-audio-wrap {
+            margin-bottom: 20px;
+        }
+
+        #dtmf-audio {
+            width: 100%;
+            border-radius: 12px;
+            outline: none;
+        }
+
+        #dtmf-input-wrap {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+
+        #dtmf-input {
+            flex: 1;
+            padding: 12px 18px;
+            border-radius: 50px;
+            border: 2px solid #f9a8d4;
+            font-family: 'Nunito', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #4a1042;
+            background: #fff8fd;
+            outline: none;
+            transition: border-color .2s;
+            letter-spacing: 3px;
+            text-align: center;
+        }
+
+        #dtmf-input:focus {
+            border-color: #e91e8c;
+        }
+
+        #dtmf-submit {
+            padding: 12px 26px;
+            border-radius: 50px;
+            border: none;
+            background: linear-gradient(135deg, #e91e8c, #f472b6);
+            color: #fff;
+            font-family: 'Nunito', sans-serif;
+            font-weight: 800;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: transform .18s;
+            box-shadow: 0 4px 18px rgba(233, 30, 140, .35);
+        }
+
+        #dtmf-submit:hover {
+            transform: scale(1.07);
+        }
+
+        #dtmf-msg {
+            font-size: .92rem;
+            font-weight: 700;
+            min-height: 22px;
+            margin-bottom: 8px;
+        }
+
+        #dtmf-msg.err {
+            color: #e53935;
+        }
+
+        #dtmf-msg.ok {
+            color: #388e3c;
+        }
+
+        #dtmf-close-btn {
+            margin-top: 10px;
+            background: none;
+            border: 2px solid #f9a8d4;
+            color: #c2185b;
+            padding: 9px 32px;
+            border-radius: 50px;
+            font-family: 'Nunito', sans-serif;
+            font-weight: 800;
+            font-size: .95rem;
+            cursor: pointer;
+            transition: background .18s;
+        }
+
+        #dtmf-close-btn:hover {
+            background: #fce4ec;
+        }
+
+        /* ── DONG PHONG SCENE ── */
+        #dongphong-scene {
+            position: fixed;
+            inset: 0;
+            display: none;
+            z-index: 500;
+            background: linear-gradient(160deg, #fff0fa, #fce4ec 60%, #fdf6ff);
+            font-family: 'Nunito', sans-serif;
+            overflow: hidden;
+        }
+
+        #dongphong-scene.active {
+            display: flex;
+            flex-direction: column;
+            animation: fadeIn .4s ease;
+        }
+
+        #dp-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 24px 10px;
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            border-bottom: 2px solid #f9a8d4;
+            flex-shrink: 0;
+        }
+
+        #dp-header h2 {
+            font-family: 'Pacifico', cursive;
+            color: #e91e8c;
+            font-size: 1.35rem;
+            text-shadow: 0 2px 10px rgba(233, 30, 140, .2);
+        }
+
+        #dp-back-btn {
+            background: linear-gradient(135deg, #f9a8d4, #f472b6);
+            border: none;
+            border-radius: 50px;
+            padding: 8px 22px;
+            color: #fff;
+            font-family: 'Nunito', sans-serif;
+            font-weight: 800;
+            font-size: .9rem;
+            cursor: pointer;
+            transition: transform .18s;
+            box-shadow: 0 3px 14px rgba(233, 30, 140, .3);
+        }
+
+        #dp-back-btn:hover {
+            transform: scale(1.08);
+        }
+
+        #dp-body {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        /* Sidebar chọn người */
+        #dp-sidebar {
+            width: 130px;
+            flex-shrink: 0;
+            background: rgba(255, 255, 255, 0.65);
+            backdrop-filter: blur(8px);
+            border-right: 2px solid #f9a8d4;
+            overflow-y: auto;
+            padding: 14px 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        #dp-sidebar h4 {
+            font-size: .78rem;
+            color: #c2185b;
+            text-align: center;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            font-weight: 800;
+            margin-bottom: 4px;
+        }
+
+        .char-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            cursor: grab;
+            padding: 8px 4px;
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.85);
+            border: 2px solid #f9a8d4;
+            transition: transform .18s, box-shadow .18s;
+            user-select: none;
+        }
+
+        .char-card:hover {
+            transform: scale(1.08);
+            box-shadow: 0 4px 18px rgba(233, 30, 140, .3);
+        }
+
+        .char-card:active {
+            cursor: grabbing;
+        }
+
+        .char-card img {
+            width: 70px;
+            height: 70px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 2px solid #f472b6;
+            pointer-events: none;
+        }
+
+        .char-card span {
+            font-size: .72rem;
+            font-weight: 800;
+            color: #7c2d6b;
+            text-align: center;
+        }
+
+        /* Main area */
+        #dp-main {
+            flex: 1;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Zones */
+        #dp-zones {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: 1fr 1fr;
+            width: 100%;
+            height: 100%;
+            gap: 0;
+        }
+
+        .dp-zone {
+            position: relative;
+            overflow: hidden;
+            border: 2px solid rgba(249, 168, 212, 0.4);
+            transition: background .25s;
+        }
+
+        .dp-zone.drag-over {
+            background: rgba(233, 30, 140, 0.08) !important;
+        }
+
+        /* Zone backgrounds */
+        .zone-bedroom {
+            background: linear-gradient(135deg, #fce4ec 0%, #f8bbd0 100%);
+        }
+
+        .zone-park {
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+        }
+
+        .zone-canteen {
+            background: linear-gradient(135deg, #fff8e1 0%, #ffe0b2 100%);
+        }
+
+        .zone-cinema {
+            background: linear-gradient(135deg, #ede7f6 0%, #d1c4e9 100%);
+        }
+
+        .zone-label {
+            position: absolute;
+            top: 10px;
+            left: 14px;
+            font-size: .85rem;
+            font-weight: 800;
+            color: rgba(100, 30, 80, 0.7);
+            letter-spacing: 1px;
+            pointer-events: none;
+        }
+
+        .zone-emoji {
+            position: absolute;
+            top: 8px;
+            right: 12px;
+            font-size: 1.6rem;
+            pointer-events: none;
+        }
+
+        /* Drop hint */
+        .zone-hint {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: .82rem;
+            color: rgba(194, 24, 91, 0.45);
+            font-weight: 700;
+            pointer-events: none;
+            text-align: center;
+            padding: 8px;
+        }
+
+        /* Characters placed in zone */
+        .placed-char {
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            cursor: move;
+            z-index: 10;
+            user-select: none;
+            animation: popIn .4s cubic-bezier(.34, 1.56, .64, 1);
+        }
+
+        .placed-char img {
+            width: 56px;
+            height: 56px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 2px solid #e91e8c;
+            pointer-events: none;
+            animation: charBob 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes charBob {
+            0% {
+                transform: translateY(0)
+            }
+
+            100% {
+                transform: translateY(-5px)
+            }
+        }
+
+        .placed-char .char-name {
+            font-size: .65rem;
+            font-weight: 800;
+            color: #7c2d6b;
+        }
+
+        /* Speech bubble for placed char */
+        .char-speech {
+            position: absolute;
+            bottom: calc(100% + 6px);
+            left: 50%;
+            transform: translateX(-50%);
+            background: #fff;
+            border: 2px solid #f472b6;
+            border-radius: 16px 16px 16px 4px;
+            padding: 7px 12px;
+            font-size: .72rem;
+            font-weight: 700;
+            color: #4a1042;
+            white-space: nowrap;
+            max-width: 180px;
+            white-space: normal;
+            box-shadow: 0 4px 14px rgba(233, 30, 140, .2);
+            animation: fadeIn .3s ease;
+            z-index: 20;
+            text-align: center;
+            pointer-events: none;
+            line-height: 1.5;
+        }
+
+        .char-speech::after {
+            content: '';
+            position: absolute;
+            bottom: -9px;
+            left: 18px;
+            border: 5px solid transparent;
+            border-top-color: #f472b6;
+        }
+
+        /* AI loading dots */
+        .typing-dots span {
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #e91e8c;
+            margin: 0 2px;
+            animation: dotPulse .8s ease-in-out infinite;
+        }
+
+        .typing-dots span:nth-child(2) {
+            animation-delay: .2s
+        }
+
+        .typing-dots span:nth-child(3) {
+            animation-delay: .4s
+        }
+
+        @keyframes dotPulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+                opacity: .4
+            }
+
+            50% {
+                transform: scale(1.5);
+                opacity: 1
+            }
+        }
+
+        /* Zone decorations */
+        .zone-deco {
+            position: absolute;
+            pointer-events: none;
+            font-size: 1.8rem;
+            opacity: .35;
+            bottom: 12px;
+            right: 16px;
         }
 
         @keyframes fadeIn {
@@ -618,12 +1053,12 @@
         @keyframes popIn {
             from {
                 opacity: 0;
-                transform: scale(.72) translateY(28px);
+                transform: scale(.72) translateY(28px)
             }
 
             to {
                 opacity: 1;
-                transform: scale(1) translateY(0);
+                transform: scale(1) translateY(0)
             }
         }
 
@@ -685,16 +1120,82 @@
         </div>
     </div>
 
+    <!-- DTMF PUZZLE MODAL -->
+    <div id="dtmf-overlay">
+        <div id="dtmf-box">
+            <h3>🔐 Cửa Đang Khóa</h3>
+            <div class="dtmf-sub">
+                Giải quyết vấn đề sau để mở khoá tính năng này<br>
+                <strong>Nhận diện giá trị số trong đoạn âm thanh dưới đây.<br>Trả lời dãy số kết quả (DTMF signaling)</strong>
+            </div>
+            <div id="dtmf-audio-wrap">
+                <audio id="dtmf-audio" controls>
+                    <source src="dtmf.wav" type="audio/wav" />
+                    Trình duyệt không hỗ trợ audio.
+                </audio>
+            </div>
+            <div id="dtmf-input-wrap">
+                <input id="dtmf-input" type="text" maxlength="20" placeholder="Nhập dãy số..." autocomplete="off" />
+                <button id="dtmf-submit">✔</button>
+            </div>
+            <div id="dtmf-msg"></div>
+            <button id="dtmf-close-btn">Đóng lại</button>
+        </div>
+    </div>
+
+    <!-- DONG PHONG SCENE -->
+    <div id="dongphong-scene">
+        <div id="dp-header">
+            <h2>🌸 Động Phòng Hoa Chúc 🌸</h2>
+            <button id="dp-back-btn">← Quay lại</button>
+        </div>
+        <div id="dp-body">
+            <div id="dp-sidebar">
+                <h4>✨ Bạn trai</h4>
+                <!-- Filled by JS -->
+            </div>
+            <div id="dp-main">
+                <div id="dp-zones">
+                    <div class="dp-zone zone-bedroom" data-zone="bedroom" data-zone-name="Phòng ngủ">
+                        <div class="zone-label">🛏️ Phòng ngủ</div>
+                        <div class="zone-emoji">🌙</div>
+                        <div class="zone-hint">Kéo thả nhân vật vào đây</div>
+                        <div class="zone-deco">🛏️</div>
+                    </div>
+                    <div class="dp-zone zone-park" data-zone="park" data-zone-name="Công viên">
+                        <div class="zone-label">🌳 Công viên</div>
+                        <div class="zone-emoji">🌸</div>
+                        <div class="zone-hint">Kéo thả nhân vật vào đây</div>
+                        <div class="zone-deco">🌳</div>
+                    </div>
+                    <div class="dp-zone zone-canteen" data-zone="canteen" data-zone-name="Nhà ăn">
+                        <div class="zone-label">🍽️ Nhà ăn</div>
+                        <div class="zone-emoji">🍜</div>
+                        <div class="zone-hint">Kéo thả nhân vật vào đây</div>
+                        <div class="zone-deco">🍽️</div>
+                    </div>
+                    <div class="dp-zone zone-cinema" data-zone="cinema" data-zone-name="Rạp chiếu phim">
+                        <div class="zone-label">🎬 Rạp chiếu phim</div>
+                        <div class="zone-emoji">🎭</div>
+                        <div class="zone-hint">Kéo thả nhân vật vào đây</div>
+                        <div class="zone-deco">🍿</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- TOOLBAR -->
     <div id="toolbar">
-        <button class="tool-btn" id="btn-greeting" data-tip="Chúc em hạnh phúc 🎂">🎂</button>
-        <button class="tool-btn" id="btn-poem" data-tip="Tình anh 💌">💌</button>
+        <button class="tool-btn" id="btn-greeting" data-tip="Chúc Em Hạnh Phúc 🎂">🎂</button>
+        <button class="tool-btn" id="btn-poem" data-tip="Tình Anh 💌">💌</button>
+        <button class="tool-btn" id="btn-dongphong" data-tip="Động Phòng Hoa Chúc 🌸">🌸</button>
         <button class="tool-btn" id="btn-hanh" data-tip="Hành 🧅">🧅</button>
         <button class="tool-btn" id="btn-cha" data-tip="Chả 🌭">🌭</button>
         <button class="tool-btn" id="btn-cut" data-tip="Hà Chảnh 💩">💩</button>
     </div>
 
-    <!-- SCENE -->
+    <!-- SCENE (bubbles) -->
     <div id="scene">
         <div id="title">
             <h1>tổng hợp những tin nhắn<br>của tớ bị cậu bơ</h1>
@@ -707,28 +1208,14 @@
         const rand = (a, b) => Math.random() * (b - a) + a;
         const randInt = (a, b) => Math.floor(rand(a, b + 1));
 
-        /* ── POEMS DATA ── */
+        /* ═══════════════════════════════════════
+           POEMS
+        ═══════════════════════════════════════ */
         const POEMS = [
-            {
-                title: '💌 thư tình số 1',
-                body:
-                    `anh iêu em thích mê
-ko có gì để chê
-anh iêu em nhiều thế
-bị chê nên bị ế`
-            },
-            {
-                title: '💌 thư tình số 2',
-                body:
-                    `thư tềnh a viết hay hay
-khóe mắt a cứ sâu cay e nhờ
-a thì nhắn như thằng khờ
-e seen tin nhắn, a đờ người luôn`
-            }
+            { title: '💌 thư tình số 1', body: `anh iêu em thích mê\nko có gì để chê\nanh iêu em nhiều thế\nbị chê nên bị ế` },
+            { title: '💌 thư tình số 2', body: `thư tềnh a viết hay hay\nkhóe mắt a cứ sâu cay e nhờ\na thì nhắn như thằng khờ\ne seen tin nhắn, a đờ người luôn` }
         ];
-
         let poemIdx = 0;
-
         function renderPoem(idx) {
             poemIdx = idx;
             document.getElementById('poem-title').textContent = POEMS[idx].title;
@@ -737,41 +1224,21 @@ e seen tin nhắn, a đờ người luôn`
             document.getElementById('poem-prev').disabled = idx === 0;
             document.getElementById('poem-next').disabled = idx === POEMS.length - 1;
         }
-
-        function showPoemModal() {
-            renderPoem(0);
-            const ov = document.getElementById('poem-overlay');
-            ov.style.opacity = '1';
-            ov.classList.add('active');
-        }
-
-        document.getElementById('poem-prev').addEventListener('click', () => {
-            if (poemIdx > 0) renderPoem(poemIdx - 1);
-        });
-
-        document.getElementById('poem-next').addEventListener('click', () => {
-            if (poemIdx < POEMS.length - 1) renderPoem(poemIdx + 1);
-        });
-
-        document.querySelectorAll('.poem-dot').forEach(d => {
-            d.addEventListener('click', () => renderPoem(+d.dataset.idx));
-        });
-
+        function showPoemModal() { renderPoem(0); document.getElementById('poem-overlay').classList.add('active'); }
+        document.getElementById('poem-prev').addEventListener('click', () => { if (poemIdx > 0) renderPoem(poemIdx - 1); });
+        document.getElementById('poem-next').addEventListener('click', () => { if (poemIdx < POEMS.length - 1) renderPoem(poemIdx + 1); });
+        document.querySelectorAll('.poem-dot').forEach(d => d.addEventListener('click', () => renderPoem(+d.dataset.idx)));
         document.getElementById('poem-close-btn').addEventListener('click', () => {
             const ov = document.getElementById('poem-overlay');
-            ov.style.transition = 'opacity .25s';
-            ov.style.opacity = '0';
-            setTimeout(() => {
-                ov.classList.remove('active');
-                ov.style.opacity = '';
-                ov.style.transition = '';
-            }, 260);
+            ov.style.transition = 'opacity .25s'; ov.style.opacity = '0';
+            setTimeout(() => { ov.classList.remove('active'); ov.style.opacity = ''; ov.style.transition = ''; }, 260);
         });
 
-        /* ── HEART RING ── */
+        /* ═══════════════════════════════════════
+           HEART RING
+        ═══════════════════════════════════════ */
         function buildHeartBorder() {
-            const ring = document.getElementById('heart-ring');
-            const box = document.getElementById('modal-box');
+            const ring = document.getElementById('heart-ring'), box = document.getElementById('modal-box');
             if (!ring || !box) return;
             ring.innerHTML = '';
             const EMOJIS = ['🩷', '💗', '💖', '💕', '❤️', '🩵', '💙', '💚', '💛', '🧡', '💜', '🤍'];
@@ -779,20 +1246,15 @@ e seen tin nhắn, a đờ người luôn`
             const GAP = 38, RW = W + GAP * 2, RH = H + GAP * 2;
             let idx = 0;
             function placeHeart(px, py, rotDeg, szMulti) {
-                const el = document.createElement('span');
-                el.className = 'hr-heart';
+                const el = document.createElement('span'); el.className = 'hr-heart';
                 el.textContent = EMOJIS[idx % EMOJIS.length];
                 const sz = (1.5 + (idx % 5) * 0.3) * szMulti;
-                el.style.cssText = `font-size:${sz}rem;left:${px}px;top:${py}px;transform:rotate(${rotDeg}deg);animation-duration:${(1.8 + (idx % 7) * 0.3).toFixed(1)}s;animation-delay:${((idx % 13) * 0.15).toFixed(2)}s; z-index: ${Math.floor(Math.random()*4)};`;
-                ring.appendChild(el);
-                idx++;
+                el.style.cssText = `font-size:${sz}rem;left:${px}px;top:${py}px;transform:rotate(${rotDeg}deg);animation-duration:${(1.8 + (idx % 7) * 0.3).toFixed(1)}s;animation-delay:${((idx % 13) * 0.15).toFixed(2)}s;z-index:${Math.floor(Math.random() * 4)};`;
+                ring.appendChild(el); idx++;
             }
             const halfEm = 18;
-            // Tạo 3 lớp trái tim đè lên nhau bao full viền
             for (let layer = 0; layer < 3; layer++) {
-                const density = 30 - layer * 6;
-                const szMulti = 1 - layer * 0.15;
-                const offset = layer * 16;
+                const density = 30 - layer * 6, szMulti = 1 - layer * 0.15, offset = layer * 16;
                 const topN = Math.max(5, Math.round(RW / density));
                 for (let i = 0; i <= topN; i++) placeHeart((i / topN) * RW - halfEm + rand(-15, 15), -halfEm * 1.2 - offset + rand(-12, 12), rand(-45, 45), szMulti);
                 for (let i = 0; i <= topN; i++) placeHeart((i / topN) * RW - halfEm + rand(-15, 15), RH - halfEm * 0.8 + offset + rand(-12, 12), rand(-45, 45), szMulti);
@@ -801,36 +1263,27 @@ e seen tin nhắn, a đờ người luôn`
                 for (let i = 0; i <= sideN; i++) placeHeart(RW - halfEm * 0.9 + offset + rand(-12, 12), (i / sideN) * RH - halfEm + rand(-15, 15), rand(-45, 45), szMulti);
             }
         }
-
         function showGreetingModal() {
             const ov = document.getElementById('modal-overlay');
-            ov.style.opacity = '1';
-            ov.style.transition = '';
-            ov.style.display = 'flex';
+            ov.style.opacity = '1'; ov.style.transition = ''; ov.style.display = 'flex';
             setTimeout(buildHeartBorder, 50);
         }
-
         window.addEventListener('load', () => setTimeout(buildHeartBorder, 100));
-
         document.getElementById('close-btn').addEventListener('click', () => {
             const ov = document.getElementById('modal-overlay');
-            ov.style.transition = 'opacity .3s';
-            ov.style.opacity = '0';
-            setTimeout(() => {
-                ov.style.display = 'none';
-                if (!window._sceneStarted) { window._sceneStarted = true; startScene(); }
-            }, 320);
+            ov.style.transition = 'opacity .3s'; ov.style.opacity = '0';
+            setTimeout(() => { ov.style.display = 'none'; if (!window._sceneStarted) { window._sceneStarted = true; startScene(); } }, 320);
         });
-
         document.getElementById('btn-greeting').addEventListener('click', showGreetingModal);
         document.getElementById('btn-poem').addEventListener('click', showPoemModal);
 
-        /* ── RAIN SYSTEM ── */
+        /* ═══════════════════════════════════════
+           RAIN
+        ═══════════════════════════════════════ */
         function triggerRain(emoji, count = 80) {
             for (let i = 0; i < count; i++) {
                 setTimeout(() => {
-                    const el = document.createElement('div');
-                    el.className = 'rain-item';
+                    const el = document.createElement('div'); el.className = 'rain-item';
                     el.textContent = emoji;
                     el.style.fontSize = rand(1.2, 2.8).toFixed(2) + 'rem';
                     el.style.left = rand(0, 96) + 'vw';
@@ -841,12 +1294,13 @@ e seen tin nhắn, a đờ người luôn`
                 }, i * rand(0, 40));
             }
         }
-
         document.getElementById('btn-hanh').addEventListener('click', () => triggerRain('🧅', 80));
         document.getElementById('btn-cha').addEventListener('click', () => triggerRain('🌭', 80));
         document.getElementById('btn-cut').addEventListener('click', () => triggerRain('💩', 80));
 
-        /* ── SCENE ── */
+        /* ═══════════════════════════════════════
+           BUBBLE SCENE
+        ═══════════════════════════════════════ */
         function startScene() {
             const scene = document.getElementById('scene');
             scene.style.display = 'block';
@@ -857,88 +1311,56 @@ e seen tin nhắn, a đờ người luôn`
             const els = shuffled.map((msg, i) => {
                 const el = document.createElement('div');
                 el.className = 'bubble ' + VARIANTS[i % VARIANTS.length];
-                el.textContent = msg;
-                el.style.visibility = 'hidden';
-                el.style.transform = 'translate(0px,0px)';
-                frag.appendChild(el);
-                return el;
+                el.textContent = msg; el.style.visibility = 'hidden'; el.style.transform = 'translate(0px,0px)';
+                frag.appendChild(el); return el;
             });
             scene.appendChild(frag);
-
             requestAnimationFrame(() => {
                 requestAnimationFrame(() => {
                     const bubbles = els.map(el => {
-                        const r = el.getBoundingClientRect();
-                        return { el, w: r.width || 120, h: r.height || 40 };
+                        const r = el.getBoundingClientRect(); return { el, w: r.width || 120, h: r.height || 40 };
                     });
                     const placed = [];
-
                     function overlaps(x, y, w, h) {
                         const PAD = 14;
-                        for (const p of placed) {
-                            if (x < p.x + p.w + PAD && x + w + PAD > p.x && y < p.y + p.h + PAD && y + h + PAD > p.y) return true;
-                        }
+                        for (const p of placed) { if (x < p.x + p.w + PAD && x + w + PAD > p.x && y < p.y + p.h + PAD && y + h + PAD > p.y) return true; }
                         return false;
                     }
-
                     const CX = VW / 2, CY = VH / 2, SAFE_W = 340, SAFE_H = 130;
-                    const tbX = VW - 16 - 90 - 20, tbY = 16 - 20, tbW = 130, tbH = 320;
-
+                    const tbX = VW - 16 - 90 - 20, tbY = 16 - 20, tbW = 130, tbH = 380;
                     function inSafeZone(x, y, w, h) {
                         const inTitle = !(x + w < CX - SAFE_W / 2 || x > CX + SAFE_W / 2 || y + h < CY - SAFE_H / 2 || y > CY + SAFE_H / 2);
                         const inToolbar = !(x + w < tbX || x > tbX + tbW || y + h < tbY || y > tbY + tbH);
                         return inTitle || inToolbar;
                     }
-
                     const objects = bubbles.map(({ el, w, h }) => {
                         let x, y, tries = 0;
-                        do {
-                            x = rand(8, VW - w - 8);
-                            y = rand(8, VH - h - 8);
-                            tries++;
-                        } while ((overlaps(x, y, w, h) || inSafeZone(x, y, w, h)) && tries < 400);
-                        placed.push({ x, y, w, h });
-                        el.style.transform = `translate(${x}px,${y}px)`;
-                        el.style.visibility = 'visible';
+                        do { x = rand(8, VW - w - 8); y = rand(8, VH - h - 8); tries++; }
+                        while ((overlaps(x, y, w, h) || inSafeZone(x, y, w, h)) && tries < 400);
+                        placed.push({ x, y, w, h }); el.style.transform = `translate(${x}px,${y}px)`; el.style.visibility = 'visible';
                         const speed = rand(0.25, 0.7), angle = rand(0, Math.PI * 2);
-                        return {
-                            el, w, h, x, y,
-                            vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed,
-                            wobble: rand(0, Math.PI * 2),
-                            wobbleSpeed: rand(0.008, 0.018),
-                            wobbleAmp: rand(0.3, 0.9)
-                        };
+                        return { el, w, h, x, y, vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed, wobble: rand(0, Math.PI * 2), wobbleSpeed: rand(0.008, 0.018), wobbleAmp: rand(0.3, 0.9) };
                     });
-
                     const SPARKS = ['✨', '🌸', '💗', '💕', '🌷', '⭐', '💖', '🎀', '🩷'];
                     for (let s = 0; s < 18; s++) {
-                        const sp = document.createElement('div');
-                        sp.className = 'spark';
+                        const sp = document.createElement('div'); sp.className = 'spark';
                         sp.textContent = SPARKS[randInt(0, SPARKS.length - 1)];
-                        sp.style.left = rand(2, 96) + 'vw';
-                        sp.style.top = rand(5, 90) + 'vh';
+                        sp.style.left = rand(2, 96) + 'vw'; sp.style.top = rand(5, 90) + 'vh';
                         sp.style.fontSize = rand(.75, 1.3).toFixed(2) + 'rem';
                         sp.style.animation = `sparkFade ${rand(3, 7).toFixed(1)}s ${rand(0, 8).toFixed(1)}s ease-in-out infinite`;
                         scene.appendChild(sp);
                     }
-
                     function tick() {
                         const W = window.innerWidth, H = window.innerHeight;
                         const tbRect = document.getElementById('toolbar').getBoundingClientRect();
-                        const tbBX1 = tbRect.left - 12, tbBY1 = tbRect.top - 12;
-                        const tbBX2 = tbRect.right + 12, tbBY2 = tbRect.bottom + 12;
-
+                        const tbBX1 = tbRect.left - 12, tbBY1 = tbRect.top - 12, tbBX2 = tbRect.right + 12, tbBY2 = tbRect.bottom + 12;
                         for (let i = 0; i < objects.length; i++) {
                             const o = objects[i];
-                            o.wobble += o.wobbleSpeed;
-                            o.x += o.vx;
-                            o.y += o.vy + Math.sin(o.wobble) * o.wobbleAmp * 0.12;
-
+                            o.wobble += o.wobbleSpeed; o.x += o.vx; o.y += o.vy + Math.sin(o.wobble) * o.wobbleAmp * 0.12;
                             if (o.x < 4) { o.x = 4; o.vx = Math.abs(o.vx); }
                             if (o.x + o.w > W - 4) { o.x = W - 4 - o.w; o.vx = -Math.abs(o.vx); }
                             if (o.y < 4) { o.y = 4; o.vy = Math.abs(o.vy); }
                             if (o.y + o.h > H - 4) { o.y = H - 4 - o.h; o.vy = -Math.abs(o.vy); }
-
                             const bx1 = o.x, bx2 = o.x + o.w, by1 = o.y, by2 = o.y + o.h;
                             if (bx2 > tbBX1 && bx1 < tbBX2 && by2 > tbBY1 && by1 < tbBY2) {
                                 const overL = bx2 - tbBX1, overR = tbBX2 - bx1, overT = by2 - tbBY1, overB = tbBY2 - by1;
@@ -948,25 +1370,19 @@ e seen tin nhắn, a đờ người luôn`
                                 else if (min === overT) { o.y -= overT; o.vy = -Math.abs(o.vy); }
                                 else { o.y += overB; o.vy = Math.abs(o.vy); }
                             }
-
                             for (let j = i + 1; j < objects.length; j++) {
                                 const b = objects[j];
                                 const dx = (o.x + o.w / 2) - (b.x + b.w / 2), dy = (o.y + o.h / 2) - (b.y + b.h / 2);
-                                const dist = Math.hypot(dx, dy);
-                                const minD = (o.w / 2 + b.w / 2) * 0.9 + 10;
+                                const dist = Math.hypot(dx, dy), minD = (o.w / 2 + b.w / 2) * 0.9 + 10;
                                 if (dist < minD && dist > 0.1) {
-                                    const push = (minD - dist) / minD * 0.35;
-                                    const nx = dx / dist, ny = dy / dist;
-                                    o.vx += nx * push; o.vy += ny * push;
-                                    b.vx -= nx * push; b.vy -= ny * push;
+                                    const push = (minD - dist) / minD * 0.35, nx = dx / dist, ny = dy / dist;
+                                    o.vx += nx * push; o.vy += ny * push; b.vx -= nx * push; b.vy -= ny * push;
                                     o.vx *= 0.96; o.vy *= 0.96; b.vx *= 0.96; b.vy *= 0.96;
                                 }
                             }
-
                             const spd = Math.hypot(o.vx, o.vy);
                             if (spd > 1.2) { o.vx = o.vx / spd * 1.2; o.vy = o.vy / spd * 1.2; }
                             if (spd < 0.15 && Math.random() < 0.01) { o.vx += rand(-0.2, 0.2); o.vy += rand(-0.2, 0.2); }
-
                             o.el.style.transform = `translate(${o.x}px,${o.y}px)`;
                         }
                         requestAnimationFrame(tick);
@@ -974,6 +1390,277 @@ e seen tin nhắn, a đờ người luôn`
                     requestAnimationFrame(tick);
                 });
             });
+        }
+
+        /* ═══════════════════════════════════════
+           DTMF PUZZLE
+        ═══════════════════════════════════════ */
+        const DTMF_ANSWER = '28322489';
+        let dtmfUnlocked = false;
+
+        function showDtmfModal() {
+            document.getElementById('dtmf-msg').textContent = '';
+            document.getElementById('dtmf-msg').className = '';
+            document.getElementById('dtmf-input').value = '';
+            document.getElementById('dtmf-overlay').classList.add('active');
+        }
+        function hideDtmfModal() {
+            const ov = document.getElementById('dtmf-overlay');
+            ov.style.transition = 'opacity .25s'; ov.style.opacity = '0';
+            setTimeout(() => { ov.classList.remove('active'); ov.style.opacity = ''; ov.style.transition = ''; }, 260);
+        }
+        document.getElementById('dtmf-close-btn').addEventListener('click', hideDtmfModal);
+
+        function checkDtmf() {
+            const val = document.getElementById('dtmf-input').value.trim();
+            const msg = document.getElementById('dtmf-msg');
+            if (val === DTMF_ANSWER) {
+                msg.textContent = '✅ Chính xác! Mở khoá thành công!';
+                msg.className = 'ok';
+                dtmfUnlocked = true;
+                setTimeout(() => { hideDtmfModal(); setTimeout(openDongPhong, 300); }, 900);
+            } else {
+                msg.textContent = '❌ Sai rồi! Nghe lại file âm thanh nhé~';
+                msg.className = 'err';
+                document.getElementById('dtmf-input').value = '';
+            }
+        }
+        document.getElementById('dtmf-submit').addEventListener('click', checkDtmf);
+        document.getElementById('dtmf-input').addEventListener('keydown', e => { if (e.key === 'Enter') checkDtmf(); });
+
+        document.getElementById('btn-dongphong').addEventListener('click', () => {
+            if (dtmfUnlocked) { openDongPhong(); }
+            else { showDtmfModal(); }
+        });
+
+        /* ═══════════════════════════════════════
+           DONG PHONG SCENE
+        ═══════════════════════════════════════ */
+        const CHARACTERS = [
+            { id: 'jaypark', name: 'Jay Park', img: 'images/jaypark.png' },
+            { id: 'jihoon', name: 'Jihoon', img: 'images/jihoon.png' },
+            { id: 'keonho', name: 'Keonho', img: 'images/keonho.png' },
+            { id: 'mason', name: 'Mason', img: 'images/mason.png' },
+            { id: 'negav', name: 'Negav', img: 'images/negav.png' },
+            { id: 'ohyul', name: 'Ohyul', img: 'images/ohyul.png' },
+            { id: 'ryul', name: 'Ryul', img: 'images/ryul.png' },
+            { id: 'sonhoang', name: 'Sơn Hoàng', img: 'images/sonhoang.png' },
+        ];
+
+        const ZONE_DIALOGUES = {
+            bedroom: [
+                'Ừm... buồn ngủ quá 😴', 'Ngủ cùng mình nhé? 🌙', 'Đêm nay ngủ ngon nha 💤',
+                'Gối này thơm ghê 🌸', 'Mình nằm đây nghĩ về em nè ❤️', 'Aaaa ngủ tiếp thôi~ 😪'
+            ],
+            park: [
+                'Trời hôm nay đẹp ghê! 🌸', 'Đi dạo công viên cùng mình nha 🌳',
+                'Nhìn hoa nở mà nhớ em ghê 🌷', 'Hít thở không khí trong lành nào 🍃',
+                'Chạy nào! Bắt được thì tặng quà 🏃', 'Ngồi đây ngắm hoàng hôn nha 🌅'
+            ],
+            canteen: [
+                'Ăn gì hôm nay vậy? 🍜', 'Mình gọi phần cho em nhé 🥰',
+                'Cơm ngon ghê á! 🍚', 'Ăn thêm đi, trời ơi gầy vậy! 😄',
+                'Đây là món em thích nè 💕', 'Ăn cùng mình cho vui nha~ 🍱'
+            ],
+            cinema: [
+                'Phim gì chiếu tối nay nhỉ? 🎬', 'Nhường ghế ngồi bên mình nha 🎭',
+                'Mình mua bắp rang cho em! 🍿', 'Ôi đoạn này hay ghê á! 😲',
+                'Nắm tay mình xem phim nha 🤝', 'Hết phim rồi, về thôi em ơi 🌙'
+            ]
+        };
+
+        const MULTI_DIALOGUES = [
+            'Đông vui ghê hen! 🎉', 'Tụ tập thế này vui quá 😄',
+            'Nhiều người quá, chen chút nào~ 😂', 'Cùng nhau vui nè! 🥳'
+        ];
+
+        function getZoneDialogue(zone, charId, othersInZone) {
+            const base = ZONE_DIALOGUES[zone] || ['Vui quá á! 😊'];
+            if (othersInZone.length > 0) {
+                const names = othersInZone.map(id => CHARACTERS.find(c => c.id === id)?.name || id).join(' và ');
+                const multiLines = [
+                    `Vui khi có ${names} ở đây! 🎉`,
+                    `${names} ơi, cùng chơi nào~ 😄`,
+                    `Hôm nay có cả ${names} nữa kìa! 🥳`
+                ];
+                return multiLines[Math.floor(Math.random() * multiLines.length)];
+            }
+            return base[Math.floor(Math.random() * base.length)];
+        }
+
+        // Track placed chars per zone: { zoneEl: [{charId, el}] }
+        const zonePlacements = new WeakMap();
+
+        function openDongPhong() {
+            buildDpSidebar();
+            setupZoneDrops();
+            document.getElementById('dongphong-scene').classList.add('active');
+            // clear all placed chars
+            document.querySelectorAll('.dp-zone').forEach(z => {
+                z.querySelectorAll('.placed-char').forEach(c => c.remove());
+                zonePlacements.set(z, []);
+            });
+        }
+
+        document.getElementById('dp-back-btn').addEventListener('click', () => {
+            document.getElementById('dongphong-scene').classList.remove('active');
+        });
+
+        function buildDpSidebar() {
+            const sidebar = document.getElementById('dp-sidebar');
+            // Remove existing char cards but keep h4
+            sidebar.querySelectorAll('.char-card').forEach(c => c.remove());
+            CHARACTERS.forEach(char => {
+                const card = document.createElement('div');
+                card.className = 'char-card';
+                card.draggable = true;
+                card.dataset.charId = char.id;
+                card.innerHTML = `<img src="${char.img}" alt="${char.name}"><span>${char.name}</span>`;
+                card.addEventListener('dragstart', e => {
+                    e.dataTransfer.setData('charId', char.id);
+                    e.dataTransfer.effectAllowed = 'copy';
+                });
+                sidebar.appendChild(card);
+            });
+        }
+
+        function setupZoneDrops() {
+            document.querySelectorAll('.dp-zone').forEach(zone => {
+                if (!zonePlacements.has(zone)) zonePlacements.set(zone, []);
+                zone.addEventListener('dragover', e => {
+                    e.preventDefault(); e.dataTransfer.dropEffect = 'copy';
+                    zone.classList.add('drag-over');
+                });
+                zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+                zone.addEventListener('drop', e => {
+                    e.preventDefault(); zone.classList.remove('drag-over');
+                    const charId = e.dataTransfer.getData('charId');
+                    if (!charId) return;
+                    const placements = zonePlacements.get(zone);
+                    // Allow multiple of same char
+                    dropCharIntoZone(charId, zone, e.offsetX, e.offsetY);
+                });
+            });
+        }
+
+        function dropCharIntoZone(charId, zoneEl, dropX, dropY) {
+            const char = CHARACTERS.find(c => c.id === charId);
+            if (!char) return;
+
+            const el = document.createElement('div');
+            el.className = 'placed-char';
+            el.dataset.charId = charId;
+
+            const img = document.createElement('img');
+            img.src = char.img; img.alt = char.name;
+            const nameEl = document.createElement('div');
+            nameEl.className = 'char-name'; nameEl.textContent = char.name;
+            el.appendChild(img); el.appendChild(nameEl);
+
+            // Position
+            const zRect = zoneEl.getBoundingClientRect();
+            let px = dropX - 28, py = dropY - 28;
+            px = Math.max(4, Math.min(zRect.width - 70, px));
+            py = Math.max(30, Math.min(zRect.height - 80, py));
+            el.style.left = px + 'px'; el.style.top = py + 'px';
+
+            // Drag inside zone
+            makeDraggableInZone(el, zoneEl);
+
+            zoneEl.appendChild(el);
+            const placements = zonePlacements.get(zoneEl) || [];
+            placements.push({ charId, el });
+            zonePlacements.set(zoneEl, placements);
+
+            // Speech bubble with AI
+            showTypingThenSpeak(el, char, zoneEl);
+        }
+
+        function makeDraggableInZone(charEl, zoneEl) {
+            let isDragging = false, startX, startY, origLeft, origTop;
+            charEl.addEventListener('mousedown', e => {
+                if (e.target.tagName === 'IMG' || e.target.classList.contains('char-name') || e.target === charEl) {
+                    isDragging = true;
+                    const zRect = zoneEl.getBoundingClientRect();
+                    startX = e.clientX; startY = e.clientY;
+                    origLeft = parseInt(charEl.style.left) || 0;
+                    origTop = parseInt(charEl.style.top) || 0;
+                    charEl.style.zIndex = 50; e.preventDefault();
+                }
+            });
+            document.addEventListener('mousemove', e => {
+                if (!isDragging) return;
+                const zRect = zoneEl.getBoundingClientRect();
+                let nx = origLeft + (e.clientX - startX);
+                let ny = origTop + (e.clientY - startY);
+                nx = Math.max(4, Math.min(zRect.width - 70, nx));
+                ny = Math.max(30, Math.min(zRect.height - 80, ny));
+                charEl.style.left = nx + 'px'; charEl.style.top = ny + 'px';
+            });
+            document.addEventListener('mouseup', () => { if (isDragging) { isDragging = false; charEl.style.zIndex = 10; } });
+        }
+
+        async function showTypingThenSpeak(charEl, char, zoneEl) {
+            // Remove existing speech
+            charEl.querySelectorAll('.char-speech').forEach(s => s.remove());
+
+            // Show typing indicator
+            const typing = document.createElement('div');
+            typing.className = 'char-speech typing-dots';
+            typing.innerHTML = '<span></span><span></span><span></span>';
+            charEl.appendChild(typing);
+
+            const zoneName = zoneEl.dataset.zoneName || 'đây';
+            const zoneKey = zoneEl.dataset.zone;
+            const placements = (zonePlacements.get(zoneEl) || []);
+            const others = placements.filter(p => p.el !== charEl).map(p => p.charId);
+
+            let line;
+            try {
+                const prompt = `Bạn đang đóng vai ${char.name}, một bạn trai dễ thương người Hàn Quốc đang ở ${zoneName}. Hãy nói một câu ngắn (dưới 15 từ, tiếng Việt, có thêm emoji) thể hiện hành động hoặc cảm xúc phù hợp với không gian ${zoneName}. ${others.length > 0 ? `Trong ${zoneName} còn có ${others.map(id => CHARACTERS.find(c => c.id === id)?.name || id).join(', ')} cùng ở đây.` : ''} Chỉ trả lời câu thoại, không giải thích.`;
+                const resp = await fetch('https://api.anthropic.com/v1/messages', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        model: 'claude-sonnet-4-20250514',
+                        max_tokens: 100,
+                        messages: [{ role: 'user', content: prompt }]
+                    })
+                });
+                const data = await resp.json();
+                line = data.content?.[0]?.text?.trim() || getZoneDialogue(zoneKey, char.id, others);
+            } catch (err) {
+                line = getZoneDialogue(zoneKey, char.id, others);
+            }
+
+            // Replace typing with speech
+            typing.remove();
+            const speech = document.createElement('div');
+            speech.className = 'char-speech';
+            speech.textContent = line;
+            charEl.appendChild(speech);
+
+            // Auto-hide after 4s then periodic random chatter
+            setTimeout(() => {
+                speech.remove();
+                startPeriodicChatter(charEl, char, zoneEl);
+            }, 4000);
+        }
+
+        function startPeriodicChatter(charEl, char, zoneEl) {
+            if (charEl._chatterTimer) clearInterval(charEl._chatterTimer);
+            charEl._chatterTimer = setInterval(async () => {
+                if (!document.contains(charEl)) { clearInterval(charEl._chatterTimer); return; }
+                charEl.querySelectorAll('.char-speech').forEach(s => s.remove());
+                const zoneKey = zoneEl.dataset.zone;
+                const placements = (zonePlacements.get(zoneEl) || []);
+                const others = placements.filter(p => p.el !== charEl).map(p => p.charId);
+                const line = getZoneDialogue(zoneKey, char.id, others);
+                const speech = document.createElement('div');
+                speech.className = 'char-speech'; speech.textContent = line;
+                charEl.appendChild(speech);
+                setTimeout(() => speech.remove(), 3500);
+            }, 6000 + Math.random() * 4000);
         }
     </script>
 </body>
