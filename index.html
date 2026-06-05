@@ -1,0 +1,981 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>💌 ALHUN</title>
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Nunito:wght@400;600;700&display=swap"
+        rel="stylesheet" />
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            background: #ff6eb4;
+            font-family: 'Nunito', sans-serif;
+            position: relative;
+        }
+
+        body::before,
+        body::after {
+            content: '';
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(55px);
+            opacity: .72;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        body::before {
+            width: 60vw;
+            height: 60vw;
+            background: radial-gradient(circle at 40% 40%, #ff3cac, #ff6eb4 40%, #ffb347 100%);
+            top: -15vw;
+            left: -10vw;
+            animation: blobMove1 9s ease-in-out infinite alternate;
+        }
+
+        body::after {
+            width: 55vw;
+            height: 55vw;
+            background: radial-gradient(circle at 60% 60%, #a855f7, #ec4899 45%, #f97316 100%);
+            bottom: -12vw;
+            right: -10vw;
+            animation: blobMove2 11s ease-in-out infinite alternate;
+        }
+
+        #scene::before,
+        #scene::after {
+            content: '';
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(60px);
+            opacity: .55;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        #scene::before {
+            width: 40vw;
+            height: 40vw;
+            background: radial-gradient(circle, #facc15, #fb923c 60%, #f43f5e 100%);
+            bottom: 10vh;
+            left: -5vw;
+            animation: blobMove3 13s ease-in-out infinite alternate;
+        }
+
+        #scene::after {
+            width: 35vw;
+            height: 35vw;
+            background: radial-gradient(circle, #34d399, #06b6d4 55%, #818cf8 100%);
+            top: 5vh;
+            right: 10vw;
+            animation: blobMove4 10s ease-in-out infinite alternate;
+        }
+
+        @keyframes blobMove1 {
+            0% {
+                transform: translate(0, 0) scale(1);
+            }
+
+            100% {
+                transform: translate(6vw, 8vh) scale(1.12);
+            }
+        }
+
+        @keyframes blobMove2 {
+            0% {
+                transform: translate(0, 0) scale(1);
+            }
+
+            100% {
+                transform: translate(-5vw, -6vh) scale(1.09);
+            }
+        }
+
+        @keyframes blobMove3 {
+            0% {
+                transform: translate(0, 0) scale(1);
+            }
+
+            100% {
+                transform: translate(8vw, -7vh) scale(1.15);
+            }
+        }
+
+        @keyframes blobMove4 {
+            0% {
+                transform: translate(0, 0) scale(1);
+            }
+
+            100% {
+                transform: translate(-6vw, 9vh) scale(1.1);
+            }
+        }
+
+        /* ── MODAL (greeting) ── */
+        #modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(220, 80, 160, 0.30);
+            backdrop-filter: blur(14px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            animation: fadeIn .4s ease;
+        }
+
+        #modal-wrapper {
+            position: relative;
+            max-width: 720px;
+            width: 94%;
+            animation: popIn .5s cubic-bezier(.34, 1.56, .64, 1);
+        }
+
+        #heart-ring {
+            position: absolute;
+            inset: -38px;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .hr-heart {
+            position: absolute;
+            font-size: 2.1rem;
+            line-height: 1;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, .12));
+            animation: hrFloat ease-in-out infinite alternate;
+            transform-origin: center;
+        }
+
+        @keyframes hrFloat {
+            0% {
+                transform: translateY(0) scale(1) rotate(-8deg);
+            }
+
+            100% {
+                transform: translateY(-6px) scale(1.12) rotate(8deg);
+            }
+        }
+
+        #modal-box {
+            background: linear-gradient(170deg, #fff9fb 0%, #fffafa 55%, #fef0f7 100%);
+            border-radius: 40px;
+            padding: 44px;
+            text-align: center;
+            box-shadow:
+                0 24px 70px rgba(220, 80, 160, .28),
+                0 4px 16px rgba(220, 80, 160, .14),
+                inset 0 1px 0 rgba(255, 255, 255, .9);
+            position: relative;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 32px;
+        }
+
+        @media (max-width: 768px) {
+            #modal-box {
+                flex-direction: column;
+                gap: 20px;
+                padding: 30px 20px;
+            }
+        }
+
+        #mason-img {
+            width: 220px;
+            max-width: 100%;
+            flex-shrink: 0;
+            /* Đã bỏ animation để ảnh đứng yên */
+            /* Đã bỏ box-shadow và border-radius để xóa viền phông */
+        }
+
+        .modal-text-content {
+            flex: 1;
+        }
+
+        #modal-icons {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 18px;
+        }
+
+        .mi-icon {
+            font-size: 2rem;
+            filter: drop-shadow(0 2px 6px rgba(233, 30, 140, .2));
+            animation: bounce 1.6s ease-in-out infinite;
+        }
+
+        .mi-icon:nth-child(2) {
+            animation-delay: .18s;
+            font-size: 2.5rem;
+        }
+
+        .mi-icon:nth-child(3) {
+            animation-delay: .36s;
+        }
+
+        #modal-box h2 {
+            font-family: 'Pacifico', cursive;
+            color: #e91e8c;
+            font-size: 1.75rem;
+            margin-bottom: 20px;
+            line-height: 1.4;
+            text-shadow: 0 2px 14px rgba(233, 30, 140, .18);
+        }
+
+        #modal-box p {
+            color: #3d1535;
+            font-size: 1.08rem;
+            line-height: 2;
+            font-weight: 600;
+        }
+
+        #close-btn {
+            margin-top: 30px;
+            background: linear-gradient(135deg, #e91e8c 0%, #f06eb0 50%, #f4829c 100%);
+            color: #fff;
+            border: none;
+            padding: 14px 52px;
+            border-radius: 50px;
+            font-family: 'Nunito', sans-serif;
+            font-size: 1.05rem;
+            font-weight: 800;
+            cursor: pointer;
+            box-shadow: 0 5px 24px rgba(233, 30, 140, .42);
+            transition: transform .18s, box-shadow .18s;
+            letter-spacing: .6px;
+        }
+
+        #close-btn:hover {
+            transform: scale(1.09);
+            box-shadow: 0 9px 32px rgba(233, 30, 140, .56);
+        }
+
+        #heart-border {
+            display: none !important;
+        }
+
+        /* ── POEM MODAL ── */
+        #poem-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(160, 20, 100, 0.32);
+            backdrop-filter: blur(16px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9998;
+        }
+
+        #poem-overlay.active {
+            display: flex;
+            animation: fadeIn .3s ease;
+        }
+
+        #poem-box {
+            background: linear-gradient(160deg, #fff5fc 0%, #fef0f9 60%, #fff9fb 100%);
+            border-radius: 36px;
+            padding: 40px 44px 36px;
+            max-width: 440px;
+            width: 92%;
+            text-align: center;
+            box-shadow:
+                0 20px 60px rgba(220, 80, 160, .3),
+                0 4px 18px rgba(220, 80, 160, .15),
+                inset 0 1px 0 rgba(255, 255, 255, .85);
+            position: relative;
+            animation: popIn .45s cubic-bezier(.34, 1.56, .64, 1);
+        }
+
+        #poem-nav {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .poem-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #f9a8d4;
+            cursor: pointer;
+            transition: background .2s, transform .2s;
+        }
+
+        .poem-dot.active {
+            background: #e91e8c;
+            transform: scale(1.35);
+        }
+
+        #poem-title {
+            font-family: 'Pacifico', cursive;
+            color: #e91e8c;
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            text-shadow: 0 2px 12px rgba(233, 30, 140, .15);
+        }
+
+        #poem-body {
+            color: #4a1040;
+            font-size: 1.06rem;
+            line-height: 2.1;
+            font-weight: 600;
+            white-space: pre-line;
+            min-height: 120px;
+        }
+
+        #poem-arrows {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin-top: 22px;
+        }
+
+        .poem-arrow-btn {
+            background: linear-gradient(135deg, #f9a8d4 0%, #f472b6 100%);
+            border: none;
+            border-radius: 50%;
+            width: 42px;
+            height: 42px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform .18s, box-shadow .18s;
+            box-shadow: 0 3px 14px rgba(233, 30, 140, .28);
+        }
+
+        .poem-arrow-btn:hover {
+            transform: scale(1.12);
+            box-shadow: 0 6px 22px rgba(233, 30, 140, .42);
+        }
+
+        .poem-arrow-btn:disabled {
+            opacity: 0.38;
+            cursor: default;
+            transform: none;
+        }
+
+        #poem-close-btn {
+            margin-top: 22px;
+            background: linear-gradient(135deg, #e91e8c 0%, #f06eb0 50%, #f4829c 100%);
+            color: #fff;
+            border: none;
+            padding: 12px 44px;
+            border-radius: 50px;
+            font-family: 'Nunito', sans-serif;
+            font-size: 1rem;
+            font-weight: 800;
+            cursor: pointer;
+            box-shadow: 0 5px 22px rgba(233, 30, 140, .38);
+            transition: transform .18s, box-shadow .18s;
+            letter-spacing: .5px;
+        }
+
+        #poem-close-btn:hover {
+            transform: scale(1.08);
+            box-shadow: 0 8px 30px rgba(233, 30, 140, .52);
+        }
+
+        /* ── SCENE ── */
+        #scene {
+            position: fixed;
+            inset: 0;
+            display: none;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        /* ── TITLE ── */
+        #title {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        #title h1 {
+            font-family: 'Pacifico', cursive;
+            font-size: clamp(1.25rem, 3.8vw, 2.3rem);
+            color: #e91e8c;
+            line-height: 1.45;
+            text-shadow: 0 2px 20px rgba(233, 30, 140, .18);
+        }
+
+        #title .sub {
+            font-size: .8rem;
+            font-weight: 700;
+            color: #f472b6;
+            letter-spacing: 2.5px;
+            text-transform: uppercase;
+            margin-top: 7px;
+        }
+
+        /* ── TOOLBAR ── */
+        #toolbar {
+            position: fixed;
+            top: 16px;
+            right: 16px;
+            z-index: 200;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .tool-btn {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            border: none;
+            background: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            transition: transform .2s;
+            position: relative;
+            filter: drop-shadow(0 2px 6px rgba(0, 0, 0, .18));
+        }
+
+        .tool-btn:hover {
+            transform: scale(1.2) rotate(-8deg);
+        }
+
+        .tool-btn:active {
+            transform: scale(0.88);
+        }
+
+        .tool-btn::after {
+            content: attr(data-tip);
+            position: absolute;
+            top: 50%;
+            right: calc(100% + 10px);
+            transform: translateY(-50%);
+            background: rgba(233, 30, 140, 0.88);
+            color: #fff;
+            font-family: 'Nunito', sans-serif;
+            font-size: .72rem;
+            font-weight: 700;
+            white-space: nowrap;
+            padding: 4px 10px;
+            border-radius: 8px;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity .18s;
+            box-shadow: 0 2px 8px rgba(233, 30, 140, .22);
+        }
+
+        .tool-btn:hover::after {
+            opacity: 1;
+            transform: translateY(-50%) rotate(8deg);
+        }
+
+        /* ── BUBBLES ── */
+        .bubble {
+            position: absolute;
+            left: 0;
+            top: 0;
+            border-radius: 22px;
+            padding: 9px 15px;
+            font-size: .87rem;
+            font-weight: 700;
+            line-height: 1.5;
+            max-width: 220px;
+            word-break: break-word;
+            cursor: default;
+            user-select: none;
+            filter: drop-shadow(0 4px 10px rgba(233, 30, 140, .13));
+            transition: filter .2s;
+            z-index: 2;
+            will-change: transform;
+        }
+
+        .bubble:hover {
+            filter: drop-shadow(0 6px 18px rgba(233, 30, 140, .32));
+            z-index: 100;
+        }
+
+        .bubble.v0 {
+            background: #fff0f9;
+            border: 2px solid #f9a8d4;
+            color: #7c2d6b;
+        }
+
+        .bubble.v1 {
+            background: #fff;
+            border: 2px solid #f472b6;
+            color: #4a1942;
+        }
+
+        .bubble.v2 {
+            background: #fdf2ff;
+            border: 2px solid #e879f9;
+            color: #6b21a8;
+        }
+
+        .bubble.v3 {
+            background: #fff7fb;
+            border: 2px solid #fb7185;
+            color: #9f1239;
+        }
+
+        .bubble.v4 {
+            background: #fff0f7;
+            border: 2px solid #fda4c8;
+            color: #831843;
+        }
+
+        /* ── SPARKLES ── */
+        .spark {
+            position: absolute;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0;
+            animation: sparkFade linear infinite;
+        }
+
+        @keyframes sparkFade {
+            0% {
+                opacity: 0;
+                transform: translateY(0) scale(.6) rotate(0deg);
+            }
+
+            15% {
+                opacity: .65;
+            }
+
+            85% {
+                opacity: .5;
+            }
+
+            100% {
+                opacity: 0;
+                transform: translateY(-90px) scale(1.1) rotate(180deg);
+            }
+        }
+
+        /* ── RAIN ── */
+        .rain-item {
+            position: fixed;
+            top: -80px;
+            pointer-events: none;
+            z-index: 9000;
+            font-size: 1.8rem;
+            animation: rainFall linear forwards;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, .15));
+        }
+
+        @keyframes rainFall {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+
+            80% {
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(110vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0
+            }
+
+            to {
+                opacity: 1
+            }
+        }
+
+        @keyframes popIn {
+            from {
+                opacity: 0;
+                transform: scale(.72) translateY(28px);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        @keyframes bounce {
+
+            0%,
+            100% {
+                transform: translateY(0)
+            }
+
+            50% {
+                transform: translateY(-7px)
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- MODAL (greeting) -->
+    <div id="modal-overlay">
+        <div id="modal-wrapper">
+            <div id="heart-ring"></div>
+            <div id="modal-box">
+                <img id="mason-img" src="images/mason.png" alt="Mason Nguyễn" />
+                <div class="modal-text-content">
+                    <div id="modal-icons">
+                        <span class="mi-icon">💌</span>
+                        <span class="mi-icon">🎂</span>
+                        <span class="mi-icon">💖</span>
+                    </div>
+                    <h2>Chúc Mừng Sinh Nhật! 🎉</h2>
+                    <p>
+                        Chào em Hà Trang. Anh là Mason Nguyễn đây.<br>
+                        Chúc tình yêu tuổi mới thật vui vẻ nhớ.<br>
+                        Anh eo em bét nhòe. 🥰<br>
+                        Rep tin nhắn a nha cục cưng 💬
+                    </p>
+                    <button id="close-btn">Okie anh ❤️</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- POEM MODAL -->
+    <div id="poem-overlay">
+        <div id="poem-box">
+            <div id="poem-nav">
+                <div class="poem-dot active" data-idx="0"></div>
+                <div class="poem-dot" data-idx="1"></div>
+            </div>
+            <div id="poem-title">💌 thư tình số 1</div>
+            <div id="poem-body"></div>
+            <div id="poem-arrows">
+                <button class="poem-arrow-btn" id="poem-prev" disabled>←</button>
+                <button class="poem-arrow-btn" id="poem-next">→</button>
+            </div>
+            <button id="poem-close-btn">Đóng lại 🌸</button>
+        </div>
+    </div>
+
+    <!-- TOOLBAR -->
+    <div id="toolbar">
+        <button class="tool-btn" id="btn-greeting" data-tip="Chúc em hạnh phúc 🎂">🎂</button>
+        <button class="tool-btn" id="btn-poem" data-tip="Tình anh 💌">💌</button>
+        <button class="tool-btn" id="btn-hanh" data-tip="Hành 🧅">🧅</button>
+        <button class="tool-btn" id="btn-cha" data-tip="Chả 🌭">🌭</button>
+        <button class="tool-btn" id="btn-cut" data-tip="Hà Chảnh 💩">💩</button>
+    </div>
+
+    <!-- SCENE -->
+    <div id="scene">
+        <div id="title">
+            <h1>tổng hợp những tin nhắn<br>của tớ bị cậu bơ</h1>
+            <div class="sub">✦ bộ sưu tập đặc biệt ✦</div>
+        </div>
+    </div>
+
+    <script src="messages.js"></script>
+    <script>
+        const rand = (a, b) => Math.random() * (b - a) + a;
+        const randInt = (a, b) => Math.floor(rand(a, b + 1));
+
+        /* ── POEMS DATA ── */
+        const POEMS = [
+            {
+                title: '💌 thư tình số 1',
+                body:
+                    `anh iêu em thích mê
+ko có gì để chê
+anh iêu em nhiều thế
+bị chê nên bị ế`
+            },
+            {
+                title: '💌 thư tình số 2',
+                body:
+                    `thư tềnh a viết hay hay
+khóe mắt a cứ sâu cay e nhờ
+a thì nhắn như thằng khờ
+e seen tin nhắn, a đờ người luôn`
+            }
+        ];
+
+        let poemIdx = 0;
+
+        function renderPoem(idx) {
+            poemIdx = idx;
+            document.getElementById('poem-title').textContent = POEMS[idx].title;
+            document.getElementById('poem-body').textContent = POEMS[idx].body;
+            document.querySelectorAll('.poem-dot').forEach((d, i) => d.classList.toggle('active', i === idx));
+            document.getElementById('poem-prev').disabled = idx === 0;
+            document.getElementById('poem-next').disabled = idx === POEMS.length - 1;
+        }
+
+        function showPoemModal() {
+            renderPoem(0);
+            const ov = document.getElementById('poem-overlay');
+            ov.style.opacity = '1';
+            ov.classList.add('active');
+        }
+
+        document.getElementById('poem-prev').addEventListener('click', () => {
+            if (poemIdx > 0) renderPoem(poemIdx - 1);
+        });
+
+        document.getElementById('poem-next').addEventListener('click', () => {
+            if (poemIdx < POEMS.length - 1) renderPoem(poemIdx + 1);
+        });
+
+        document.querySelectorAll('.poem-dot').forEach(d => {
+            d.addEventListener('click', () => renderPoem(+d.dataset.idx));
+        });
+
+        document.getElementById('poem-close-btn').addEventListener('click', () => {
+            const ov = document.getElementById('poem-overlay');
+            ov.style.transition = 'opacity .25s';
+            ov.style.opacity = '0';
+            setTimeout(() => {
+                ov.classList.remove('active');
+                ov.style.opacity = '';
+                ov.style.transition = '';
+            }, 260);
+        });
+
+        /* ── HEART RING ── */
+        function buildHeartBorder() {
+            const ring = document.getElementById('heart-ring');
+            const box = document.getElementById('modal-box');
+            if (!ring || !box) return;
+            ring.innerHTML = '';
+            const EMOJIS = ['🩷', '💗', '💖', '💕', '❤️', '🩵', '💙', '💚', '💛', '🧡', '💜', '🤍'];
+            const W = box.offsetWidth, H = box.offsetHeight;
+            const GAP = 38, RW = W + GAP * 2, RH = H + GAP * 2;
+            let idx = 0;
+            function placeHeart(px, py, rotDeg, szMulti) {
+                const el = document.createElement('span');
+                el.className = 'hr-heart';
+                el.textContent = EMOJIS[idx % EMOJIS.length];
+                const sz = (1.5 + (idx % 5) * 0.3) * szMulti;
+                el.style.cssText = `font-size:${sz}rem;left:${px}px;top:${py}px;transform:rotate(${rotDeg}deg);animation-duration:${(1.8 + (idx % 7) * 0.3).toFixed(1)}s;animation-delay:${((idx % 13) * 0.15).toFixed(2)}s; z-index: ${Math.floor(Math.random()*4)};`;
+                ring.appendChild(el);
+                idx++;
+            }
+            const halfEm = 18;
+            // Tạo 3 lớp trái tim đè lên nhau bao full viền
+            for (let layer = 0; layer < 3; layer++) {
+                const density = 30 - layer * 6;
+                const szMulti = 1 - layer * 0.15;
+                const offset = layer * 16;
+                const topN = Math.max(5, Math.round(RW / density));
+                for (let i = 0; i <= topN; i++) placeHeart((i / topN) * RW - halfEm + rand(-15, 15), -halfEm * 1.2 - offset + rand(-12, 12), rand(-45, 45), szMulti);
+                for (let i = 0; i <= topN; i++) placeHeart((i / topN) * RW - halfEm + rand(-15, 15), RH - halfEm * 0.8 + offset + rand(-12, 12), rand(-45, 45), szMulti);
+                const sideN = Math.max(4, Math.round(RH / density));
+                for (let i = 0; i <= sideN; i++) placeHeart(-halfEm * 1.1 - offset + rand(-12, 12), (i / sideN) * RH - halfEm + rand(-15, 15), rand(-45, 45), szMulti);
+                for (let i = 0; i <= sideN; i++) placeHeart(RW - halfEm * 0.9 + offset + rand(-12, 12), (i / sideN) * RH - halfEm + rand(-15, 15), rand(-45, 45), szMulti);
+            }
+        }
+
+        function showGreetingModal() {
+            const ov = document.getElementById('modal-overlay');
+            ov.style.opacity = '1';
+            ov.style.transition = '';
+            ov.style.display = 'flex';
+            setTimeout(buildHeartBorder, 50);
+        }
+
+        window.addEventListener('load', () => setTimeout(buildHeartBorder, 100));
+
+        document.getElementById('close-btn').addEventListener('click', () => {
+            const ov = document.getElementById('modal-overlay');
+            ov.style.transition = 'opacity .3s';
+            ov.style.opacity = '0';
+            setTimeout(() => {
+                ov.style.display = 'none';
+                if (!window._sceneStarted) { window._sceneStarted = true; startScene(); }
+            }, 320);
+        });
+
+        document.getElementById('btn-greeting').addEventListener('click', showGreetingModal);
+        document.getElementById('btn-poem').addEventListener('click', showPoemModal);
+
+        /* ── RAIN SYSTEM ── */
+        function triggerRain(emoji, count = 80) {
+            for (let i = 0; i < count; i++) {
+                setTimeout(() => {
+                    const el = document.createElement('div');
+                    el.className = 'rain-item';
+                    el.textContent = emoji;
+                    el.style.fontSize = rand(1.2, 2.8).toFixed(2) + 'rem';
+                    el.style.left = rand(0, 96) + 'vw';
+                    el.style.animationDuration = rand(1.4, 3.2).toFixed(2) + 's';
+                    el.style.animationDelay = '0s';
+                    document.body.appendChild(el);
+                    el.addEventListener('animationend', () => el.remove());
+                }, i * rand(0, 40));
+            }
+        }
+
+        document.getElementById('btn-hanh').addEventListener('click', () => triggerRain('🧅', 80));
+        document.getElementById('btn-cha').addEventListener('click', () => triggerRain('🌭', 80));
+        document.getElementById('btn-cut').addEventListener('click', () => triggerRain('💩', 80));
+
+        /* ── SCENE ── */
+        function startScene() {
+            const scene = document.getElementById('scene');
+            scene.style.display = 'block';
+            const VW = window.innerWidth, VH = window.innerHeight;
+            const VARIANTS = ['v0', 'v1', 'v2', 'v3', 'v4'];
+            const shuffled = [...MESSAGES].sort(() => Math.random() - .5);
+            const frag = document.createDocumentFragment();
+            const els = shuffled.map((msg, i) => {
+                const el = document.createElement('div');
+                el.className = 'bubble ' + VARIANTS[i % VARIANTS.length];
+                el.textContent = msg;
+                el.style.visibility = 'hidden';
+                el.style.transform = 'translate(0px,0px)';
+                frag.appendChild(el);
+                return el;
+            });
+            scene.appendChild(frag);
+
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    const bubbles = els.map(el => {
+                        const r = el.getBoundingClientRect();
+                        return { el, w: r.width || 120, h: r.height || 40 };
+                    });
+                    const placed = [];
+
+                    function overlaps(x, y, w, h) {
+                        const PAD = 14;
+                        for (const p of placed) {
+                            if (x < p.x + p.w + PAD && x + w + PAD > p.x && y < p.y + p.h + PAD && y + h + PAD > p.y) return true;
+                        }
+                        return false;
+                    }
+
+                    const CX = VW / 2, CY = VH / 2, SAFE_W = 340, SAFE_H = 130;
+                    const tbX = VW - 16 - 90 - 20, tbY = 16 - 20, tbW = 130, tbH = 320;
+
+                    function inSafeZone(x, y, w, h) {
+                        const inTitle = !(x + w < CX - SAFE_W / 2 || x > CX + SAFE_W / 2 || y + h < CY - SAFE_H / 2 || y > CY + SAFE_H / 2);
+                        const inToolbar = !(x + w < tbX || x > tbX + tbW || y + h < tbY || y > tbY + tbH);
+                        return inTitle || inToolbar;
+                    }
+
+                    const objects = bubbles.map(({ el, w, h }) => {
+                        let x, y, tries = 0;
+                        do {
+                            x = rand(8, VW - w - 8);
+                            y = rand(8, VH - h - 8);
+                            tries++;
+                        } while ((overlaps(x, y, w, h) || inSafeZone(x, y, w, h)) && tries < 400);
+                        placed.push({ x, y, w, h });
+                        el.style.transform = `translate(${x}px,${y}px)`;
+                        el.style.visibility = 'visible';
+                        const speed = rand(0.25, 0.7), angle = rand(0, Math.PI * 2);
+                        return {
+                            el, w, h, x, y,
+                            vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed,
+                            wobble: rand(0, Math.PI * 2),
+                            wobbleSpeed: rand(0.008, 0.018),
+                            wobbleAmp: rand(0.3, 0.9)
+                        };
+                    });
+
+                    const SPARKS = ['✨', '🌸', '💗', '💕', '🌷', '⭐', '💖', '🎀', '🩷'];
+                    for (let s = 0; s < 18; s++) {
+                        const sp = document.createElement('div');
+                        sp.className = 'spark';
+                        sp.textContent = SPARKS[randInt(0, SPARKS.length - 1)];
+                        sp.style.left = rand(2, 96) + 'vw';
+                        sp.style.top = rand(5, 90) + 'vh';
+                        sp.style.fontSize = rand(.75, 1.3).toFixed(2) + 'rem';
+                        sp.style.animation = `sparkFade ${rand(3, 7).toFixed(1)}s ${rand(0, 8).toFixed(1)}s ease-in-out infinite`;
+                        scene.appendChild(sp);
+                    }
+
+                    function tick() {
+                        const W = window.innerWidth, H = window.innerHeight;
+                        const tbRect = document.getElementById('toolbar').getBoundingClientRect();
+                        const tbBX1 = tbRect.left - 12, tbBY1 = tbRect.top - 12;
+                        const tbBX2 = tbRect.right + 12, tbBY2 = tbRect.bottom + 12;
+
+                        for (let i = 0; i < objects.length; i++) {
+                            const o = objects[i];
+                            o.wobble += o.wobbleSpeed;
+                            o.x += o.vx;
+                            o.y += o.vy + Math.sin(o.wobble) * o.wobbleAmp * 0.12;
+
+                            if (o.x < 4) { o.x = 4; o.vx = Math.abs(o.vx); }
+                            if (o.x + o.w > W - 4) { o.x = W - 4 - o.w; o.vx = -Math.abs(o.vx); }
+                            if (o.y < 4) { o.y = 4; o.vy = Math.abs(o.vy); }
+                            if (o.y + o.h > H - 4) { o.y = H - 4 - o.h; o.vy = -Math.abs(o.vy); }
+
+                            const bx1 = o.x, bx2 = o.x + o.w, by1 = o.y, by2 = o.y + o.h;
+                            if (bx2 > tbBX1 && bx1 < tbBX2 && by2 > tbBY1 && by1 < tbBY2) {
+                                const overL = bx2 - tbBX1, overR = tbBX2 - bx1, overT = by2 - tbBY1, overB = tbBY2 - by1;
+                                const min = Math.min(overL, overR, overT, overB);
+                                if (min === overL) { o.x -= overL; o.vx = -Math.abs(o.vx); }
+                                else if (min === overR) { o.x += overR; o.vx = Math.abs(o.vx); }
+                                else if (min === overT) { o.y -= overT; o.vy = -Math.abs(o.vy); }
+                                else { o.y += overB; o.vy = Math.abs(o.vy); }
+                            }
+
+                            for (let j = i + 1; j < objects.length; j++) {
+                                const b = objects[j];
+                                const dx = (o.x + o.w / 2) - (b.x + b.w / 2), dy = (o.y + o.h / 2) - (b.y + b.h / 2);
+                                const dist = Math.hypot(dx, dy);
+                                const minD = (o.w / 2 + b.w / 2) * 0.9 + 10;
+                                if (dist < minD && dist > 0.1) {
+                                    const push = (minD - dist) / minD * 0.35;
+                                    const nx = dx / dist, ny = dy / dist;
+                                    o.vx += nx * push; o.vy += ny * push;
+                                    b.vx -= nx * push; b.vy -= ny * push;
+                                    o.vx *= 0.96; o.vy *= 0.96; b.vx *= 0.96; b.vy *= 0.96;
+                                }
+                            }
+
+                            const spd = Math.hypot(o.vx, o.vy);
+                            if (spd > 1.2) { o.vx = o.vx / spd * 1.2; o.vy = o.vy / spd * 1.2; }
+                            if (spd < 0.15 && Math.random() < 0.01) { o.vx += rand(-0.2, 0.2); o.vy += rand(-0.2, 0.2); }
+
+                            o.el.style.transform = `translate(${o.x}px,${o.y}px)`;
+                        }
+                        requestAnimationFrame(tick);
+                    }
+                    requestAnimationFrame(tick);
+                });
+            });
+        }
+    </script>
+</body>
+
+</html>
