@@ -1304,92 +1304,115 @@
         function startScene() {
             const scene = document.getElementById('scene');
             scene.style.display = 'block';
-            const VW = window.innerWidth, VH = window.innerHeight;
+
+            const VW = window.visualViewport ? window.visualViewport.width  : window.innerWidth;
+            const VH = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+            const isMobile = VW < 600;
+
             const VARIANTS = ['v0', 'v1', 'v2', 'v3', 'v4'];
-            const shuffled = [...MESSAGES].sort(() => Math.random() - .5);
+            const MAX_BUBBLES = isMobile ? 28 : MESSAGES.length;
+            const shuffled = [...MESSAGES].sort(() => Math.random() - .5).slice(0, MAX_BUBBLES);
+
+            // Ước tính kích thước ngay, không chờ layout
+            function estimateSize(text) {
+                const charsPerLine = isMobile ? 13 : 17;
+                const lines = Math.ceil(text.length / charsPerLine);
+                const w = Math.min(isMobile ? 155 : 215, Math.max(85, text.length * (isMobile ? 7.2 : 7.8)));
+                const h = 24 + lines * 22;
+                return { w, h };
+            }
+
+            const CX = VW / 2, CY = VH / 2;
+            const SAFE_W = isMobile ? 220 : 340, SAFE_H = isMobile ? 90 : 130;
+            const tbX = VW - 74, tbY = 0, tbW = 74, tbH = VH;
+
+            const placed = [];
+            function overlaps(x, y, w, h) {
+                const PAD = 10;
+                for (const p of placed) { if (x < p.x + p.w + PAD && x + w + PAD > p.x && y < p.y + p.h + PAD && y + h + PAD > p.y) return true; }
+                return false;
+            }
+            function inSafeZone(x, y, w, h) {
+                const inTitle   = !(x + w < CX - SAFE_W / 2 || x > CX + SAFE_W / 2 || y + h < CY - SAFE_H / 2 || y > CY + SAFE_H / 2);
+                const inToolbar = !(x + w < tbX || x > tbX + tbW || y + h < tbY || y > tbY + tbH);
+                return inTitle || inToolbar;
+            }
+
             const frag = document.createDocumentFragment();
-            const els = shuffled.map((msg, i) => {
+            const objects = shuffled.map((msg, i) => {
                 const el = document.createElement('div');
                 el.className = 'bubble ' + VARIANTS[i % VARIANTS.length];
-                el.textContent = msg; el.style.visibility = 'hidden'; el.style.transform = 'translate(0px,0px)';
-                frag.appendChild(el); return el;
+                el.textContent = msg;
+
+                const { w, h } = estimateSize(msg);
+                let x, y, tries = 0;
+                do { x = rand(6, VW - w - 6); y = rand(6, VH - h - 6); tries++; }
+                while ((overlaps(x, y, w, h) || inSafeZone(x, y, w, h)) && tries < 300);
+                placed.push({ x, y, w, h });
+                el.style.transform = `translate(${x}px,${y}px)`;
+                frag.appendChild(el);
+
+                const speed = rand(0.2, isMobile ? 0.45 : 0.7), angle = rand(0, Math.PI * 2);
+                return { el, w, h, x, y, vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed, wobble: rand(0, Math.PI * 2), wobbleSpeed: rand(0.008, 0.018), wobbleAmp: rand(0.3, 0.9) };
             });
             scene.appendChild(frag);
-            requestAnimationFrame(() => {
-                requestAnimationFrame(() => {
-                    const bubbles = els.map(el => {
-                        const r = el.getBoundingClientRect(); return { el, w: r.width || 120, h: r.height || 40 };
-                    });
-                    const placed = [];
-                    function overlaps(x, y, w, h) {
-                        const PAD = 14;
-                        for (const p of placed) { if (x < p.x + p.w + PAD && x + w + PAD > p.x && y < p.y + p.h + PAD && y + h + PAD > p.y) return true; }
-                        return false;
-                    }
-                    const CX = VW / 2, CY = VH / 2, SAFE_W = 340, SAFE_H = 130;
-                    const tbX = VW - 16 - 90 - 20, tbY = 16 - 20, tbW = 130, tbH = 380;
-                    function inSafeZone(x, y, w, h) {
-                        const inTitle = !(x + w < CX - SAFE_W / 2 || x > CX + SAFE_W / 2 || y + h < CY - SAFE_H / 2 || y > CY + SAFE_H / 2);
-                        const inToolbar = !(x + w < tbX || x > tbX + tbW || y + h < tbY || y > tbY + tbH);
-                        return inTitle || inToolbar;
-                    }
-                    const objects = bubbles.map(({ el, w, h }) => {
-                        let x, y, tries = 0;
-                        do { x = rand(8, VW - w - 8); y = rand(8, VH - h - 8); tries++; }
-                        while ((overlaps(x, y, w, h) || inSafeZone(x, y, w, h)) && tries < 400);
-                        placed.push({ x, y, w, h }); el.style.transform = `translate(${x}px,${y}px)`; el.style.visibility = 'visible';
-                        const speed = rand(0.25, 0.7), angle = rand(0, Math.PI * 2);
-                        return { el, w, h, x, y, vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed, wobble: rand(0, Math.PI * 2), wobbleSpeed: rand(0.008, 0.018), wobbleAmp: rand(0.3, 0.9) };
-                    });
-                    const SPARKS = ['✨', '🌸', '💗', '💕', '🌷', '⭐', '💖', '🎀', '🩷'];
-                    for (let s = 0; s < 18; s++) {
-                        const sp = document.createElement('div'); sp.className = 'spark';
-                        sp.textContent = SPARKS[randInt(0, SPARKS.length - 1)];
-                        sp.style.left = rand(2, 96) + 'vw'; sp.style.top = rand(5, 90) + 'vh';
-                        sp.style.fontSize = rand(.75, 1.3).toFixed(2) + 'rem';
-                        sp.style.animation = `sparkFade ${rand(3, 7).toFixed(1)}s ${rand(0, 8).toFixed(1)}s ease-in-out infinite`;
-                        scene.appendChild(sp);
-                    }
-                    function tick() {
-                        const W = window.innerWidth, H = window.innerHeight;
-                        const tbRect = document.getElementById('toolbar').getBoundingClientRect();
-                        const tbBX1 = tbRect.left - 12, tbBY1 = tbRect.top - 12, tbBX2 = tbRect.right + 12, tbBY2 = tbRect.bottom + 12;
-                        for (let i = 0; i < objects.length; i++) {
-                            const o = objects[i];
-                            o.wobble += o.wobbleSpeed; o.x += o.vx; o.y += o.vy + Math.sin(o.wobble) * o.wobbleAmp * 0.12;
-                            if (o.x < 4) { o.x = 4; o.vx = Math.abs(o.vx); }
-                            if (o.x + o.w > W - 4) { o.x = W - 4 - o.w; o.vx = -Math.abs(o.vx); }
-                            if (o.y < 4) { o.y = 4; o.vy = Math.abs(o.vy); }
-                            if (o.y + o.h > H - 4) { o.y = H - 4 - o.h; o.vy = -Math.abs(o.vy); }
-                            const bx1 = o.x, bx2 = o.x + o.w, by1 = o.y, by2 = o.y + o.h;
-                            if (bx2 > tbBX1 && bx1 < tbBX2 && by2 > tbBY1 && by1 < tbBY2) {
-                                const overL = bx2 - tbBX1, overR = tbBX2 - bx1, overT = by2 - tbBY1, overB = tbBY2 - by1;
-                                const min = Math.min(overL, overR, overT, overB);
-                                if (min === overL) { o.x -= overL; o.vx = -Math.abs(o.vx); }
-                                else if (min === overR) { o.x += overR; o.vx = Math.abs(o.vx); }
-                                else if (min === overT) { o.y -= overT; o.vy = -Math.abs(o.vy); }
-                                else { o.y += overB; o.vy = Math.abs(o.vy); }
-                            }
-                            for (let j = i + 1; j < objects.length; j++) {
-                                const b = objects[j];
-                                const dx = (o.x + o.w / 2) - (b.x + b.w / 2), dy = (o.y + o.h / 2) - (b.y + b.h / 2);
-                                const dist = Math.hypot(dx, dy), minD = (o.w / 2 + b.w / 2) * 0.9 + 10;
-                                if (dist < minD && dist > 0.1) {
-                                    const push = (minD - dist) / minD * 0.35, nx = dx / dist, ny = dy / dist;
-                                    o.vx += nx * push; o.vy += ny * push; b.vx -= nx * push; b.vy -= ny * push;
-                                    o.vx *= 0.96; o.vy *= 0.96; b.vx *= 0.96; b.vy *= 0.96;
-                                }
-                            }
-                            const spd = Math.hypot(o.vx, o.vy);
-                            if (spd > 1.2) { o.vx = o.vx / spd * 1.2; o.vy = o.vy / spd * 1.2; }
-                            if (spd < 0.15 && Math.random() < 0.01) { o.vx += rand(-0.2, 0.2); o.vy += rand(-0.2, 0.2); }
-                            o.el.style.transform = `translate(${o.x}px,${o.y}px)`;
-                        }
-                        requestAnimationFrame(tick);
-                    }
-                    requestAnimationFrame(tick);
+
+            const SPARKS = ['✨', '🌸', '💗', '💕', '🌷', '⭐', '💖', '🎀', '🩷'];
+            for (let s = 0; s < (isMobile ? 8 : 18); s++) {
+                const sp = document.createElement('div'); sp.className = 'spark';
+                sp.textContent = SPARKS[randInt(0, SPARKS.length - 1)];
+                sp.style.left = rand(2, 90) + 'vw'; sp.style.top = rand(5, 88) + 'vh';
+                sp.style.fontSize = rand(.75, 1.3).toFixed(2) + 'rem';
+                sp.style.animation = `sparkFade ${rand(3, 7).toFixed(1)}s ${rand(0, 8).toFixed(1)}s ease-in-out infinite`;
+                scene.appendChild(sp);
+            }
+
+            let liveW = VW, liveH = VH;
+            if (window.visualViewport) {
+                window.visualViewport.addEventListener('resize', () => {
+                    liveW = window.visualViewport.width;
+                    liveH = window.visualViewport.height;
                 });
-            });
+            }
+
+            function tick() {
+                const W = liveW, H = liveH;
+                const tbRect = document.getElementById('toolbar').getBoundingClientRect();
+                const tbBX1 = tbRect.left - 10, tbBY1 = tbRect.top - 10, tbBX2 = tbRect.right + 10, tbBY2 = tbRect.bottom + 10;
+                for (let i = 0; i < objects.length; i++) {
+                    const o = objects[i];
+                    o.wobble += o.wobbleSpeed; o.x += o.vx; o.y += o.vy + Math.sin(o.wobble) * o.wobbleAmp * 0.12;
+                    if (o.x < 4) { o.x = 4; o.vx = Math.abs(o.vx); }
+                    if (o.x + o.w > W - 4) { o.x = W - 4 - o.w; o.vx = -Math.abs(o.vx); }
+                    if (o.y < 4) { o.y = 4; o.vy = Math.abs(o.vy); }
+                    if (o.y + o.h > H - 4) { o.y = H - 4 - o.h; o.vy = -Math.abs(o.vy); }
+                    const bx1 = o.x, bx2 = o.x + o.w, by1 = o.y, by2 = o.y + o.h;
+                    if (bx2 > tbBX1 && bx1 < tbBX2 && by2 > tbBY1 && by1 < tbBY2) {
+                        const overL = bx2 - tbBX1, overR = tbBX2 - bx1, overT = by2 - tbBY1, overB = tbBY2 - by1;
+                        const min = Math.min(overL, overR, overT, overB);
+                        if (min === overL) { o.x -= overL; o.vx = -Math.abs(o.vx); }
+                        else if (min === overR) { o.x += overR; o.vx = Math.abs(o.vx); }
+                        else if (min === overT) { o.y -= overT; o.vy = -Math.abs(o.vy); }
+                        else { o.y += overB; o.vy = Math.abs(o.vy); }
+                    }
+                    for (let j = i + 1; j < objects.length; j++) {
+                        const b = objects[j];
+                        const dx = (o.x + o.w / 2) - (b.x + b.w / 2), dy = (o.y + o.h / 2) - (b.y + b.h / 2);
+                        const dist = Math.hypot(dx, dy), minD = (o.w / 2 + b.w / 2) * 0.9 + 10;
+                        if (dist < minD && dist > 0.1) {
+                            const push = (minD - dist) / minD * 0.35, nx = dx / dist, ny = dy / dist;
+                            o.vx += nx * push; o.vy += ny * push; b.vx -= nx * push; b.vy -= ny * push;
+                            o.vx *= 0.96; o.vy *= 0.96; b.vx *= 0.96; b.vy *= 0.96;
+                        }
+                    }
+                    const spd = Math.hypot(o.vx, o.vy);
+                    if (spd > 1.2) { o.vx = o.vx / spd * 1.2; o.vy = o.vy / spd * 1.2; }
+                    if (spd < 0.15 && Math.random() < 0.01) { o.vx += rand(-0.2, 0.2); o.vy += rand(-0.2, 0.2); }
+                    o.el.style.transform = `translate(${o.x}px,${o.y}px)`;
+                }
+                requestAnimationFrame(tick);
+            }
+            requestAnimationFrame(tick);
         }
 
         /* ═══════════════════════════════════════
