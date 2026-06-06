@@ -1311,9 +1311,15 @@
         function showGreetingModal() {
             const ov = document.getElementById('modal-overlay');
             ov.style.opacity = '1'; ov.style.transition = ''; ov.style.display = 'flex';
-            setTimeout(buildHeartBorder, 50);
+            buildHeartBorder();
         }
-        window.addEventListener('load', () => setTimeout(buildHeartBorder, 100));
+        
+        // Gọi hàm render ngay lập tức khi đọc mã để hiển thị trái tim tức thì
+        buildHeartBorder();
+        
+        // Gọi lại một lần nữa khi toàn bộ tài nguyên (ảnh, font) đã tải xong 
+        // để vị trí các trái tim tự động điều chỉnh bám sát viền nếu kích thước box thay đổi
+        window.addEventListener('load', buildHeartBorder);
         document.getElementById('close-btn').addEventListener('click', () => {
             const ov = document.getElementById('modal-overlay');
             // Fade out mượt mà lập tức
