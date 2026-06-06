@@ -5,8 +5,9 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>💌 MỪNG THỌ BẢO BỐI</title>
-    <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Nunito:wght@400;600;700&display=swap"
-        rel="stylesheet" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet" />
     <style>
         *,
         *::before,
@@ -511,9 +512,11 @@
             box-shadow: 0 2px 8px rgba(233, 30, 140, .22);
         }
 
-        .tool-btn:hover::after {
-            opacity: 1;
-            transform: translateY(-50%) rotate(8deg);
+        @media (hover: hover) {
+            .tool-btn:hover::after {
+                opacity: 1;
+                transform: translateY(-50%) rotate(8deg);
+            }
         }
 
         /* ── BUBBLES ── */
@@ -1385,7 +1388,7 @@
                     Chúc tình yêu tuổi mới thật vui vẻ nhớ.</p>
                     <p>Anh eo em bét nhòe. 🥰
                     <p>Rep tin nhắn a nha cục cưng,
-                    <class="highlight-text">click okie để nhận quà khủng 💖</p>
+                    <p class="highlight-text">click okie để nhận quà khủng 💖</p>
                     <button id="close-btn">Okie anh ❤️</button>
                 </div>
             </div>
@@ -1412,7 +1415,7 @@
     <!-- DTMF PUZZLE MODAL -->
     <div id="dtmf-overlay">
         <div id="dtmf-box">
-            <h3>🔐 Cửa Đang Khóa</h3>
+            <h3>🔐 Giải Đố Chọn Chồng</h3>
             <div class="dtmf-sub">
                 Giải quyết vấn đề sau để mở khoá tính năng này<br>
                 <strong>Nhận diện giá trị số trong đoạn âm thanh dưới đây.<br>Trả lời dãy số kết quả (DTMF signaling)</strong>
@@ -1471,7 +1474,7 @@
     <!-- SCENE (bubbles) -->
     <div id="scene">
         <div id="title">
-            <h1>tổng hợp những tin nhắn<br>của tớ bị cậu bơ</h1>
+            <h1>tổng hợp những tin nhắn<br>hà bơ hun</h1>
             <div class="sub">✦ bộ sưu tập đặc biệt ✦</div>
         </div>
     </div>
@@ -1542,26 +1545,28 @@
             buildHeartBorder();
         }
         
-        // Gọi hàm render ngay lập tức khi đọc mã để hiển thị trái tim tức thì
-        buildHeartBorder();
+        // Tự động tính toán lại viền tim ngay khi kích thước hộp thoại thay đổi (do load ảnh hoặc load font)
+        const boxElement = document.getElementById('modal-box');
+        if (boxElement) {
+            const resizeObserver = new ResizeObserver(() => {
+                buildHeartBorder();
+            });
+            resizeObserver.observe(boxElement);
+        }
         
-        // Gọi lại một lần nữa khi toàn bộ tài nguyên (ảnh, font) đã tải xong 
-        // để vị trí các trái tim tự động điều chỉnh bám sát viền nếu kích thước box thay đổi
-        window.addEventListener('load', buildHeartBorder);
+        // Đảm bảo tim cập nhật ngay lập tức khi Google Fonts được tải xong
+        if (document.fonts) {
+            document.fonts.ready.then(() => buildHeartBorder());
+        }
         document.getElementById('close-btn').addEventListener('click', () => {
             const ov = document.getElementById('modal-overlay');
-            // Fade out mượt mà lập tức
-            ov.style.transition = 'opacity .25s ease';
+            ov.style.transition = 'opacity .15s ease';
             ov.style.opacity = '0';
-            
-            // Chờ modal ẩn đi hoàn toàn mới render bong bóng, điện thoại sẽ hết khựng
-            setTimeout(() => { 
-                ov.style.display = 'none'; 
-                if (!window._sceneStarted) { 
-                    window._sceneStarted = true; 
-                    startScene(); 
-                }
-            }, 260);
+            if (!window._sceneStarted) { 
+                window._sceneStarted = true; 
+                startScene(); // Render ngay khi bảng bắt đầu mờ để tạo cảm giác phản hồi lập tức
+            }
+            setTimeout(() => { ov.style.display = 'none'; }, 150);
         });
         document.getElementById('btn-greeting').addEventListener('click', showGreetingModal);
         document.getElementById('btn-poem').addEventListener('click', showPoemModal);
