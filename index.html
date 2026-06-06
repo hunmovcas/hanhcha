@@ -2402,10 +2402,7 @@ NHIỆM VỤ: Viết đúng 1 câu thoại của ${char.name} thể hiện việ
         }
 
         async function triggerTinaReaction(charEl, char, zoneEl) {
-            charEl.querySelectorAll('.char-speech').forEach(s => s.remove());
-            if (charEl._chatterTimer) clearInterval(charEl._chatterTimer);
-
-            charEl.classList.add('chasing-tina');
+            if (charEl._specialEvent) return; // Đang bận ra góc thì mặc kệ sự đời
 
             let activeZone = zoneEl;
             // KÉO HỘ KHẨU BẤT CHẤP ZONE: Nếu khác zone với Tina, tự động bay sang zone Tina!
@@ -2429,10 +2426,23 @@ NHIỆM VỤ: Viết đúng 1 câu thoại của ${char.name} thể hiện việ
                 activeZone = tinaZoneEl; // Bắt đầu tính thoại dựa theo zone hỗn chiến
             }
 
-            // Lao vào giành giật
+            // Lao vào giành giật (di chuyển vật lý)
             if (tinaZoneEl) {
                 animateChaseToTina(charEl, activeZone);
             }
+
+            // --- ĐIỂM MẤU CHỐT ---
+            // Nếu đã mang cờ đuổi Tina rồi, tức là đang trong chu kỳ đếm giờ ra góc
+            // -> Ta chỉ cho chạy tới chỗ mới thôi, KHÔNG reset timer & thoại chào sân nữa!
+            if (charEl._isChasingTina) {
+                return; 
+            }
+            charEl._isChasingTina = true;
+
+            // Xóa thoại cũ và timer cũ để bắt đầu mode thả thính lần đầu
+            charEl.querySelectorAll('.char-speech').forEach(s => s.remove());
+            if (charEl._chatterTimer) clearInterval(charEl._chatterTimer);
+            charEl.classList.add('chasing-tina');
 
             // Hiện typing
             const typing = document.createElement('div');
@@ -2464,11 +2474,10 @@ NHIỆM VỤ: Viết đúng 1 câu thoại của ${char.name} thể hiện việ
             const speech = document.createElement('div');
             speech.className = 'char-speech';
             speech.textContent = line;
-            // Pop lên trên cùng để dễ đọc khi đang loạn
             speech.style.zIndex = 1000 + Math.floor(Math.random() * 100);
             charEl.appendChild(speech);
 
-            // Chuyển sang mode gáy nhau liên tục
+            // Chuyển sang mode gáy nhau liên tục (chu kỳ này sẽ không bị reset khi kéo Tina)
             setTimeout(() => {
                 speech.remove();
                 startTinaChatter(charEl, char, activeZone);
@@ -2855,6 +2864,10 @@ NHIỆM VỤ: Viết đúng 1 câu thoại của ${char.name} thể hiện việ
 
             document.querySelectorAll('.placed-char').forEach(charEl => {
                 charEl.classList.remove('chasing-tina');
+                charEl._isChasingTina = false; // Reset cờ thời gian đuổi Tina
+                charEl._specialEvent = false;  // Tháo cờ sự kiện nếu đang dắt tay nhau ở góc
+                charEl.style.animation = '';   // Ngừng nhảy nhót lắc lư
+                
                 const charId = charEl.dataset.charId;
                 const char = CHARACTERS.find(c => c.id === charId);
                 if (!char) return;
