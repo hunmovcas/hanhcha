@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet" />
+    <link rel="preload" href="images/mason.png" as="image" />
     <style>
         *,
         *::before,
@@ -517,6 +518,10 @@
                 opacity: 1;
                 transform: translateY(-50%) rotate(8deg);
             }
+        }
+        .tool-btn.show-tip-mobile::after {
+            opacity: 1;
+            transform: translateY(-50%) rotate(8deg);
         }
 
         /* ── BUBBLES ── */
@@ -1474,7 +1479,7 @@
     <!-- SCENE (bubbles) -->
     <div id="scene">
         <div id="title">
-            <h1>tổng hợp những tin nhắn<br>hà bơ hun</h1>
+            <h1>tổng hợp những tin nhắn hà bơ hun</h1>
             <div class="sub">✦ bộ sưu tập đặc biệt ✦</div>
         </div>
     </div>
@@ -1562,12 +1567,26 @@
             const ov = document.getElementById('modal-overlay');
             ov.style.transition = 'opacity .15s ease';
             ov.style.opacity = '0';
-            if (!window._sceneStarted) { 
-                window._sceneStarted = true; 
-                startScene(); // Render ngay khi bảng bắt đầu mờ để tạo cảm giác phản hồi lập tức
-            }
-            setTimeout(() => { ov.style.display = 'none'; }, 150);
+            setTimeout(() => { 
+                ov.style.display = 'none'; 
+                if (!window._sceneStarted) { 
+                    window._sceneStarted = true; 
+                    // Trì hoãn 50ms để điện thoại có thời gian tắt modal mượt mà, chống treo máy
+                    setTimeout(startScene, 50);
+                }
+            }, 150);
         });
+
+        // Hiện tooltip tạm thời 1.5 giây trên điện thoại khi chạm vào nút
+        document.querySelectorAll('.tool-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                if (window.innerWidth <= 768) {
+                    this.classList.add('show-tip-mobile');
+                    setTimeout(() => this.classList.remove('show-tip-mobile'), 1500);
+                }
+            });
+        });
+
         document.getElementById('btn-greeting').addEventListener('click', showGreetingModal);
         document.getElementById('btn-poem').addEventListener('click', showPoemModal);
 
