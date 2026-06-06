@@ -678,13 +678,14 @@
         #dtmf-box {
             background: linear-gradient(160deg, #fff5fc 0%, #fdf0ff 60%, #fff9fb 100%);
             border-radius: 36px;
-            padding: 40px 44px 36px;
+            padding: 32px 20px; /* Giảm padding trên mobile */
             max-width: 480px;
-            width: 93%;
+            width: 90%; /* Thu hẹp lại một chút để không chạm mép màn hình */
             text-align: center;
             box-shadow: 0 24px 70px rgba(180, 0, 120, .35), inset 0 1px 0 rgba(255, 255, 255, .9);
             animation: popIn .45s cubic-bezier(.34, 1.56, .64, 1);
             position: relative;
+            margin: 0 auto;
         }
 
         #dtmf-box h3 {
@@ -715,24 +716,25 @@
 
         #dtmf-input-wrap {
             display: flex;
-            gap: 10px;
+            gap: 8px;
             margin-bottom: 14px;
+            width: 100%; /* Ép rộng hết cỡ bảng */
         }
 
         #dtmf-input {
             flex: 1;
-            padding: 12px 18px;
+            padding: 12px 10px; /* Giảm padding ngang để tránh tràn */
             border-radius: 50px;
             border: 2px solid #f9a8d4;
             font-family: 'Nunito', sans-serif;
-            font-size: 1.1rem;
+            font-size: 1rem; /* Nhỏ lại chút cho vừa */
             font-weight: 700;
             color: #4a1042;
             background: #fff8fd;
             outline: none;
-            transition: border-color .2s;
-            letter-spacing: 3px;
+            letter-spacing: 2px;
             text-align: center;
+            min-width: 0; /* Quan trọng để flex không bị tràn */
         }
 
         #dtmf-input:focus {
@@ -1663,17 +1665,16 @@
             const scene = document.getElementById('scene');
             scene.style.display = 'block';
 
-            const VW = window.visualViewport ? window.visualViewport.width : window.innerWidth;
+            const VW = window.visualViewport ? window.visualViewport.width  : window.innerWidth;
             const VH = window.visualViewport ? window.visualViewport.height : window.innerHeight;
             const isMobile = VW < 600;
 
             const VARIANTS = ['v0', 'v1', 'v2', 'v3', 'v4'];
-            // Sửa lỗi đứng máy: Giới hạn số lượng bong bóng để vòng lặp va chạm O(N^2) không làm sập mobile
+            
+            // Hiển thị ĐẦY ĐỦ toàn bộ tin nhắn
             const safeMsgs = (typeof MESSAGES !== 'undefined' && Array.isArray(MESSAGES)) ? MESSAGES : ['Lỗi load tin nhắn'];
-            const MAX_BUBBLES = isMobile ? 25 : 50;
-            const shuffled = [...safeMsgs].sort(() => Math.random() - .5).slice(0, Math.min(MAX_BUBBLES, safeMsgs.length));
+            const shuffled = [...safeMsgs].sort(() => Math.random() - .5);
 
-            // Ước tính kích thước ngay, không chờ layout
             function estimateSize(text) {
                 const charsPerLine = isMobile ? 15 : 17;
                 const lines = Math.ceil(text.length / charsPerLine);
@@ -1686,9 +1687,8 @@
             const SAFE_W = isMobile ? 200 : 340, SAFE_H = isMobile ? 80 : 130;
             const tbX = VW - 74, tbY = 0, tbW = 74, tbH = VH;
 
-            const placed = [];
             function inSafeZone(x, y, w, h) {
-                const inTitle = !(x + w < CX - SAFE_W / 2 || x > CX + SAFE_W / 2 || y + h < CY - SAFE_H / 2 || y > CY + SAFE_H / 2);
+                const inTitle   = !(x + w < CX - SAFE_W / 2 || x > CX + SAFE_W / 2 || y + h < CY - SAFE_H / 2 || y > CY + SAFE_H / 2);
                 const inToolbar = !(x + w < tbX || x > tbX + tbW || y + h < tbY || y > tbY + tbH);
                 return inTitle || inToolbar;
             }
@@ -1701,19 +1701,19 @@
 
                 const { w, h } = estimateSize(msg);
                 let x, y, tries = 0;
-                // Bỏ qua hàm overlaps() tốn CPU. Các bong bóng sinh ra đè nhau xíu sẽ lập tức tự đẩy nhau văng ra (bởi thuật toán vật lý bên dưới) => load mượt ngay lập tức
-                do {
-                    x = rand(6, VW - w - 6);
-                    y = rand(6, VH - h - 6);
-                    tries++;
-                } while (inSafeZone(x, y, w, h) && tries < 30);
-
-                placed.push({ x, y, w, h });
+                
+                // Cố định ngay vị trí ngẫu nhiên lúc sinh ra, bỏ qua logic đẩy nhau nặng nề
+                do { 
+                    x = rand(6, VW - w - 6); 
+                    y = rand(6, VH - h - 6); 
+                    tries++; 
+                } while (inSafeZone(x, y, w, h) && tries < 15);
+                
                 el.style.transform = `translate(${x}px,${y}px)`;
                 frag.appendChild(el);
 
-                const speed = rand(0.2, isMobile ? 0.45 : 0.7), angle = rand(0, Math.PI * 2);
-                return { el, w, h, x, y, vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed, wobble: rand(0, Math.PI * 2), wobbleSpeed: rand(0.008, 0.018), wobbleAmp: rand(0.3, 0.9) };
+                // Giữ lại hiệu ứng rung đong đưa
+                return { el, w, h, x, y, wobble: rand(0, Math.PI * 2), wobbleSpeed: rand(0.008, 0.018), wobbleAmp: rand(0.3, 0.9) };
             });
             scene.appendChild(frag);
 
@@ -1727,48 +1727,15 @@
                 scene.appendChild(sp);
             }
 
-            let liveW = VW, liveH = VH;
-            if (window.visualViewport) {
-                window.visualViewport.addEventListener('resize', () => {
-                    liveW = window.visualViewport.width;
-                    liveH = window.visualViewport.height;
-                });
-            }
-
             function tick() {
-                const W = liveW, H = liveH;
-                const tbRect = document.getElementById('toolbar').getBoundingClientRect();
-                const tbBX1 = tbRect.left - 10, tbBY1 = tbRect.top - 10, tbBX2 = tbRect.right + 10, tbBY2 = tbRect.bottom + 10;
+                // Loại bỏ HOÀN TOÀN logic check va chạm đẩy nhau
+                // Chỉ update vị trí đong đưa quanh điểm neo gốc (x, y) để siêu nhẹ mượt
                 for (let i = 0; i < objects.length; i++) {
                     const o = objects[i];
-                    o.wobble += o.wobbleSpeed; o.x += o.vx; o.y += o.vy + Math.sin(o.wobble) * o.wobbleAmp * 0.12;
-                    if (o.x < 4) { o.x = 4; o.vx = Math.abs(o.vx); }
-                    if (o.x + o.w > W - 4) { o.x = W - 4 - o.w; o.vx = -Math.abs(o.vx); }
-                    if (o.y < 4) { o.y = 4; o.vy = Math.abs(o.vy); }
-                    if (o.y + o.h > H - 4) { o.y = H - 4 - o.h; o.vy = -Math.abs(o.vy); }
-                    const bx1 = o.x, bx2 = o.x + o.w, by1 = o.y, by2 = o.y + o.h;
-                    if (bx2 > tbBX1 && bx1 < tbBX2 && by2 > tbBY1 && by1 < tbBY2) {
-                        const overL = bx2 - tbBX1, overR = tbBX2 - bx1, overT = by2 - tbBY1, overB = tbBY2 - by1;
-                        const min = Math.min(overL, overR, overT, overB);
-                        if (min === overL) { o.x -= overL; o.vx = -Math.abs(o.vx); }
-                        else if (min === overR) { o.x += overR; o.vx = Math.abs(o.vx); }
-                        else if (min === overT) { o.y -= overT; o.vy = -Math.abs(o.vy); }
-                        else { o.y += overB; o.vy = Math.abs(o.vy); }
-                    }
-                    for (let j = i + 1; j < objects.length; j++) {
-                        const b = objects[j];
-                        const dx = (o.x + o.w / 2) - (b.x + b.w / 2), dy = (o.y + o.h / 2) - (b.y + b.h / 2);
-                        const dist = Math.hypot(dx, dy), minD = (o.w / 2 + b.w / 2) * 0.9 + 10;
-                        if (dist < minD && dist > 0.1) {
-                            const push = (minD - dist) / minD * 0.35, nx = dx / dist, ny = dy / dist;
-                            o.vx += nx * push; o.vy += ny * push; b.vx -= nx * push; b.vy -= ny * push;
-                            o.vx *= 0.96; o.vy *= 0.96; b.vx *= 0.96; b.vy *= 0.96;
-                        }
-                    }
-                    const spd = Math.hypot(o.vx, o.vy);
-                    if (spd > 1.2) { o.vx = o.vx / spd * 1.2; o.vy = o.vy / spd * 1.2; }
-                    if (spd < 0.15 && Math.random() < 0.01) { o.vx += rand(-0.2, 0.2); o.vy += rand(-0.2, 0.2); }
-                    o.el.style.transform = `translate(${o.x}px,${o.y}px)`;
+                    o.wobble += o.wobbleSpeed;
+                    const currentX = o.x + Math.cos(o.wobble) * o.wobbleAmp * 5;
+                    const currentY = o.y + Math.sin(o.wobble) * o.wobbleAmp * 12;
+                    o.el.style.transform = `translate(${currentX}px,${currentY}px)`;
                 }
                 requestAnimationFrame(tick);
             }
