@@ -602,11 +602,11 @@
 
         /* ── RAIN ── */
         .rain-item {
-            position: fixed;
-            top: -80px;
+            position: absolute; /* Chuyển từ fixed sang absolute để fix lỗi hệ toạ độ trên mobile */
+            top: -10vh; /* Bắt đầu chắc chắn từ cao tít ngoài mép màn hình */
             pointer-events: none;
             z-index: 9000;
-            font-size: 1.8rem;
+            font-size: 2rem;
             animation: rainFall linear forwards;
             filter: drop-shadow(0 2px 4px rgba(0, 0, 0, .15));
         }
@@ -614,16 +614,16 @@
         @keyframes rainFall {
             0% {
                 transform: translateY(0) rotate(0deg);
-                opacity: 1
+                opacity: 1;
             }
 
             80% {
-                opacity: 1
+                opacity: 1;
             }
 
             100% {
-                transform: translateY(110vh) rotate(360deg);
-                opacity: 0
+                transform: translateY(120vh) rotate(360deg);
+                opacity: 0;
             }
         }
 
@@ -1109,13 +1109,14 @@
             }
         }
 
-        /* Mobile bubble giảm size tránh rối */
+        /* Mobile bubble giảm size tránh rối, thu nhỏ thêm để hiển thị nhiều tin nhắn */
         @media (max-width: 600px) {
             .bubble {
-                font-size: .78rem;
-                padding: 7px 11px;
-                max-width: 160px;
-                border-radius: 16px;
+                font-size: .65rem;
+                padding: 5px 8px;
+                max-width: 120px;
+                border-radius: 14px;
+                line-height: 1.35;
             }
         }
     </style>
@@ -1365,28 +1366,23 @@
             const isMobile = VW < 600;
 
             const VARIANTS = ['v0', 'v1', 'v2', 'v3', 'v4'];
-            const MAX_BUBBLES = isMobile ? 18 : MESSAGES.length;
+            const MAX_BUBBLES = isMobile ? 35 : MESSAGES.length; // Tăng số lượng tin nhắn trên mobile
             const shuffled = [...MESSAGES].sort(() => Math.random() - .5).slice(0, MAX_BUBBLES);
 
             // Ước tính kích thước ngay, không chờ layout
             function estimateSize(text) {
-                const charsPerLine = isMobile ? 13 : 17;
+                const charsPerLine = isMobile ? 15 : 17;
                 const lines = Math.ceil(text.length / charsPerLine);
-                const w = Math.min(isMobile ? 155 : 215, Math.max(85, text.length * (isMobile ? 7.2 : 7.8)));
-                const h = 24 + lines * 22;
+                const w = Math.min(isMobile ? 115 : 215, Math.max(isMobile ? 60 : 85, text.length * (isMobile ? 5.5 : 7.8)));
+                const h = (isMobile ? 16 : 24) + lines * (isMobile ? 16 : 22);
                 return { w, h };
             }
 
             const CX = VW / 2, CY = VH / 2;
-            const SAFE_W = isMobile ? 220 : 340, SAFE_H = isMobile ? 90 : 130;
+            const SAFE_W = isMobile ? 200 : 340, SAFE_H = isMobile ? 80 : 130;
             const tbX = VW - 74, tbY = 0, tbW = 74, tbH = VH;
 
             const placed = [];
-            function overlaps(x, y, w, h) {
-                const PAD = 10;
-                for (const p of placed) { if (x < p.x + p.w + PAD && x + w + PAD > p.x && y < p.y + p.h + PAD && y + h + PAD > p.y) return true; }
-                return false;
-            }
             function inSafeZone(x, y, w, h) {
                 const inTitle   = !(x + w < CX - SAFE_W / 2 || x > CX + SAFE_W / 2 || y + h < CY - SAFE_H / 2 || y > CY + SAFE_H / 2);
                 const inToolbar = !(x + w < tbX || x > tbX + tbW || y + h < tbY || y > tbY + tbH);
@@ -1401,8 +1397,13 @@
 
                 const { w, h } = estimateSize(msg);
                 let x, y, tries = 0;
-                do { x = rand(6, VW - w - 6); y = rand(6, VH - h - 6); tries++; }
-                while ((overlaps(x, y, w, h) || inSafeZone(x, y, w, h)) && tries < 300);
+                // Bỏ qua hàm overlaps() tốn CPU. Các bong bóng sinh ra đè nhau xíu sẽ lập tức tự đẩy nhau văng ra (bởi thuật toán vật lý bên dưới) => load mượt ngay lập tức
+                do { 
+                    x = rand(6, VW - w - 6); 
+                    y = rand(6, VH - h - 6); 
+                    tries++; 
+                } while (inSafeZone(x, y, w, h) && tries < 30);
+                
                 placed.push({ x, y, w, h });
                 el.style.transform = `translate(${x}px,${y}px)`;
                 frag.appendChild(el);
