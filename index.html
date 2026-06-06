@@ -135,7 +135,7 @@
             justify-content: center;
             z-index: 9999;
             animation: fadeIn .4s ease;
-            padding: 12px;
+            padding: 48px 16px;
             overflow-y: auto;
         }
 
@@ -145,13 +145,15 @@
             width: 100%;
             animation: popIn .5s cubic-bezier(.34, 1.56, .64, 1);
             margin: auto;
+            padding: 40px;
         }
 
         #heart-ring {
             position: absolute;
-            inset: -38px;
+            inset: 0;
             pointer-events: none;
             z-index: 2;
+            overflow: visible;
         }
 
         .hr-heart {
@@ -190,8 +192,8 @@
         @media (max-width:768px) {
             #modal-box {
                 flex-direction: column;
-                gap: 12px;
-                padding: 20px 16px;
+                gap: 16px;
+                padding: 32px 24px;
             }
         }
 
@@ -199,6 +201,8 @@
             width: 220px;
             max-width: 100%;
             flex-shrink: 0;
+            position: relative;
+            z-index: 10;
         }
 
         @media (max-width:768px) {
@@ -209,6 +213,11 @@
 
         .modal-text-content {
             flex: 1;
+            position: relative;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
         #modal-icons {
@@ -216,7 +225,7 @@
             align-items: center;
             justify-content: center;
             gap: 10px;
-            margin-bottom: 18px;
+            margin-bottom: 12px;
         }
 
         .mi-icon {
@@ -237,26 +246,33 @@
         #modal-box h2 {
             font-family: 'Pacifico', cursive;
             color: #e91e8c;
-            font-size: 1.75rem;
-            margin-bottom: 20px;
-            line-height: 1.4;
+            font-size: 1.85rem;
+            margin-bottom: 18px;
+            line-height: 1.35;
             text-shadow: 0 2px 14px rgba(233, 30, 140, .18);
         }
 
         #modal-box p {
-            color: #3d1535;
-            font-size: 1.08rem;
-            line-height: 2;
-            font-weight: 600;
+            color: #4a1540;
+            font-size: 1.05rem;
+            line-height: 1.6;
+            font-weight: 700;
+            margin-bottom: 10px;
+            width: 100%;
+        }
+
+        .highlight-text {
+            color: #e91e8c;
+            font-weight: 800;
         }
 
         @media (max-width:768px) {
-            #modal-box h2 { font-size: 1.35rem; margin-bottom: 10px; }
-            #modal-box p  { font-size: .95rem; line-height: 1.75; }
-            #modal-icons  { margin-bottom: 10px; }
+            #modal-box h2 { font-size: 1.6rem; margin-bottom: 14px; }
+            #modal-box p  { font-size: 0.98rem; line-height: 1.5; margin-bottom: 8px; }
+            #modal-icons  { margin-bottom: 8px; }
             .mi-icon      { font-size: 1.6rem; }
             .mi-icon:nth-child(2) { font-size: 2rem; }
-            #close-btn    { margin-top: 16px; padding: 12px 36px; }
+            #close-btn    { margin-top: 18px; padding: 14px 40px; width: 85%; max-width: 260px; font-size: 1.1rem; }
         }
 
         #close-btn {
@@ -1092,6 +1108,16 @@
                 transform: translateY(-7px)
             }
         }
+
+        /* Mobile bubble giảm size tránh rối */
+        @media (max-width: 600px) {
+            .bubble {
+                font-size: .78rem;
+                padding: 7px 11px;
+                max-width: 160px;
+                border-radius: 16px;
+            }
+        }
     </style>
 </head>
 
@@ -1100,8 +1126,8 @@
     <!-- MODAL (greeting) -->
     <div id="modal-overlay">
         <div id="modal-wrapper">
-            <div id="heart-ring"></div>
             <div id="modal-box">
+                <div id="heart-ring"></div>
                 <img id="mason-img" src="images/mason.png" alt="Mason Nguyễn" />
                 <div class="modal-text-content">
                     <div id="modal-icons">
@@ -1110,12 +1136,11 @@
                         <span class="mi-icon">💖</span>
                     </div>
                     <h2>Mừng Sinh Nhật Bé Yêu! 🎉</h2>
-                    <p>
-                        Chào em Hà Trang. Anh là Mason Nguyễn đây.<br>
-                        Chúc tình yêu tuổi mới thật vui vẻ nhớ.<br>
-                        Anh eo em bét nhòe. 🥰<br>
-                        Rep tin nhắn a nha cục cưng 💬
-                    </p>
+                    <p>Chào em Hà Trang. Anh là Mason&nbsp;Nguyễn đây.
+                    Chúc tình yêu tuổi mới thật vui vẻ nhớ.</p>
+                    <p>Anh eo em bét nhòe. 🥰
+                    <p>Rep tin nhắn a nha cục cưng,
+                    <class="highlight-text">click okie để nhận quà khủng 💖</p>
                     <button id="close-btn">Okie anh ❤️</button>
                 </div>
             </div>
@@ -1262,7 +1287,7 @@
             ring.innerHTML = '';
             const EMOJIS = ['🩷', '💗', '💖', '💕', '❤️', '🩵', '💙', '💚', '💛', '🧡', '💜', '🤍'];
             const W = box.offsetWidth, H = box.offsetHeight;
-            const GAP = 38, RW = W + GAP * 2, RH = H + GAP * 2;
+            const RW = W, RH = H; // Bám sát viền bảng
             let idx = 0;
             function placeHeart(px, py, rotDeg, szMulti) {
                 const el = document.createElement('span'); el.className = 'hr-heart';
@@ -1275,11 +1300,11 @@
             for (let layer = 0; layer < 3; layer++) {
                 const density = 30 - layer * 6, szMulti = 1 - layer * 0.15, offset = layer * 16;
                 const topN = Math.max(5, Math.round(RW / density));
-                for (let i = 0; i <= topN; i++) placeHeart((i / topN) * RW - halfEm + rand(-15, 15), -halfEm * 1.2 - offset + rand(-12, 12), rand(-45, 45), szMulti);
-                for (let i = 0; i <= topN; i++) placeHeart((i / topN) * RW - halfEm + rand(-15, 15), RH - halfEm * 0.8 + offset + rand(-12, 12), rand(-45, 45), szMulti);
+                for (let i = 0; i <= topN; i++) placeHeart((i / topN) * RW - halfEm + rand(-15, 15), -halfEm - offset + rand(-12, 12), rand(-45, 45), szMulti);
+                for (let i = 0; i <= topN; i++) placeHeart((i / topN) * RW - halfEm + rand(-15, 15), RH - halfEm + offset + rand(-12, 12), rand(-45, 45), szMulti);
                 const sideN = Math.max(4, Math.round(RH / density));
-                for (let i = 0; i <= sideN; i++) placeHeart(-halfEm * 1.1 - offset + rand(-12, 12), (i / sideN) * RH - halfEm + rand(-15, 15), rand(-45, 45), szMulti);
-                for (let i = 0; i <= sideN; i++) placeHeart(RW - halfEm * 0.9 + offset + rand(-12, 12), (i / sideN) * RH - halfEm + rand(-15, 15), rand(-45, 45), szMulti);
+                for (let i = 0; i <= sideN; i++) placeHeart(-halfEm - offset + rand(-12, 12), (i / sideN) * RH - halfEm + rand(-15, 15), rand(-45, 45), szMulti);
+                for (let i = 0; i <= sideN; i++) placeHeart(RW - halfEm + offset + rand(-12, 12), (i / sideN) * RH - halfEm + rand(-15, 15), rand(-45, 45), szMulti);
             }
         }
         function showGreetingModal() {
@@ -1290,8 +1315,18 @@
         window.addEventListener('load', () => setTimeout(buildHeartBorder, 100));
         document.getElementById('close-btn').addEventListener('click', () => {
             const ov = document.getElementById('modal-overlay');
-            ov.style.transition = 'opacity .3s'; ov.style.opacity = '0';
-            setTimeout(() => { ov.style.display = 'none'; if (!window._sceneStarted) { window._sceneStarted = true; startScene(); } }, 320);
+            // Fade out mượt mà lập tức
+            ov.style.transition = 'opacity .25s ease';
+            ov.style.opacity = '0';
+            
+            // Chờ modal ẩn đi hoàn toàn mới render bong bóng, điện thoại sẽ hết khựng
+            setTimeout(() => { 
+                ov.style.display = 'none'; 
+                if (!window._sceneStarted) { 
+                    window._sceneStarted = true; 
+                    startScene(); 
+                }
+            }, 260);
         });
         document.getElementById('btn-greeting').addEventListener('click', showGreetingModal);
         document.getElementById('btn-poem').addEventListener('click', showPoemModal);
@@ -1300,12 +1335,13 @@
            RAIN
         ═══════════════════════════════════════ */
         function triggerRain(emoji, count = 80) {
+            const W = window.innerWidth;
             for (let i = 0; i < count; i++) {
                 setTimeout(() => {
                     const el = document.createElement('div'); el.className = 'rain-item';
                     el.textContent = emoji;
                     el.style.fontSize = rand(1.2, 2.8).toFixed(2) + 'rem';
-                    el.style.left = rand(0, 96) + 'vw';
+                    el.style.left = rand(0, W - 40) + 'px';
                     el.style.animationDuration = rand(1.4, 3.2).toFixed(2) + 's';
                     el.style.animationDelay = '0s';
                     document.body.appendChild(el);
@@ -1329,7 +1365,7 @@
             const isMobile = VW < 600;
 
             const VARIANTS = ['v0', 'v1', 'v2', 'v3', 'v4'];
-            const MAX_BUBBLES = isMobile ? 28 : MESSAGES.length;
+            const MAX_BUBBLES = isMobile ? 18 : MESSAGES.length;
             const shuffled = [...MESSAGES].sort(() => Math.random() - .5).slice(0, MAX_BUBBLES);
 
             // Ước tính kích thước ngay, không chờ layout
