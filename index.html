@@ -5,10 +5,11 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>💌 MỪNG THỌ BẢO BỐI</title>
+        <link rel="preload" href="images/mason.png" as="image" fetchpriority="high">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet" />
-    <link rel="preload" href="images/mason.png" as="image" />
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Nunito:wght@400;600;700&display=swap"
+        rel="stylesheet" />
     <style>
         *,
         *::before,
@@ -269,12 +270,36 @@
         }
 
         @media (max-width:768px) {
-            #modal-box h2 { font-size: 1.6rem; margin-bottom: 14px; }
-            #modal-box p  { font-size: 0.98rem; line-height: 1.5; margin-bottom: 8px; }
-            #modal-icons  { margin-bottom: 8px; }
-            .mi-icon      { font-size: 1.6rem; }
-            .mi-icon:nth-child(2) { font-size: 2rem; }
-            #close-btn    { margin-top: 18px; padding: 14px 40px; width: 85%; max-width: 260px; font-size: 1.1rem; }
+            #modal-box h2 {
+                font-size: 1.6rem;
+                margin-bottom: 14px;
+            }
+
+            #modal-box p {
+                font-size: 0.98rem;
+                line-height: 1.5;
+                margin-bottom: 8px;
+            }
+
+            #modal-icons {
+                margin-bottom: 8px;
+            }
+
+            .mi-icon {
+                font-size: 1.6rem;
+            }
+
+            .mi-icon:nth-child(2) {
+                font-size: 2rem;
+            }
+
+            #close-btn {
+                margin-top: 18px;
+                padding: 14px 40px;
+                width: 85%;
+                max-width: 260px;
+                font-size: 1.1rem;
+            }
         }
 
         #close-btn {
@@ -519,10 +544,6 @@
                 transform: translateY(-50%) rotate(8deg);
             }
         }
-        .tool-btn.show-tip-mobile::after {
-            opacity: 1;
-            transform: translateY(-50%) rotate(8deg);
-        }
 
         /* ── BUBBLES ── */
         .bubble {
@@ -610,8 +631,10 @@
 
         /* ── RAIN ── */
         .rain-item {
-            position: absolute; /* Chuyển từ fixed sang absolute để fix lỗi hệ toạ độ trên mobile */
-            top: -10vh; /* Bắt đầu chắc chắn từ cao tít ngoài mép màn hình */
+            position: absolute;
+            /* Chuyển từ fixed sang absolute để fix lỗi hệ toạ độ trên mobile */
+            top: -10vh;
+            /* Bắt đầu chắc chắn từ cao tít ngoài mép màn hình */
             pointer-events: none;
             z-index: 9000;
             font-size: 2rem;
@@ -892,7 +915,8 @@
         /* Main area */
         #dp-main {
             flex: 1;
-            overflow: visible; /* Đã mở overflow để bong bóng thoại không bị cắt */
+            overflow: visible;
+            /* Đã mở overflow để bong bóng thoại không bị cắt */
             position: relative;
             z-index: 10;
         }
@@ -909,13 +933,15 @@
 
         .dp-zone {
             position: relative;
-            overflow: visible; /* Fix lỗi cắt bóng thoại do hidden */
+            overflow: visible;
+            /* Fix lỗi cắt bóng thoại do hidden */
             border: 2px solid rgba(249, 168, 212, 0.4);
             transition: background .25s;
         }
-        
+
         /* Đảm bảo nhân vật đang nói sẽ luôn nổi layer lên trên cùng */
-        .placed-char:has(.char-speech), #tina-zone-avatar:has(.char-speech) {
+        .placed-char:has(.char-speech),
+        #tina-zone-avatar:has(.char-speech) {
             z-index: 9999 !important;
         }
 
@@ -977,7 +1003,7 @@
             border-radius: 8px;
             white-space: nowrap;
             z-index: 50;
-            box-shadow: 0 2px 8px rgba(220,38,38,.3);
+            box-shadow: 0 2px 8px rgba(220, 38, 38, .3);
             animation: fadeIn .2s ease;
             pointer-events: none;
         }
@@ -1036,17 +1062,18 @@
             0% {
                 box-shadow:
                     0 0 0 3px #38bdf8,
-                    0 0 10px 3px rgba(56,189,248,0.4),
-                    0 0 22px 7px rgba(56,189,248,0.2),
-                    0 0 40px 13px rgba(56,189,248,0.1);
+                    0 0 10px 3px rgba(56, 189, 248, 0.4),
+                    0 0 22px 7px rgba(56, 189, 248, 0.2),
+                    0 0 40px 13px rgba(56, 189, 248, 0.1);
                 filter: brightness(1.05);
             }
+
             100% {
                 box-shadow:
                     0 0 0 4px #38bdf8,
-                    0 0 20px 8px rgba(56,189,248,0.65),
-                    0 0 42px 16px rgba(56,189,248,0.38),
-                    0 0 68px 24px rgba(56,189,248,0.18);
+                    0 0 20px 8px rgba(56, 189, 248, 0.65),
+                    0 0 42px 16px rgba(56, 189, 248, 0.38),
+                    0 0 68px 24px rgba(56, 189, 248, 0.18);
                 filter: brightness(1.18);
             }
         }
@@ -1055,17 +1082,18 @@
             0% {
                 box-shadow:
                     0 0 0 3px #fbbf24,
-                    0 0 10px 3px rgba(251,191,36,0.4),
-                    0 0 22px 7px rgba(251,191,36,0.2),
-                    0 0 40px 13px rgba(251,191,36,0.1);
+                    0 0 10px 3px rgba(251, 191, 36, 0.4),
+                    0 0 22px 7px rgba(251, 191, 36, 0.2),
+                    0 0 40px 13px rgba(251, 191, 36, 0.1);
                 filter: brightness(1.05);
             }
+
             100% {
                 box-shadow:
                     0 0 0 4px #fbbf24,
-                    0 0 20px 8px rgba(251,191,36,0.65),
-                    0 0 42px 16px rgba(251,191,36,0.38),
-                    0 0 68px 24px rgba(251,191,36,0.18);
+                    0 0 20px 8px rgba(251, 191, 36, 0.65),
+                    0 0 42px 16px rgba(251, 191, 36, 0.38),
+                    0 0 68px 24px rgba(251, 191, 36, 0.18);
                 filter: brightness(1.18);
             }
         }
@@ -1086,38 +1114,39 @@
         }
 
         .placed-char.home-zone.char-keonho::before {
-            background: conic-gradient(
-                transparent 0deg,
-                rgba(56, 189, 248, 0.9) 30deg,
-                transparent 60deg,
-                transparent 120deg,
-                rgba(125, 211, 252, 0.7) 150deg,
-                transparent 180deg,
-                transparent 240deg,
-                rgba(56, 189, 248, 0.8) 270deg,
-                transparent 300deg,
-                transparent 360deg
-            );
+            background: conic-gradient(transparent 0deg,
+                    rgba(56, 189, 248, 0.9) 30deg,
+                    transparent 60deg,
+                    transparent 120deg,
+                    rgba(125, 211, 252, 0.7) 150deg,
+                    transparent 180deg,
+                    transparent 240deg,
+                    rgba(56, 189, 248, 0.8) 270deg,
+                    transparent 300deg,
+                    transparent 360deg);
         }
 
         .placed-char.home-zone.char-jaypark::before {
-            background: conic-gradient(
-                transparent 0deg,
-                rgba(251, 191, 36, 0.9) 30deg,
-                transparent 60deg,
-                transparent 120deg,
-                rgba(253, 230, 138, 0.7) 150deg,
-                transparent 180deg,
-                transparent 240deg,
-                rgba(251, 191, 36, 0.8) 270deg,
-                transparent 300deg,
-                transparent 360deg
-            );
+            background: conic-gradient(transparent 0deg,
+                    rgba(251, 191, 36, 0.9) 30deg,
+                    transparent 60deg,
+                    transparent 120deg,
+                    rgba(253, 230, 138, 0.7) 150deg,
+                    transparent 180deg,
+                    transparent 240deg,
+                    rgba(251, 191, 36, 0.8) 270deg,
+                    transparent 300deg,
+                    transparent 360deg);
         }
 
         @keyframes ringRotate {
-            from { transform: translateX(-50%) rotate(0deg); }
-            to   { transform: translateX(-50%) rotate(360deg); }
+            from {
+                transform: translateX(-50%) rotate(0deg);
+            }
+
+            to {
+                transform: translateX(-50%) rotate(360deg);
+            }
         }
 
         /* Hào quang nền phía sau — căn đúng theo avatar */
@@ -1136,16 +1165,23 @@
         }
 
         .placed-char.home-zone.char-keonho::after {
-            background: radial-gradient(circle, rgba(56,189,248,0.4) 0%, rgba(56,189,248,0.15) 50%, transparent 75%);
+            background: radial-gradient(circle, rgba(56, 189, 248, 0.4) 0%, rgba(56, 189, 248, 0.15) 50%, transparent 75%);
         }
 
         .placed-char.home-zone.char-jaypark::after {
-            background: radial-gradient(circle, rgba(251,191,36,0.4) 0%, rgba(251,191,36,0.15) 50%, transparent 75%);
+            background: radial-gradient(circle, rgba(251, 191, 36, 0.4) 0%, rgba(251, 191, 36, 0.15) 50%, transparent 75%);
         }
 
         @keyframes auraBreath {
-            0%   { transform: translateX(-50%) scale(1);    opacity: 0.7; }
-            100% { transform: translateX(-50%) scale(1.4); opacity: 1;   }
+            0% {
+                transform: translateX(-50%) scale(1);
+                opacity: 0.7;
+            }
+
+            100% {
+                transform: translateX(-50%) scale(1.4);
+                opacity: 1;
+            }
         }
 
         @keyframes charBob {
@@ -1251,10 +1287,11 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 2px 8px rgba(233,30,140,.45);
+            box-shadow: 0 2px 8px rgba(233, 30, 140, .45);
             transition: transform .15s, background .15s;
             padding: 0;
         }
+
         .char-remove-btn:hover {
             transform: scale(1.2);
             background: #c2185b;
@@ -1313,25 +1350,30 @@
             object-fit: cover;
             object-position: center top;
             border: 3px solid #f472b6;
-            box-shadow: 0 0 0 2px #fff, 0 4px 14px rgba(233,30,140,.35);
+            box-shadow: 0 0 0 2px #fff, 0 4px 14px rgba(233, 30, 140, .35);
             cursor: grab;
             flex-shrink: 0;
             transition: transform .2s, box-shadow .2s;
             user-select: none;
         }
+
         #tina-header-avatar:hover {
             transform: scale(1.13);
-            box-shadow: 0 0 0 3px #fff, 0 6px 22px rgba(233,30,140,.55);
+            box-shadow: 0 0 0 3px #fff, 0 6px 22px rgba(233, 30, 140, .55);
         }
-        #tina-header-avatar:active { cursor: grabbing; }
+
+        #tina-header-avatar:active {
+            cursor: grabbing;
+        }
 
         /* Tina đã được thả vào zone */
         #tina-zone-avatar {
             position: absolute;
             z-index: 50;
             pointer-events: none;
-            transition: left .55s cubic-bezier(.34,1.56,.64,1), top .55s cubic-bezier(.34,1.56,.64,1);
+            transition: left .55s cubic-bezier(.34, 1.56, .64, 1), top .55s cubic-bezier(.34, 1.56, .64, 1);
         }
+
         #tina-zone-avatar img {
             width: 62px;
             height: 62px;
@@ -1339,37 +1381,50 @@
             object-fit: cover;
             object-position: center top;
             border: 3px solid #e91e8c;
-            box-shadow: 0 0 0 3px #fff8, 0 0 18px 6px rgba(233,30,140,.45), 0 0 38px 12px rgba(233,30,140,.2);
+            box-shadow: 0 0 0 3px #fff8, 0 0 18px 6px rgba(233, 30, 140, .45), 0 0 38px 12px rgba(233, 30, 140, .2);
             animation: tinaPulse 1.6s ease-in-out infinite alternate;
         }
+
         #tina-zone-avatar .tina-name-tag {
             text-align: center;
             font-size: .68rem;
             font-weight: 900;
             color: #e91e8c;
-            text-shadow: 0 1px 4px #fff, 0 0 8px rgba(233,30,140,.5);
+            text-shadow: 0 1px 4px #fff, 0 0 8px rgba(233, 30, 140, .5);
             margin-top: 3px;
             letter-spacing: .5px;
         }
+
         @keyframes tinaPulse {
-            0%  { box-shadow: 0 0 0 3px #fff8, 0 0 14px 4px rgba(233,30,140,.4),  0 0 28px 8px rgba(233,30,140,.15); }
-            100%{ box-shadow: 0 0 0 4px #fff8, 0 0 28px 10px rgba(233,30,140,.65), 0 0 52px 18px rgba(233,30,140,.28); }
+            0% {
+                box-shadow: 0 0 0 3px #fff8, 0 0 14px 4px rgba(233, 30, 140, .4), 0 0 28px 8px rgba(233, 30, 140, .15);
+            }
+
+            100% {
+                box-shadow: 0 0 0 4px #fff8, 0 0 28px 10px rgba(233, 30, 140, .65), 0 0 52px 18px rgba(233, 30, 140, .28);
+            }
         }
 
         /* Nhân vật đang lao về phía Tina */
         .placed-char.chasing-tina img {
             animation: charBob 2s ease-in-out infinite alternate, chasingShake .35s ease-in-out infinite alternate;
         }
+
         @keyframes chasingShake {
-            0%  { transform: translateY(0) rotate(-6deg); }
-            100%{ transform: translateY(-4px) rotate(6deg); }
+            0% {
+                transform: translateY(0) rotate(-6deg);
+            }
+
+            100% {
+                transform: translateY(-4px) rotate(6deg);
+            }
         }
 
         /* Tina drop-zone highlight */
         .dp-zone.tina-drag-over {
             outline: 3px dashed #e91e8c;
             outline-offset: -4px;
-            background: rgba(233,30,140,.07) !important;
+            background: rgba(233, 30, 140, .07) !important;
         }
     </style>
 </head>
@@ -1381,7 +1436,7 @@
         <div id="modal-wrapper">
             <div id="modal-box">
                 <div id="heart-ring"></div>
-                <img id="mason-img" src="images/mason.png" alt="Mason Nguyễn" />
+                <img id="mason-img" src="images/mason.png" alt="Mason Nguyễn" fetchpriority="high" loading="eager" />
                 <div class="modal-text-content">
                     <div id="modal-icons">
                         <span class="mi-icon">💌</span>
@@ -1390,7 +1445,7 @@
                     </div>
                     <h2>Mừng Sinh Nhật Yêu! 🎉</h2>
                     <p>Chào em Hà Trang. Anh là Mason&nbsp;Nguyễn đây.
-                    Chúc tình yêu tuổi mới thật vui vẻ nhớ.</p>
+                        Chúc tình yêu tuổi mới thật vui vẻ nhớ.</p>
                     <p>Anh eo em bét nhòe. 🥰
                     <p>Rep tin nhắn a nha cục cưng,
                     <p class="highlight-text">click okie để nhận quà khủng 💖</p>
@@ -1423,7 +1478,8 @@
             <h3>🔐 Giải Đố Chọn Chồng</h3>
             <div class="dtmf-sub">
                 Giải quyết vấn đề sau để mở khoá tính năng này<br>
-                <strong>Nhận diện giá trị số trong đoạn âm thanh dưới đây.<br>Trả lời dãy số kết quả (DTMF signaling)</strong>
+                <strong>Nhận diện giá trị số trong đoạn âm thanh dưới đây.<br>Trả lời dãy số kết quả (DTMF
+                    signaling)</strong>
             </div>
             <div id="dtmf-audio-wrap">
                 <audio id="dtmf-audio" controls>
@@ -1446,7 +1502,7 @@
             <h2>🌸 Động Phòng Hoa Chúc 🌸</h2>
             <div style="display:flex;align-items:center;gap:10px;flex-shrink:0;">
                 <img id="tina-header-avatar" src="tina.png" alt="Tina" draggable="true"
-                     title="Kéo Tina vào zone để các bạn trai tranh giành! 💖" />
+                    title="Kéo Tina vào zone để các bạn trai tranh giành! 💖" />
                 <button id="dp-back-btn">← Quay lại</button>
             </div>
         </div>
@@ -1479,7 +1535,7 @@
     <!-- SCENE (bubbles) -->
     <div id="scene">
         <div id="title">
-            <h1>tổng hợp những tin nhắn hà bơ hun</h1>
+            <h1>tổng hợp những tin nhắn<br>hà bơ hun</h1>
             <div class="sub">✦ bộ sưu tập đặc biệt ✦</div>
         </div>
     </div>
@@ -1549,7 +1605,7 @@
             ov.style.opacity = '1'; ov.style.transition = ''; ov.style.display = 'flex';
             buildHeartBorder();
         }
-        
+
         // Tự động tính toán lại viền tim ngay khi kích thước hộp thoại thay đổi (do load ảnh hoặc load font)
         const boxElement = document.getElementById('modal-box');
         if (boxElement) {
@@ -1558,7 +1614,7 @@
             });
             resizeObserver.observe(boxElement);
         }
-        
+
         // Đảm bảo tim cập nhật ngay lập tức khi Google Fonts được tải xong
         if (document.fonts) {
             document.fonts.ready.then(() => buildHeartBorder());
@@ -1567,26 +1623,12 @@
             const ov = document.getElementById('modal-overlay');
             ov.style.transition = 'opacity .15s ease';
             ov.style.opacity = '0';
-            setTimeout(() => { 
-                ov.style.display = 'none'; 
-                if (!window._sceneStarted) { 
-                    window._sceneStarted = true; 
-                    // Trì hoãn 50ms để điện thoại có thời gian tắt modal mượt mà, chống treo máy
-                    setTimeout(startScene, 50);
-                }
-            }, 150);
+            if (!window._sceneStarted) {
+                window._sceneStarted = true;
+                startScene(); // Render ngay khi bảng bắt đầu mờ để tạo cảm giác phản hồi lập tức
+            }
+            setTimeout(() => { ov.style.display = 'none'; }, 150);
         });
-
-        // Hiện tooltip tạm thời 1.5 giây trên điện thoại khi chạm vào nút
-        document.querySelectorAll('.tool-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                if (window.innerWidth <= 768) {
-                    this.classList.add('show-tip-mobile');
-                    setTimeout(() => this.classList.remove('show-tip-mobile'), 1500);
-                }
-            });
-        });
-
         document.getElementById('btn-greeting').addEventListener('click', showGreetingModal);
         document.getElementById('btn-poem').addEventListener('click', showPoemModal);
 
@@ -1608,9 +1650,11 @@
                 }, i * rand(0, 40));
             }
         }
-        document.getElementById('btn-hanh').addEventListener('click', () => triggerRain('🧅', 80));
-        document.getElementById('btn-cha').addEventListener('click', () => triggerRain('🌭', 80));
-        document.getElementById('btn-cut').addEventListener('click', () => triggerRain('💩', 80));
+        // Sửa lỗi lag tooltip: Giảm số lượng icon rơi xuống theo thiết bị
+        const rainCount = window.innerWidth < 600 ? 25 : 60;
+        document.getElementById('btn-hanh').addEventListener('click', () => triggerRain('🧅', rainCount));
+        document.getElementById('btn-cha').addEventListener('click', () => triggerRain('🌭', rainCount));
+        document.getElementById('btn-cut').addEventListener('click', () => triggerRain('💩', rainCount));
 
         /* ═══════════════════════════════════════
            BUBBLE SCENE
@@ -1619,13 +1663,15 @@
             const scene = document.getElementById('scene');
             scene.style.display = 'block';
 
-            const VW = window.visualViewport ? window.visualViewport.width  : window.innerWidth;
+            const VW = window.visualViewport ? window.visualViewport.width : window.innerWidth;
             const VH = window.visualViewport ? window.visualViewport.height : window.innerHeight;
             const isMobile = VW < 600;
 
             const VARIANTS = ['v0', 'v1', 'v2', 'v3', 'v4'];
-            const MAX_BUBBLES = MESSAGES.length;
-            const shuffled = [...MESSAGES].sort(() => Math.random() - .5).slice(0, MAX_BUBBLES);
+            // Sửa lỗi đứng máy: Giới hạn số lượng bong bóng để vòng lặp va chạm O(N^2) không làm sập mobile
+            const safeMsgs = (typeof MESSAGES !== 'undefined' && Array.isArray(MESSAGES)) ? MESSAGES : ['Lỗi load tin nhắn'];
+            const MAX_BUBBLES = isMobile ? 25 : 50;
+            const shuffled = [...safeMsgs].sort(() => Math.random() - .5).slice(0, Math.min(MAX_BUBBLES, safeMsgs.length));
 
             // Ước tính kích thước ngay, không chờ layout
             function estimateSize(text) {
@@ -1642,7 +1688,7 @@
 
             const placed = [];
             function inSafeZone(x, y, w, h) {
-                const inTitle   = !(x + w < CX - SAFE_W / 2 || x > CX + SAFE_W / 2 || y + h < CY - SAFE_H / 2 || y > CY + SAFE_H / 2);
+                const inTitle = !(x + w < CX - SAFE_W / 2 || x > CX + SAFE_W / 2 || y + h < CY - SAFE_H / 2 || y > CY + SAFE_H / 2);
                 const inToolbar = !(x + w < tbX || x > tbX + tbW || y + h < tbY || y > tbY + tbH);
                 return inTitle || inToolbar;
             }
@@ -1656,12 +1702,12 @@
                 const { w, h } = estimateSize(msg);
                 let x, y, tries = 0;
                 // Bỏ qua hàm overlaps() tốn CPU. Các bong bóng sinh ra đè nhau xíu sẽ lập tức tự đẩy nhau văng ra (bởi thuật toán vật lý bên dưới) => load mượt ngay lập tức
-                do { 
-                    x = rand(6, VW - w - 6); 
-                    y = rand(6, VH - h - 6); 
-                    tries++; 
+                do {
+                    x = rand(6, VW - w - 6);
+                    y = rand(6, VH - h - 6);
+                    tries++;
                 } while (inSafeZone(x, y, w, h) && tries < 30);
-                
+
                 placed.push({ x, y, w, h });
                 el.style.transform = `translate(${x}px,${y}px)`;
                 frag.appendChild(el);
@@ -1785,41 +1831,41 @@
         ];
 
         const CHAR_PERSONAS = {
-            keonho:   'năng động, hoạt bát, tươi sáng, đáng yêu, vô tư — luôn vui vẻ rộn ràng, hay kêu lên thán từ kiểu "OMG!", "Oa xịn ghê!", hay cười haha. Xưng "anh" gọi người kia là "em" hoặc "cưng", ngọt ngào tự nhiên',
-            jihoon:   'trầm tĩnh, nội tâm, thu hút ngầm, chân thực, quan sát — ít nói nhưng câu nào ra câu đó, hay nhìn xa xăm, suy nghĩ sâu. Xưng "anh" gọi người kia là "em", kiệm lời nhưng tình cảm ẩn sau từng chữ',
-            sean:     'điềm đạm, bí ẩn, lôi cuốn, chân thành, vững chãi — nói chậm rãi, tự tin, không cần chứng minh gì. Xưng "anh" gọi người kia là "em" hoặc "người đẹp", giọng trầm ấm như đang che chở',
-            jaypark:  'bản lĩnh, tự tin, phóng khoáng, tầm nhìn, lãnh đạo — luôn làm chủ tình huống, ra quyết định dứt khoát, vibe boss. Xưng "anh" gọi người kia là "em" hoặc "bé", tự nhiên như hít thở',
-            ryul:     'gai góc, thẳng thắn, ngông nghênh, bụi bặm, phá cách — nói thẳng không ngại, chảnh nhưng dễ thương. Xưng "anh" gọi người kia là "em" hoặc đôi khi "ê cưng" kiểu nửa chảnh nửa thương',
-            mason:    'sôi nổi, lém lỉnh, duyên dáng, hoạt ngôn, bùng nổ — nói nhiều cười nhiều, hay thả thính vô tội vạ, năng lượng không giới hạn. Xưng "anh" gọi người kia là "em" hoặc "cục cưng", ngọt lịm tự nhiên',
-            negav:    'hài hước, tích cực, ngây ngô, gần gũi, tự nhiên — hay nói sai chủ đề rồi tự nhận ra, meme walking. Xưng "anh" gọi người kia là "em" hoặc "bạn ơi" khi ngây ngô quên mất đang thả thính',
+            keonho: 'năng động, hoạt bát, tươi sáng, đáng yêu, vô tư — luôn vui vẻ rộn ràng, hay kêu lên thán từ kiểu "OMG!", "Oa xịn ghê!", hay cười haha. Xưng "anh" gọi người kia là "em" hoặc "cưng", ngọt ngào tự nhiên',
+            jihoon: 'trầm tĩnh, nội tâm, thu hút ngầm, chân thực, quan sát — ít nói nhưng câu nào ra câu đó, hay nhìn xa xăm, suy nghĩ sâu. Xưng "anh" gọi người kia là "em", kiệm lời nhưng tình cảm ẩn sau từng chữ',
+            sean: 'điềm đạm, bí ẩn, lôi cuốn, chân thành, vững chãi — nói chậm rãi, tự tin, không cần chứng minh gì. Xưng "anh" gọi người kia là "em" hoặc "người đẹp", giọng trầm ấm như đang che chở',
+            jaypark: 'bản lĩnh, tự tin, phóng khoáng, tầm nhìn, lãnh đạo — luôn làm chủ tình huống, ra quyết định dứt khoát, vibe boss. Xưng "anh" gọi người kia là "em" hoặc "bé", tự nhiên như hít thở',
+            ryul: 'gai góc, thẳng thắn, ngông nghênh, bụi bặm, phá cách — nói thẳng không ngại, chảnh nhưng dễ thương. Xưng "anh" gọi người kia là "em" hoặc đôi khi "ê cưng" kiểu nửa chảnh nửa thương',
+            mason: 'sôi nổi, lém lỉnh, duyên dáng, hoạt ngôn, bùng nổ — nói nhiều cười nhiều, hay thả thính vô tội vạ, năng lượng không giới hạn. Xưng "anh" gọi người kia là "em" hoặc "cục cưng", ngọt lịm tự nhiên',
+            negav: 'hài hước, tích cực, ngây ngô, gần gũi, tự nhiên — hay nói sai chủ đề rồi tự nhận ra, meme walking. Xưng "anh" gọi người kia là "em" hoặc "bạn ơi" khi ngây ngô quên mất đang thả thính',
         };
 
         const ZONE_VIBES = {
-            bedroom:  'phòng ngủ ấm cúng, ánh đèn vàng dịu, không khí lãng mạn buồn ngủ',
-            park:     'công viên ngoài trời, hoa nở, gió mát, bầu không khí dễ chịu tươi sáng',
-            canteen:  'nhà ăn náo nhiệt, mùi thức ăn thơm, bàn ghế đông người, không khí vui vẻ',
-            pool:     'bể bơi, nắng hè, tiếng nước bắn tóe, không khí mát mẻ thư giãn',
+            bedroom: 'phòng ngủ ấm cúng, ánh đèn vàng dịu, không khí lãng mạn buồn ngủ',
+            park: 'công viên ngoài trời, hoa nở, gió mát, bầu không khí dễ chịu tươi sáng',
+            canteen: 'nhà ăn náo nhiệt, mùi thức ăn thơm, bàn ghế đông người, không khí vui vẻ',
+            pool: 'bể bơi, nắng hè, tiếng nước bắn tóe, không khí mát mẻ thư giãn',
         };
 
         // Fallback offline — dùng khi API lỗi
         const FALLBACK_SOLO = {
-                keonho: { bedroom: ['Oa phòng này cute ghê! 🌸', 'Anh ngủ được không ta? Hehe~ 😆', 'Gối thơm quá OMG! 💕', 'Em yêu chị Lam Lam không? Anh yêu lắm đó! 💕'], park: ['Trời đẹp zời ơi! OMG! 🌸', 'Chạy đua nào, em thua thì anh mời trà! 🏃', 'Hoa nở nhiều ghê xịn vậy! 🌷', 'OMG chị Lam Lam mà ở đây chắc anh xỉu! 💕'], canteen: ['Ăn gì đây OMG ngon quá! 🍜', 'Anh gọi hết menu được không ahihi~ 😋', 'Cơm nóng ăn là phê liền! 🍚'], pool: ['Nước trong veo nhảy vô liền! 💦', 'OMG mát quá đi! 🏊', 'Em ơi bắn nước không? Hihi~ 🌊', 'Em yêu chị Lam Lam nha! Anh cũng yêu! 💙'] },
-                jihoon: { bedroom: ['...Yên tĩnh thật. Anh thích.', 'Nằm đây nghe tim anh đập thôi.', 'Đêm như này anh nghĩ nhiều lắm.'], park: ['Gió hôm nay lạ thật.', 'Nhìn lá rụng mà anh cứ nghĩ mông lung...', 'Hoa nở rồi cũng tàn thôi. 🌷'], canteen: ['Ăn một mình cũng được.', 'Quan sát người xung quanh thú vị nhỉ.', 'Cơm này... ổn.'], pool: ['Nước im lặng cũng có sức nặng riêng.', 'Nhìn mặt nước mà anh thấy bình.', 'Bơi một mình đôi khi anh cần vậy.'] },
-                sean: { bedroom: ['Em cứ nghỉ đi. Mọi thứ ổn.', 'Đêm nay dài, nhưng sẽ qua.', '...Anh ở đây.'], park: ['Trời đẹp. Không cần nói nhiều.', 'Đi bộ thôi. Không vội.', 'Gió này... dễ chịu.'], canteen: ['Em gọi gì cũng được. Anh trả.', 'Ăn từ từ. Không đi đâu hết.', '...Ngon không em?'], pool: ['Bơi đi. Đừng nghĩ nhiều.', 'Nước sẽ gánh hộ một lúc.', 'Anh ở bờ chờ em.'] },
-                jaypark: { bedroom: ['Nghỉ ngơi cũng là chiến lược. 😎', 'Ngủ đủ giấc, mai anh còn chinh phục.', 'Phòng này... được. Anh approved. 😎'], park: ['Vibe ở đây chuẩn, anh approve ngay. 😎', 'Không gian này level khác hẳn, bé ơi.', 'Anh sinh ra để đứng ở đây. 👑', 'Park trong park — không ai level này đâu. 😎'], canteen: ['Gọi phần lớn nhất. Anh bao em.', 'Ăn no rồi mới làm được việc lớn.', 'Năng lượng từ bữa ăn không đùa được.'], pool: ['Bơi 50 vòng, khởi động thôi.', 'Thân thể là vũ khí, phải rèn.', 'Ai race cùng anh không? 😤'] },
-                ryul: { bedroom: ['Phòng anh, anh nằm trước. Kệ. 😒', 'Ngủ hay không là việc của anh. Seriously.', 'Đừng có làm ồn nha. Anh cảnh báo đó.', 'Tắt đèn đi. Anh không giải thích thêm.'], park: ['Công viên gì mà nhiều người thế. 😒', 'Ừ đẹp đó. Nhưng anh không nói thêm đâu.', 'Gió ok. Anh chấp nhận. Whatever.', 'Đẹp thật — dù anh không muốn thừa nhận. 😒'], canteen: ['Ăn nhanh ăn gọn xong về ngay.', 'Đồ ăn đây bình thường. Không bình luận.', 'Anh tự gọi, không cần ai order hộ. Seriously.', 'Ăn xong đừng kéo dài. Kệ.'], pool: ['Bơi kiểu gì anh cũng thắng. Obviously. 😒', 'Đừng bắn nước anh. Anh cảnh báo đó.', 'Xuống bơi đi, đứng nhìn gì vậy. 🙄', 'Nước lạnh à? Kệ. Anh vẫn vô.'] },
-                mason: { bedroom: ['Oa phòng này xịn quá em ơi! 😍', 'Ngủ mà anh vẫn đẹp trai không nhỉ? Hehe', 'Nằm đây thả thính em giờ ta~ 💕'], park: ['Trời ơi đẹp quá đi thôi nào! 🌸', 'Anh mà đẹp trai thêm tí nữa là tội lỗi!', 'Chạy nào! Bắt được em thì cho ôm! 😂'], canteen: ['Ăn cùng anh đi cưng ơi! 🍜', 'Anh gọi hết nhé, anh bao em!', 'Ngon như anh vậy! Hehe~ 😋'], pool: ['Nhảy xuống đi! Anh đỡ em cho! 💦', 'Mặc đồ bơi anh đẹp không em? 😏', 'Bắn nước anh thì anh bắn lại liền nha! 🌊'] },
-                negav: { bedroom: ['Ừ phòng này... ngủ được nhỉ? 😅', 'Tự nhiên anh buồn ngủ quá trời luôn.', 'Gối này mềm... Anh Zzzz mất 💤'], park: ['Oa cây! Cây xanh nè em ơi! 🌳', 'Đi đâu đây ta? Công viên à? Ừ công viên.', 'Hoa đẹp! Em chụp hình không? Không? Ok. 😶'], canteen: ['Ăn gì đây? Ừ ăn thôi em.', 'Tự nhiên anh đói ghê, lạ thật. 🍚', 'Anh gọi xong rồi mới thấy gọi nhiều quá. 😂'], pool: ['Bơi á? Ừ bơi. Bơi kiểu gì ta? 🤔', 'Nước lạnh không em? Ừ lạnh. Anh vẫn xuống.', 'Sao mọi người bơi nhanh vậy? Tài thật 😮'] },
-            };
+            keonho: { bedroom: ['Oa phòng này cute ghê! 🌸', 'Anh ngủ được không ta? Hehe~ 😆', 'Gối thơm quá OMG! 💕', 'Em yêu chị Lam Lam không? Anh yêu lắm đó! 💕'], park: ['Trời đẹp zời ơi! OMG! 🌸', 'Chạy đua nào, em thua thì anh mời trà! 🏃', 'Hoa nở nhiều ghê xịn vậy! 🌷', 'OMG chị Lam Lam mà ở đây chắc anh xỉu! 💕'], canteen: ['Ăn gì đây OMG ngon quá! 🍜', 'Anh gọi hết menu được không ahihi~ 😋', 'Cơm nóng ăn là phê liền! 🍚'], pool: ['Nước trong veo nhảy vô liền! 💦', 'OMG mát quá đi! 🏊', 'Em ơi bắn nước không? Hihi~ 🌊', 'Em yêu chị Lam Lam nha! Anh cũng yêu! 💙'] },
+            jihoon: { bedroom: ['...Yên tĩnh thật. Anh thích.', 'Nằm đây nghe tim anh đập thôi.', 'Đêm như này anh nghĩ nhiều lắm.'], park: ['Gió hôm nay lạ thật.', 'Nhìn lá rụng mà anh cứ nghĩ mông lung...', 'Hoa nở rồi cũng tàn thôi. 🌷'], canteen: ['Ăn một mình cũng được.', 'Quan sát người xung quanh thú vị nhỉ.', 'Cơm này... ổn.'], pool: ['Nước im lặng cũng có sức nặng riêng.', 'Nhìn mặt nước mà anh thấy bình.', 'Bơi một mình đôi khi anh cần vậy.'] },
+            sean: { bedroom: ['Em cứ nghỉ đi. Mọi thứ ổn.', 'Đêm nay dài, nhưng sẽ qua.', '...Anh ở đây.'], park: ['Trời đẹp. Không cần nói nhiều.', 'Đi bộ thôi. Không vội.', 'Gió này... dễ chịu.'], canteen: ['Em gọi gì cũng được. Anh trả.', 'Ăn từ từ. Không đi đâu hết.', '...Ngon không em?'], pool: ['Bơi đi. Đừng nghĩ nhiều.', 'Nước sẽ gánh hộ một lúc.', 'Anh ở bờ chờ em.'] },
+            jaypark: { bedroom: ['Nghỉ ngơi cũng là chiến lược. 😎', 'Ngủ đủ giấc, mai anh còn chinh phục.', 'Phòng này... được. Anh approved. 😎'], park: ['Vibe ở đây chuẩn, anh approve ngay. 😎', 'Không gian này level khác hẳn, bé ơi.', 'Anh sinh ra để đứng ở đây. 👑', 'Park trong park — không ai level này đâu. 😎'], canteen: ['Gọi phần lớn nhất. Anh bao em.', 'Ăn no rồi mới làm được việc lớn.', 'Năng lượng từ bữa ăn không đùa được.'], pool: ['Bơi 50 vòng, khởi động thôi.', 'Thân thể là vũ khí, phải rèn.', 'Ai race cùng anh không? 😤'] },
+            ryul: { bedroom: ['Phòng anh, anh nằm trước. Kệ. 😒', 'Ngủ hay không là việc của anh. Seriously.', 'Đừng có làm ồn nha. Anh cảnh báo đó.', 'Tắt đèn đi. Anh không giải thích thêm.'], park: ['Công viên gì mà nhiều người thế. 😒', 'Ừ đẹp đó. Nhưng anh không nói thêm đâu.', 'Gió ok. Anh chấp nhận. Whatever.', 'Đẹp thật — dù anh không muốn thừa nhận. 😒'], canteen: ['Ăn nhanh ăn gọn xong về ngay.', 'Đồ ăn đây bình thường. Không bình luận.', 'Anh tự gọi, không cần ai order hộ. Seriously.', 'Ăn xong đừng kéo dài. Kệ.'], pool: ['Bơi kiểu gì anh cũng thắng. Obviously. 😒', 'Đừng bắn nước anh. Anh cảnh báo đó.', 'Xuống bơi đi, đứng nhìn gì vậy. 🙄', 'Nước lạnh à? Kệ. Anh vẫn vô.'] },
+            mason: { bedroom: ['Oa phòng này xịn quá em ơi! 😍', 'Ngủ mà anh vẫn đẹp trai không nhỉ? Hehe', 'Nằm đây thả thính em giờ ta~ 💕'], park: ['Trời ơi đẹp quá đi thôi nào! 🌸', 'Anh mà đẹp trai thêm tí nữa là tội lỗi!', 'Chạy nào! Bắt được em thì cho ôm! 😂'], canteen: ['Ăn cùng anh đi cưng ơi! 🍜', 'Anh gọi hết nhé, anh bao em!', 'Ngon như anh vậy! Hehe~ 😋'], pool: ['Nhảy xuống đi! Anh đỡ em cho! 💦', 'Mặc đồ bơi anh đẹp không em? 😏', 'Bắn nước anh thì anh bắn lại liền nha! 🌊'] },
+            negav: { bedroom: ['Ừ phòng này... ngủ được nhỉ? 😅', 'Tự nhiên anh buồn ngủ quá trời luôn.', 'Gối này mềm... Anh Zzzz mất 💤'], park: ['Oa cây! Cây xanh nè em ơi! 🌳', 'Đi đâu đây ta? Công viên à? Ừ công viên.', 'Hoa đẹp! Em chụp hình không? Không? Ok. 😶'], canteen: ['Ăn gì đây? Ừ ăn thôi em.', 'Tự nhiên anh đói ghê, lạ thật. 🍚', 'Anh gọi xong rồi mới thấy gọi nhiều quá. 😂'], pool: ['Bơi á? Ừ bơi. Bơi kiểu gì ta? 🤔', 'Nước lạnh không em? Ừ lạnh. Anh vẫn xuống.', 'Sao mọi người bơi nhanh vậy? Tài thật 😮'] },
+        };
 
         const FALLBACK_INTERACT = [
-                'Ê cưng, em làm gì ở đây vậy? 😳',
-                'Em đứng gần anh quá rồi đó nha. 😒',
-                'Tình cờ gặp em ở đây... kỳ thật. 🤨',
-                'Em cũng thích chỗ này à? Ừ thì... anh cũng vậy. 😶',
-                'Anh thấy em rồi đó. Đừng giả vờ không thấy anh. 👀',
-                'Ở đây mà có thêm em nữa... anh không biết nên vui hay không. 😅',
-            ];
+            'Ê cưng, em làm gì ở đây vậy? 😳',
+            'Em đứng gần anh quá rồi đó nha. 😒',
+            'Tình cờ gặp em ở đây... kỳ thật. 🤨',
+            'Em cũng thích chỗ này à? Ừ thì... anh cũng vậy. 😶',
+            'Anh thấy em rồi đó. Đừng giả vờ không thấy anh. 👀',
+            'Ở đây mà có thêm em nữa... anh không biết nên vui hay không. 😅',
+        ];
 
         function getOfflineSolo(charId, zone) {
             const lines = FALLBACK_SOLO[charId]?.[zone];
@@ -1891,7 +1937,7 @@
             // Setup sau khi DOM sẵn sàng — lấy element sau khi openDongPhong render
         });
 
-       // Key cố định dùng nhất quán cho tina drag — tránh lỗi browser normalize case
+        // Key cố định dùng nhất quán cho tina drag — tránh lỗi browser normalize case
         const TINA_DRAG_KEY = 'text/tina-avatar';
 
         function setupTinaDrag() {
@@ -1921,7 +1967,7 @@
                 if (!touchDragging || !tinaGhost) return;
                 const t = e.touches[0];
                 tinaGhost.style.left = t.clientX + 'px';
-                tinaGhost.style.top  = t.clientY + 'px';
+                tinaGhost.style.top = t.clientY + 'px';
                 document.querySelectorAll('.dp-zone').forEach(z => z.classList.remove('tina-drag-over'));
                 const el = document.elementFromPoint(t.clientX, t.clientY);
                 const zone = el?.closest?.('.dp-zone');
@@ -2020,7 +2066,7 @@
                     e.preventDefault(); zone.classList.remove('drag-over');
                     const charId = e.dataTransfer.getData('charId');
                     if (!charId) return;
-                    
+
                     const zRect = zone.getBoundingClientRect();
                     const dropX = e.clientX - zRect.left;
                     const dropY = e.clientY - zRect.top;
@@ -2063,7 +2109,7 @@
             if (!char) return;
 
             let el = document.querySelector(`.placed-char[data-char-id="${charId}"]`);
-            
+
             if (!el) {
                 el = document.createElement('div');
                 el.className = 'placed-char char-' + charId;
@@ -2127,7 +2173,7 @@
             el.classList.toggle('home-zone', isHome);
 
             updateSidebarState();
-            
+
             // KIỂM TRA TINA: Nếu thả bạn trai vào khi Tina ĐÃ CÓ MẶT ở bất cứ đâu trong scene
             if (tinaZoneEl) {
                 // Tự động kích hoạt mode đánh ghen, dịch chuyển tức thời về phía Tina
@@ -2141,7 +2187,7 @@
         // Home zone — nơi nhân vật tỏa sáng nhất, cá gặp nước
         const CHAR_HOME_ZONE = {
             jaypark: 'park',
-            keonho:  'pool',
+            keonho: 'pool',
         };
 
         // Câu mẫu anchor — AI bám vào để không bị drift giọng
@@ -2186,7 +2232,7 @@
 
         // Voice guide chi tiết + câu mẫu anchor
         const CHAR_VOICE_GUIDE = {
-                keonho: `
+            keonho: `
 PHONG CÁCH: Năng động, rộn ràng, vô lo, hay kêu lên thán từ
 XƯNG HÔ: Xưng "anh", gọi "em" hoặc "cưng" — ngọt tự nhiên không gượng
 TỪ ĐẶC TRƯNG: "OMG", "Oa", "Ôi zời", "Hihi~", "Hehe~", "xịn ghê", "đáng yêu quá"
@@ -2391,9 +2437,9 @@ KHI Ở ZONE KHÁC: không hiểu sao cứ nhìn sang rồi tự hỏi to thành
 
         // Prompt AI để tạo lời thoại tranh giành Tina
         function buildTinaFightPrompt(char, zoneEl) {
-            const zoneKey  = zoneEl.dataset.zone;
+            const zoneKey = zoneEl.dataset.zone;
             const zoneName = zoneEl.dataset.zoneName || 'đây';
-            const vibe     = ZONE_VIBES[zoneKey] || zoneName;
+            const vibe = ZONE_VIBES[zoneKey] || zoneName;
             const voiceGuide = CHAR_VOICE_GUIDE[char.id] || '';
 
             const samePlacements = zonePlacements.get(zoneEl) || [];
@@ -2442,11 +2488,11 @@ NHIỆM VỤ: Viết đúng 1 câu thoại của ${char.name} thể hiện việ
                     newPlacements.push({ charId: char.id, el: charEl });
                     zonePlacements.set(tinaZoneEl, newPlacements);
                 }
-                
+
                 // Reset hào quang dựa theo zone mới
                 const isHome = CHAR_HOME_ZONE[char.id] === tinaZoneEl.dataset.zone;
                 charEl.classList.toggle('home-zone', isHome);
-                
+
                 activeZone = tinaZoneEl; // Bắt đầu tính thoại dựa theo zone hỗn chiến
             }
 
@@ -2459,7 +2505,7 @@ NHIỆM VỤ: Viết đúng 1 câu thoại của ${char.name} thể hiện việ
             // Nếu đã mang cờ đuổi Tina rồi, tức là đang trong chu kỳ đếm giờ ra góc
             // -> Ta chỉ cho chạy tới chỗ mới thôi, KHÔNG reset timer & thoại chào sân nữa!
             if (charEl._isChasingTina) {
-                return; 
+                return;
             }
             charEl._isChasingTina = true;
 
@@ -2550,15 +2596,15 @@ NHIỆM VỤ: Viết đúng 1 câu thoại của ${char.name} thể hiện việ
             char1El.style.left = cornerX + 'px';
             char1El.style.top = cornerY + 'px';
             // Cho đứa thứ 2 đứng sát cạnh, mặt đối mặt
-            char2El.style.left = (cornerX + 60) + 'px'; 
+            char2El.style.left = (cornerX + 60) + 'px';
             char2El.style.top = (cornerY + 10) + 'px';
 
             char1El.style.zIndex = 2000;
             char2El.style.zIndex = 2001;
 
             // Random 50-50: Đấm nhau hay Yêu nhau?
-            const isLove = Math.random() < 0.5; 
-            
+            const isLove = Math.random() < 0.5;
+
             // Chỉnh hoạt ảnh: Yêu thì nhún nhảy nhẹ nhàng, đánh thì giật đùng đùng
             char1El.style.animation = isLove ? 'charBob 2s ease-in-out infinite alternate' : 'chasingShake 0.12s ease-in-out infinite alternate';
             char2El.style.animation = isLove ? 'charBob 2s ease-in-out infinite alternate' : 'chasingShake 0.12s ease-in-out infinite alternate';
@@ -2590,10 +2636,10 @@ NHIỆM VỤ: Viết đúng 1 câu thoại của ${char.name} thể hiện việ
                 char2El._specialEvent = false;
                 char1El.style.animation = '';
                 char2El.style.animation = '';
-                
+
                 const c1 = CHARACTERS.find(c => c.id === char1El.dataset.charId);
                 const c2 = CHARACTERS.find(c => c.id === char2El.dataset.charId);
-                
+
                 if (c1) startTinaChatter(char1El, c1, zoneEl);
                 if (c2) startTinaChatter(char2El, c2, zoneEl);
             }, 8000);
@@ -2622,7 +2668,7 @@ NHIỆM VỤ: Viết đúng 1 câu thoại của ${char.name} thể hiện việ
                 }
 
                 charEl.querySelectorAll('.char-speech').forEach(s => s.remove());
-                
+
                 // Trở về quỹ đạo bay quanh Tina
                 animateChaseToTina(charEl, currentZone);
 
@@ -2652,14 +2698,14 @@ NHIỆM VỤ: Viết đúng 1 câu thoại của ${char.name} thể hiện việ
                 speech.style.zIndex = 1000 + Math.floor(Math.random() * 100);
                 charEl.appendChild(speech);
                 setTimeout(() => speech.remove(), 3800);
-            }, 4000 + Math.random() * 3000); 
+            }, 4000 + Math.random() * 3000);
         }
 
         // Hỗn chiến giành Tina
         function animateChaseToTina(charEl, charZoneEl) {
             // Không hút về phía Tina nếu nhân vật đang dắt tay nhau ra góc tâm sự
-            if (charEl._specialEvent) return; 
-            
+            if (charEl._specialEvent) return;
+
             if (!tinaZoneEl) return;
             const tinaAvatarEl = document.getElementById('tina-zone-avatar');
             if (!tinaAvatarEl) return;
@@ -2671,29 +2717,29 @@ NHIỆM VỤ: Viết đúng 1 câu thoại của ${char.name} thể hiện việ
                 const zRect = currentZone.getBoundingClientRect();
                 const tinaRect = tinaAvatarEl.getBoundingClientRect();
                 const tinaLocalX = tinaRect.left - zRect.left + tinaRect.width / 2;
-                const tinaLocalY = tinaRect.top  - zRect.top  + tinaRect.height / 2;
+                const tinaLocalY = tinaRect.top - zRect.top + tinaRect.height / 2;
 
                 const allCharsInZone = Array.from(currentZone.querySelectorAll('.placed-char'));
                 const myIndex = allCharsInZone.indexOf(charEl);
-                const total   = allCharsInZone.length;
-                
+                const total = allCharsInZone.length;
+
                 // HIỆU ỨNG TRANH GIÀNH: Quây thành vòng tròn, chừa không gian cho Tina ở giữa
                 const baseAngle = (myIndex / Math.max(total, 1)) * Math.PI * 2;
-                const jitter    = (Math.random() - 0.5) * 0.5; // Giảm xáo trộn góc để chia đều chỗ đứng
-                const angle     = baseAngle + jitter;
-                const dist      = 80 + Math.random() * 20; // Khoảng cách giãn ra cho Tina thở
+                const jitter = (Math.random() - 0.5) * 0.5; // Giảm xáo trộn góc để chia đều chỗ đứng
+                const angle = baseAngle + jitter;
+                const dist = 80 + Math.random() * 20; // Khoảng cách giãn ra cho Tina thở
 
                 const tx = tinaLocalX - 28 + Math.cos(angle) * dist;
                 const ty = tinaLocalY - 28 + Math.sin(angle) * dist;
 
-                const clampedX = Math.max(4, Math.min(zRect.width  - 70, tx));
+                const clampedX = Math.max(4, Math.min(zRect.width - 70, tx));
                 const clampedY = Math.max(30, Math.min(zRect.height - 80, ty));
 
                 // Speed lao tới nhanh mạnh
                 charEl.style.transition = 'left .4s cubic-bezier(.34,1.56,.64,1), top .4s cubic-bezier(.34,1.56,.64,1)';
                 charEl.style.left = clampedX + 'px';
-                charEl.style.top  = clampedY + 'px';
-                
+                charEl.style.top = clampedY + 'px';
+
                 // Đẩy z-index lung tung để tạo cảm giác đứa này đè đầu đứa kia
                 charEl.style.zIndex = 100 + Math.floor(Math.random() * 50);
 
@@ -2702,13 +2748,13 @@ NHIỆM VỤ: Viết đúng 1 câu thoại của ${char.name} thể hiện việ
                 // Nhân vật ở zone khác — rung lắc tại chỗ bày tỏ ghen tuông
                 charEl.style.transition = 'left .3s ease, top .3s ease';
                 const cx = parseFloat(charEl.style.left) || 0;
-                const cy = parseFloat(charEl.style.top)  || 0;
+                const cy = parseFloat(charEl.style.top) || 0;
                 // Nhảy lắc nhỏ
-                charEl.style.left = (cx + (Math.random()-0.5)*14) + 'px';
-                charEl.style.top  = (cy + (Math.random()-0.5)*10) + 'px';
+                charEl.style.left = (cx + (Math.random() - 0.5) * 14) + 'px';
+                charEl.style.top = (cy + (Math.random() - 0.5) * 10) + 'px';
                 setTimeout(() => {
                     charEl.style.left = cx + 'px';
-                    charEl.style.top  = cy + 'px';
+                    charEl.style.top = cy + 'px';
                     setTimeout(() => { charEl.style.transition = ''; }, 320);
                 }, 320);
             }
@@ -2723,12 +2769,12 @@ NHIỆM VỤ: Viết đúng 1 câu thoại của ${char.name} thể hiện việ
 
             // Tính vị trí drop nằm trong zone, fallback về giữa zone
             const zRect = zoneEl.getBoundingClientRect();
-            const relX = (typeof dropX === 'number') ? dropX : zRect.width  / 2;
+            const relX = (typeof dropX === 'number') ? dropX : zRect.width / 2;
             const relY = (typeof dropY === 'number') ? dropY : zRect.height / 2;
 
             // Clamp để ava không bị cắt bởi overflow:hidden của zone
             const AW = 68, AH = 84; // width + height xấp xỉ của wrapper (ava 62px + nametag)
-            const px = Math.max(4, Math.min(zRect.width  - AW - 4, relX - AW / 2));
+            const px = Math.max(4, Math.min(zRect.width - AW - 4, relX - AW / 2));
             const py = Math.max(30, Math.min(zRect.height - AH - 4, relY - AH / 2));
 
             const wrapper = document.createElement('div');
@@ -2740,7 +2786,7 @@ NHIỆM VỤ: Viết đúng 1 câu thoại của ${char.name} thể hiện việ
             wrapper.style.cssText = [
                 'position:absolute',
                 'left:' + px + 'px',
-                'top:'  + py + 'px',
+                'top:' + py + 'px',
                 'display:flex',
                 'flex-direction:column',
                 'align-items:center',
@@ -2779,7 +2825,7 @@ NHIỆM VỤ: Viết đúng 1 câu thoại của ${char.name} thể hiện việ
                 if (!touchDragging || !tinaGhost) return;
                 const t = e.touches[0];
                 tinaGhost.style.left = t.clientX + 'px';
-                tinaGhost.style.top  = t.clientY + 'px';
+                tinaGhost.style.top = t.clientY + 'px';
                 document.querySelectorAll('.dp-zone').forEach(z => z.classList.remove('tina-drag-over'));
                 const el = document.elementFromPoint(t.clientX, t.clientY);
                 const zone = el?.closest?.('.dp-zone');
@@ -2810,14 +2856,14 @@ NHIỆM VỤ: Viết đúng 1 câu thoại của ${char.name} thể hiện việ
                 e.stopPropagation();
                 // Dừng mọi hiển thị thoại hiện tại
                 wrapper.querySelectorAll('.char-speech').forEach(s => s.remove());
-                
+
                 // Gái Hà Nội phải về trước 10h tối
                 const speech = document.createElement('div');
                 speech.className = 'char-speech';
                 speech.textContent = 'gái hà nội phải về trước 10h 💅';
                 speech.style.zIndex = '9999';
                 wrapper.appendChild(speech);
-                
+
                 // Chờ đọc xong câu rồi mới xóa
                 setTimeout(() => {
                     removeTinaFromScene();
@@ -2891,7 +2937,7 @@ NHIỆM VỤ: Viết đúng 1 câu thoại của ${char.name} thể hiện việ
                 charEl._isChasingTina = false; // Reset cờ thời gian đuổi Tina
                 charEl._specialEvent = false;  // Tháo cờ sự kiện nếu đang dắt tay nhau ở góc
                 charEl.style.animation = '';   // Ngừng nhảy nhót lắc lư
-                
+
                 const charId = charEl.dataset.charId;
                 const char = CHARACTERS.find(c => c.id === charId);
                 if (!char) return;
@@ -2902,10 +2948,10 @@ NHIỆM VỤ: Viết đúng 1 câu thoại của ${char.name} thể hiện việ
         }
 
         function buildDialoguePrompt(char, zoneEl) {
-            const zoneKey  = zoneEl.dataset.zone;
+            const zoneKey = zoneEl.dataset.zone;
             const zoneName = zoneEl.dataset.zoneName || 'đây';
-            const vibe     = ZONE_VIBES[zoneKey] || zoneName;
-            const persona  = CHAR_PERSONAS[char.id] || 'dễ thương, thân thiện';
+            const vibe = ZONE_VIBES[zoneKey] || zoneName;
+            const persona = CHAR_PERSONAS[char.id] || 'dễ thương, thân thiện';
             const voiceGuide = CHAR_VOICE_GUIDE[char.id] || '- Xưng "anh", gọi "em", tình cảm tự nhiên';
 
             // Kiểm tra home zone — cá gặp nước
