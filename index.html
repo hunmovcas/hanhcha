@@ -884,8 +884,9 @@
         /* Main area */
         #dp-main {
             flex: 1;
-            overflow: hidden;
+            overflow: visible; /* Đã mở overflow để bong bóng thoại không bị cắt */
             position: relative;
+            z-index: 10;
         }
 
         /* Zones */
@@ -900,9 +901,14 @@
 
         .dp-zone {
             position: relative;
-            overflow: hidden;
+            overflow: visible; /* Fix lỗi cắt bóng thoại do hidden */
             border: 2px solid rgba(249, 168, 212, 0.4);
             transition: background .25s;
+        }
+        
+        /* Đảm bảo nhân vật đang nói sẽ luôn nổi layer lên trên cùng */
+        .placed-char:has(.char-speech), #tina-zone-avatar:has(.char-speech) {
+            z-index: 9999 !important;
         }
 
         .dp-zone.drag-over {
@@ -911,53 +917,61 @@
 
         /* Zone backgrounds */
         .zone-bedroom {
-            background: linear-gradient(135deg, #fce4ec 0%, #f8bbd0 100%);
+            background: url('https://images.unsplash.com/photo-1616594039964-ae9021a400a0?auto=format&fit=crop&w=800&q=80') center/cover no-repeat;
         }
 
         .zone-park {
-            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            background: url('https://images.unsplash.com/photo-1519331379826-f10be5486c6f?auto=format&fit=crop&w=800&q=80') center/cover no-repeat;
         }
 
         .zone-canteen {
-            background: linear-gradient(135deg, #fff8e1 0%, #ffe0b2 100%);
+            background: url('https://images.unsplash.com/photo-1552566626-52f8b828add9?auto=format&fit=crop&w=1200&q=80') center/cover no-repeat;
         }
 
-        .zone-cinema {
-            background: linear-gradient(135deg, #ede7f6 0%, #d1c4e9 100%);
+        .zone-pool {
+            background: url('https://images.unsplash.com/photo-1576610616656-d3aa5d1f4534?auto=format&fit=crop&w=800&q=80') center/cover no-repeat;
         }
 
-        .zone-label {
-            position: absolute;
-            top: 10px;
-            left: 14px;
-            font-size: .85rem;
+        /* Sidebar in-use state */
+        .char-card.in-use {
+            opacity: 0.4;
+            pointer-events: none;
+            filter: grayscale(100%);
+        }
+
+        .char-card.char-locked {
+            opacity: 0.55;
+            cursor: not-allowed;
+            filter: grayscale(80%);
+            border-color: #fca5a5;
+            position: relative;
+        }
+
+        .locked-badge {
+            font-size: .6rem;
             font-weight: 800;
-            color: rgba(100, 30, 80, 0.7);
-            letter-spacing: 1px;
-            pointer-events: none;
-        }
-
-        .zone-emoji {
-            position: absolute;
-            top: 8px;
-            right: 12px;
-            font-size: 1.6rem;
-            pointer-events: none;
-        }
-
-        /* Drop hint */
-        .zone-hint {
-            position: absolute;
-            inset: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: .82rem;
-            color: rgba(194, 24, 91, 0.45);
-            font-weight: 700;
-            pointer-events: none;
+            color: #dc2626;
             text-align: center;
-            padding: 8px;
+            line-height: 1.3;
+            margin-top: 2px;
+        }
+
+        .locked-tip {
+            position: absolute;
+            bottom: calc(100% + 6px);
+            left: 50%;
+            transform: translateX(-50%);
+            background: #dc2626;
+            color: #fff;
+            font-size: .65rem;
+            font-weight: 800;
+            padding: 4px 10px;
+            border-radius: 8px;
+            white-space: nowrap;
+            z-index: 50;
+            box-shadow: 0 2px 8px rgba(220,38,38,.3);
+            animation: fadeIn .2s ease;
+            pointer-events: none;
         }
 
         /* Characters placed in zone */
@@ -981,6 +995,149 @@
             border: 2px solid #e91e8c;
             pointer-events: none;
             animation: charBob 2s ease-in-out infinite alternate;
+        }
+
+        .placed-char.home-zone img {
+            border: 2px solid transparent;
+            animation: charBob 2s ease-in-out infinite alternate;
+        }
+
+        /* Keonho — hào quang xanh dương khi ở bể bơi */
+        .placed-char.home-zone.char-keonho img {
+            border-color: #38bdf8;
+            box-shadow:
+                0 0 0 3px #38bdf8,
+                0 0 14px 5px #7dd3fc,
+                0 0 30px 10px rgba(56, 189, 248, 0.55),
+                0 0 52px 16px rgba(56, 189, 248, 0.25);
+            animation: charBob 2s ease-in-out infinite alternate, keonhoGlow 1.8s ease-in-out infinite alternate;
+        }
+
+        /* Jay Park — hào quang vàng khi ở công viên */
+        .placed-char.home-zone.char-jaypark img {
+            border-color: #fbbf24;
+            box-shadow:
+                0 0 0 3px #fbbf24,
+                0 0 14px 5px #fde68a,
+                0 0 30px 10px rgba(251, 191, 36, 0.55),
+                0 0 52px 16px rgba(251, 191, 36, 0.25);
+            animation: charBob 2s ease-in-out infinite alternate, jayparkGlow 1.8s ease-in-out infinite alternate;
+        }
+
+        @keyframes keonhoGlow {
+            0% {
+                box-shadow:
+                    0 0 0 3px #38bdf8,
+                    0 0 10px 3px rgba(56,189,248,0.4),
+                    0 0 22px 7px rgba(56,189,248,0.2),
+                    0 0 40px 13px rgba(56,189,248,0.1);
+                filter: brightness(1.05);
+            }
+            100% {
+                box-shadow:
+                    0 0 0 4px #38bdf8,
+                    0 0 20px 8px rgba(56,189,248,0.65),
+                    0 0 42px 16px rgba(56,189,248,0.38),
+                    0 0 68px 24px rgba(56,189,248,0.18);
+                filter: brightness(1.18);
+            }
+        }
+
+        @keyframes jayparkGlow {
+            0% {
+                box-shadow:
+                    0 0 0 3px #fbbf24,
+                    0 0 10px 3px rgba(251,191,36,0.4),
+                    0 0 22px 7px rgba(251,191,36,0.2),
+                    0 0 40px 13px rgba(251,191,36,0.1);
+                filter: brightness(1.05);
+            }
+            100% {
+                box-shadow:
+                    0 0 0 4px #fbbf24,
+                    0 0 20px 8px rgba(251,191,36,0.65),
+                    0 0 42px 16px rgba(251,191,36,0.38),
+                    0 0 68px 24px rgba(251,191,36,0.18);
+                filter: brightness(1.18);
+            }
+        }
+
+        /* Vòng tia sáng xoay quanh ava — căn theo avatar thực tế (56x56px, top=0) */
+        .placed-char.home-zone::before {
+            content: '';
+            position: absolute;
+            top: 0px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: -1;
+            animation: ringRotate 3s linear infinite;
+        }
+
+        .placed-char.home-zone.char-keonho::before {
+            background: conic-gradient(
+                transparent 0deg,
+                rgba(56, 189, 248, 0.9) 30deg,
+                transparent 60deg,
+                transparent 120deg,
+                rgba(125, 211, 252, 0.7) 150deg,
+                transparent 180deg,
+                transparent 240deg,
+                rgba(56, 189, 248, 0.8) 270deg,
+                transparent 300deg,
+                transparent 360deg
+            );
+        }
+
+        .placed-char.home-zone.char-jaypark::before {
+            background: conic-gradient(
+                transparent 0deg,
+                rgba(251, 191, 36, 0.9) 30deg,
+                transparent 60deg,
+                transparent 120deg,
+                rgba(253, 230, 138, 0.7) 150deg,
+                transparent 180deg,
+                transparent 240deg,
+                rgba(251, 191, 36, 0.8) 270deg,
+                transparent 300deg,
+                transparent 360deg
+            );
+        }
+
+        @keyframes ringRotate {
+            from { transform: translateX(-50%) rotate(0deg); }
+            to   { transform: translateX(-50%) rotate(360deg); }
+        }
+
+        /* Hào quang nền phía sau — căn đúng theo avatar */
+        .placed-char.home-zone::after {
+            content: '';
+            position: absolute;
+            top: -6px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 78px;
+            height: 78px;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: -2;
+            animation: auraBreath 2s ease-in-out infinite alternate;
+        }
+
+        .placed-char.home-zone.char-keonho::after {
+            background: radial-gradient(circle, rgba(56,189,248,0.4) 0%, rgba(56,189,248,0.15) 50%, transparent 75%);
+        }
+
+        .placed-char.home-zone.char-jaypark::after {
+            background: radial-gradient(circle, rgba(251,191,36,0.4) 0%, rgba(251,191,36,0.15) 50%, transparent 75%);
+        }
+
+        @keyframes auraBreath {
+            0%   { transform: translateX(-50%) scale(1);    opacity: 0.7; }
+            100% { transform: translateX(-50%) scale(1.4); opacity: 1;   }
         }
 
         @keyframes charBob {
@@ -1065,14 +1222,34 @@
             }
         }
 
-        /* Zone decorations */
-        .zone-deco {
+        /* Đã xóa zone decorations cũ */
+
+        /* Nút xóa nhân vật khỏi zone */
+        .char-remove-btn {
             position: absolute;
-            pointer-events: none;
-            font-size: 1.8rem;
-            opacity: .35;
-            bottom: 12px;
-            right: 16px;
+            top: -6px;
+            right: -6px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: none;
+            background: #e91e8c;
+            color: #fff;
+            font-size: .65rem;
+            font-weight: 900;
+            line-height: 1;
+            cursor: pointer;
+            z-index: 30;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(233,30,140,.45);
+            transition: transform .15s, background .15s;
+            padding: 0;
+        }
+        .char-remove-btn:hover {
+            transform: scale(1.2);
+            background: #c2185b;
         }
 
         @keyframes fadeIn {
@@ -1119,6 +1296,73 @@
                 line-height: 1.35;
             }
         }
+
+        /* ── TINA AVATAR (header) ── */
+        #tina-header-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            object-fit: cover;
+            object-position: center top;
+            border: 3px solid #f472b6;
+            box-shadow: 0 0 0 2px #fff, 0 4px 14px rgba(233,30,140,.35);
+            cursor: grab;
+            flex-shrink: 0;
+            transition: transform .2s, box-shadow .2s;
+            user-select: none;
+        }
+        #tina-header-avatar:hover {
+            transform: scale(1.13);
+            box-shadow: 0 0 0 3px #fff, 0 6px 22px rgba(233,30,140,.55);
+        }
+        #tina-header-avatar:active { cursor: grabbing; }
+
+        /* Tina đã được thả vào zone */
+        #tina-zone-avatar {
+            position: absolute;
+            z-index: 50;
+            pointer-events: none;
+            transition: left .55s cubic-bezier(.34,1.56,.64,1), top .55s cubic-bezier(.34,1.56,.64,1);
+        }
+        #tina-zone-avatar img {
+            width: 62px;
+            height: 62px;
+            border-radius: 50%;
+            object-fit: cover;
+            object-position: center top;
+            border: 3px solid #e91e8c;
+            box-shadow: 0 0 0 3px #fff8, 0 0 18px 6px rgba(233,30,140,.45), 0 0 38px 12px rgba(233,30,140,.2);
+            animation: tinaPulse 1.6s ease-in-out infinite alternate;
+        }
+        #tina-zone-avatar .tina-name-tag {
+            text-align: center;
+            font-size: .68rem;
+            font-weight: 900;
+            color: #e91e8c;
+            text-shadow: 0 1px 4px #fff, 0 0 8px rgba(233,30,140,.5);
+            margin-top: 3px;
+            letter-spacing: .5px;
+        }
+        @keyframes tinaPulse {
+            0%  { box-shadow: 0 0 0 3px #fff8, 0 0 14px 4px rgba(233,30,140,.4),  0 0 28px 8px rgba(233,30,140,.15); }
+            100%{ box-shadow: 0 0 0 4px #fff8, 0 0 28px 10px rgba(233,30,140,.65), 0 0 52px 18px rgba(233,30,140,.28); }
+        }
+
+        /* Nhân vật đang lao về phía Tina */
+        .placed-char.chasing-tina img {
+            animation: charBob 2s ease-in-out infinite alternate, chasingShake .35s ease-in-out infinite alternate;
+        }
+        @keyframes chasingShake {
+            0%  { transform: translateY(0) rotate(-6deg); }
+            100%{ transform: translateY(-4px) rotate(6deg); }
+        }
+
+        /* Tina drop-zone highlight */
+        .dp-zone.tina-drag-over {
+            outline: 3px dashed #e91e8c;
+            outline-offset: -4px;
+            background: rgba(233,30,140,.07) !important;
+        }
     </style>
 </head>
 
@@ -1136,7 +1380,7 @@
                         <span class="mi-icon">🎂</span>
                         <span class="mi-icon">💖</span>
                     </div>
-                    <h2>Mừng Sinh Nhật Bé Yêu! 🎉</h2>
+                    <h2>Mừng Sinh Nhật Yêu! 🎉</h2>
                     <p>Chào em Hà Trang. Anh là Mason&nbsp;Nguyễn đây.
                     Chúc tình yêu tuổi mới thật vui vẻ nhớ.</p>
                     <p>Anh eo em bét nhòe. 🥰
@@ -1192,7 +1436,11 @@
     <div id="dongphong-scene">
         <div id="dp-header">
             <h2>🌸 Động Phòng Hoa Chúc 🌸</h2>
-            <button id="dp-back-btn">← Quay lại</button>
+            <div style="display:flex;align-items:center;gap:10px;flex-shrink:0;">
+                <img id="tina-header-avatar" src="tina.png" alt="Tina" draggable="true"
+                     title="Kéo Tina vào zone để các bạn trai tranh giành! 💖" />
+                <button id="dp-back-btn">← Quay lại</button>
+            </div>
         </div>
         <div id="dp-body">
             <div id="dp-sidebar">
@@ -1201,30 +1449,10 @@
             </div>
             <div id="dp-main">
                 <div id="dp-zones">
-                    <div class="dp-zone zone-bedroom" data-zone="bedroom" data-zone-name="Phòng ngủ">
-                        <div class="zone-label">🛏️ Phòng ngủ</div>
-                        <div class="zone-emoji">🌙</div>
-                        <div class="zone-hint">Kéo thả nhân vật vào đây</div>
-                        <div class="zone-deco">🛏️</div>
-                    </div>
-                    <div class="dp-zone zone-park" data-zone="park" data-zone-name="Công viên">
-                        <div class="zone-label">🌳 Công viên</div>
-                        <div class="zone-emoji">🌸</div>
-                        <div class="zone-hint">Kéo thả nhân vật vào đây</div>
-                        <div class="zone-deco">🌳</div>
-                    </div>
-                    <div class="dp-zone zone-canteen" data-zone="canteen" data-zone-name="Nhà ăn">
-                        <div class="zone-label">🍽️ Nhà ăn</div>
-                        <div class="zone-emoji">🍜</div>
-                        <div class="zone-hint">Kéo thả nhân vật vào đây</div>
-                        <div class="zone-deco">🍽️</div>
-                    </div>
-                    <div class="dp-zone zone-cinema" data-zone="cinema" data-zone-name="Rạp chiếu phim">
-                        <div class="zone-label">🎬 Rạp chiếu phim</div>
-                        <div class="zone-emoji">🎭</div>
-                        <div class="zone-hint">Kéo thả nhân vật vào đây</div>
-                        <div class="zone-deco">🍿</div>
-                    </div>
+                    <div class="dp-zone zone-canteen" data-zone="canteen" data-zone-name="Nhà ăn"></div>
+                    <div class="dp-zone zone-park" data-zone="park" data-zone-name="Công viên"></div>
+                    <div class="dp-zone zone-bedroom" data-zone="bedroom" data-zone-name="Phòng ngủ"></div>
+                    <div class="dp-zone zone-pool" data-zone="pool" data-zone-name="Bể bơi"></div>
                 </div>
             </div>
         </div>
@@ -1372,7 +1600,7 @@
             const isMobile = VW < 600;
 
             const VARIANTS = ['v0', 'v1', 'v2', 'v3', 'v4'];
-            const MAX_BUBBLES = isMobile ? 35 : MESSAGES.length; // Tăng số lượng tin nhắn trên mobile
+            const MAX_BUBBLES = MESSAGES.length;
             const shuffled = [...MESSAGES].sort(() => Math.random() - .5).slice(0, MAX_BUBBLES);
 
             // Ước tính kích thước ngay, không chờ layout
@@ -1529,82 +1757,229 @@
             { id: 'negav', name: 'Negav', img: 'images/negav.png' },
             { id: 'ohyul', name: 'Ohyul', img: 'images/ohyul.png' },
             { id: 'ryul', name: 'Ryul', img: 'images/ryul.png' },
-            { id: 'sonhoang', name: 'Sơn Hoàng', img: 'images/sonhoang.png' },
+            { id: 'sean', name: 'Sean', img: 'images/sean.png' },
         ];
 
-        const ZONE_DIALOGUES = {
-            bedroom: [
-                'Ừm... buồn ngủ quá 😴', 'Ngủ cùng mình nhé? 🌙', 'Đêm nay ngủ ngon nha 💤',
-                'Gối này thơm ghê 🌸', 'Mình nằm đây nghĩ về em nè ❤️', 'Aaaa ngủ tiếp thôi~ 😪'
-            ],
-            park: [
-                'Trời hôm nay đẹp ghê! 🌸', 'Đi dạo công viên cùng mình nha 🌳',
-                'Nhìn hoa nở mà nhớ em ghê 🌷', 'Hít thở không khí trong lành nào 🍃',
-                'Chạy nào! Bắt được thì tặng quà 🏃', 'Ngồi đây ngắm hoàng hôn nha 🌅'
-            ],
-            canteen: [
-                'Ăn gì hôm nay vậy? 🍜', 'Mình gọi phần cho em nhé 🥰',
-                'Cơm ngon ghê á! 🍚', 'Ăn thêm đi, trời ơi gầy vậy! 😄',
-                'Đây là món em thích nè 💕', 'Ăn cùng mình cho vui nha~ 🍱'
-            ],
-            cinema: [
-                'Phim gì chiếu tối nay nhỉ? 🎬', 'Nhường ghế ngồi bên mình nha 🎭',
-                'Mình mua bắp rang cho em! 🍿', 'Ôi đoạn này hay ghê á! 😲',
-                'Nắm tay mình xem phim nha 🤝', 'Hết phim rồi, về thôi em ơi 🌙'
-            ]
+        const CHAR_PERSONAS = {
+            keonho:   'năng động, hoạt bát, tươi sáng, đáng yêu, vô tư — luôn vui vẻ rộn ràng, hay kêu lên thán từ kiểu "OMG!", "Oa xịn ghê!", hay cười haha. Xưng "anh" gọi người kia là "em" hoặc "cưng", ngọt ngào tự nhiên',
+            jihoon:   'trầm tĩnh, nội tâm, thu hút ngầm, chân thực, quan sát — ít nói nhưng câu nào ra câu đó, hay nhìn xa xăm, suy nghĩ sâu. Xưng "anh" gọi người kia là "em", kiệm lời nhưng tình cảm ẩn sau từng chữ',
+            sean:     'điềm đạm, bí ẩn, lôi cuốn, chân thành, vững chãi — nói chậm rãi, tự tin, không cần chứng minh gì. Xưng "anh" gọi người kia là "em" hoặc "người đẹp", giọng trầm ấm như đang che chở',
+            jaypark:  'bản lĩnh, tự tin, phóng khoáng, tầm nhìn, lãnh đạo — luôn làm chủ tình huống, ra quyết định dứt khoát, vibe boss. Xưng "anh" gọi người kia là "em" hoặc "bé", tự nhiên như hít thở',
+            ryul:     'gai góc, thẳng thắn, ngông nghênh, bụi bặm, phá cách — nói thẳng không ngại, chảnh nhưng dễ thương. Xưng "anh" gọi người kia là "em" hoặc đôi khi "ê cưng" kiểu nửa chảnh nửa thương',
+            mason:    'sôi nổi, lém lỉnh, duyên dáng, hoạt ngôn, bùng nổ — nói nhiều cười nhiều, hay thả thính vô tội vạ, năng lượng không giới hạn. Xưng "anh" gọi người kia là "em" hoặc "cục cưng", ngọt lịm tự nhiên',
+            negav:    'hài hước, tích cực, ngây ngô, gần gũi, tự nhiên — hay nói sai chủ đề rồi tự nhận ra, meme walking. Xưng "anh" gọi người kia là "em" hoặc "bạn ơi" khi ngây ngô quên mất đang thả thính',
         };
 
-        const MULTI_DIALOGUES = [
-            'Đông vui ghê hen! 🎉', 'Tụ tập thế này vui quá 😄',
-            'Nhiều người quá, chen chút nào~ 😂', 'Cùng nhau vui nè! 🥳'
-        ];
+        const ZONE_VIBES = {
+            bedroom:  'phòng ngủ ấm cúng, ánh đèn vàng dịu, không khí lãng mạn buồn ngủ',
+            park:     'công viên ngoài trời, hoa nở, gió mát, bầu không khí dễ chịu tươi sáng',
+            canteen:  'nhà ăn náo nhiệt, mùi thức ăn thơm, bàn ghế đông người, không khí vui vẻ',
+            pool:     'bể bơi, nắng hè, tiếng nước bắn tóe, không khí mát mẻ thư giãn',
+        };
 
-        function getZoneDialogue(zone, charId, othersInZone) {
-            const base = ZONE_DIALOGUES[zone] || ['Vui quá á! 😊'];
-            if (othersInZone.length > 0) {
-                const names = othersInZone.map(id => CHARACTERS.find(c => c.id === id)?.name || id).join(' và ');
-                const multiLines = [
-                    `Vui khi có ${names} ở đây! 🎉`,
-                    `${names} ơi, cùng chơi nào~ 😄`,
-                    `Hôm nay có cả ${names} nữa kìa! 🥳`
-                ];
-                return multiLines[Math.floor(Math.random() * multiLines.length)];
-            }
-            return base[Math.floor(Math.random() * base.length)];
+        // Fallback offline — dùng khi API lỗi
+        const FALLBACK_SOLO = {
+                keonho: { bedroom: ['Oa phòng này cute ghê! 🌸', 'Anh ngủ được không ta? Hehe~ 😆', 'Gối thơm quá OMG! 💕', 'Em yêu chị Lam Lam không? Anh yêu lắm đó! 💕'], park: ['Trời đẹp zời ơi! OMG! 🌸', 'Chạy đua nào, em thua thì anh mời trà! 🏃', 'Hoa nở nhiều ghê xịn vậy! 🌷', 'OMG chị Lam Lam mà ở đây chắc anh xỉu! 💕'], canteen: ['Ăn gì đây OMG ngon quá! 🍜', 'Anh gọi hết menu được không ahihi~ 😋', 'Cơm nóng ăn là phê liền! 🍚'], pool: ['Nước trong veo nhảy vô liền! 💦', 'OMG mát quá đi! 🏊', 'Em ơi bắn nước không? Hihi~ 🌊', 'Em yêu chị Lam Lam nha! Anh cũng yêu! 💙'] },
+                jihoon: { bedroom: ['...Yên tĩnh thật. Anh thích.', 'Nằm đây nghe tim anh đập thôi.', 'Đêm như này anh nghĩ nhiều lắm.'], park: ['Gió hôm nay lạ thật.', 'Nhìn lá rụng mà anh cứ nghĩ mông lung...', 'Hoa nở rồi cũng tàn thôi. 🌷'], canteen: ['Ăn một mình cũng được.', 'Quan sát người xung quanh thú vị nhỉ.', 'Cơm này... ổn.'], pool: ['Nước im lặng cũng có sức nặng riêng.', 'Nhìn mặt nước mà anh thấy bình.', 'Bơi một mình đôi khi anh cần vậy.'] },
+                sean: { bedroom: ['Em cứ nghỉ đi. Mọi thứ ổn.', 'Đêm nay dài, nhưng sẽ qua.', '...Anh ở đây.'], park: ['Trời đẹp. Không cần nói nhiều.', 'Đi bộ thôi. Không vội.', 'Gió này... dễ chịu.'], canteen: ['Em gọi gì cũng được. Anh trả.', 'Ăn từ từ. Không đi đâu hết.', '...Ngon không em?'], pool: ['Bơi đi. Đừng nghĩ nhiều.', 'Nước sẽ gánh hộ một lúc.', 'Anh ở bờ chờ em.'] },
+                jaypark: { bedroom: ['Nghỉ ngơi cũng là chiến lược. 😎', 'Ngủ đủ giấc, mai anh còn chinh phục.', 'Phòng này... được. Anh approved. 😎'], park: ['Vibe ở đây chuẩn, anh approve ngay. 😎', 'Không gian này level khác hẳn, bé ơi.', 'Anh sinh ra để đứng ở đây. 👑', 'Park trong park — không ai level này đâu. 😎'], canteen: ['Gọi phần lớn nhất. Anh bao em.', 'Ăn no rồi mới làm được việc lớn.', 'Năng lượng từ bữa ăn không đùa được.'], pool: ['Bơi 50 vòng, khởi động thôi.', 'Thân thể là vũ khí, phải rèn.', 'Ai race cùng anh không? 😤'] },
+                ryul: { bedroom: ['Phòng anh, anh nằm trước. Kệ. 😒', 'Ngủ hay không là việc của anh. Seriously.', 'Đừng có làm ồn nha. Anh cảnh báo đó.', 'Tắt đèn đi. Anh không giải thích thêm.'], park: ['Công viên gì mà nhiều người thế. 😒', 'Ừ đẹp đó. Nhưng anh không nói thêm đâu.', 'Gió ok. Anh chấp nhận. Whatever.', 'Đẹp thật — dù anh không muốn thừa nhận. 😒'], canteen: ['Ăn nhanh ăn gọn xong về ngay.', 'Đồ ăn đây bình thường. Không bình luận.', 'Anh tự gọi, không cần ai order hộ. Seriously.', 'Ăn xong đừng kéo dài. Kệ.'], pool: ['Bơi kiểu gì anh cũng thắng. Obviously. 😒', 'Đừng bắn nước anh. Anh cảnh báo đó.', 'Xuống bơi đi, đứng nhìn gì vậy. 🙄', 'Nước lạnh à? Kệ. Anh vẫn vô.'] },
+                mason: { bedroom: ['Oa phòng này xịn quá em ơi! 😍', 'Ngủ mà anh vẫn đẹp trai không nhỉ? Hehe', 'Nằm đây thả thính em giờ ta~ 💕'], park: ['Trời ơi đẹp quá đi thôi nào! 🌸', 'Anh mà đẹp trai thêm tí nữa là tội lỗi!', 'Chạy nào! Bắt được em thì cho ôm! 😂'], canteen: ['Ăn cùng anh đi cưng ơi! 🍜', 'Anh gọi hết nhé, anh bao em!', 'Ngon như anh vậy! Hehe~ 😋'], pool: ['Nhảy xuống đi! Anh đỡ em cho! 💦', 'Mặc đồ bơi anh đẹp không em? 😏', 'Bắn nước anh thì anh bắn lại liền nha! 🌊'] },
+                negav: { bedroom: ['Ừ phòng này... ngủ được nhỉ? 😅', 'Tự nhiên anh buồn ngủ quá trời luôn.', 'Gối này mềm... Anh Zzzz mất 💤'], park: ['Oa cây! Cây xanh nè em ơi! 🌳', 'Đi đâu đây ta? Công viên à? Ừ công viên.', 'Hoa đẹp! Em chụp hình không? Không? Ok. 😶'], canteen: ['Ăn gì đây? Ừ ăn thôi em.', 'Tự nhiên anh đói ghê, lạ thật. 🍚', 'Anh gọi xong rồi mới thấy gọi nhiều quá. 😂'], pool: ['Bơi á? Ừ bơi. Bơi kiểu gì ta? 🤔', 'Nước lạnh không em? Ừ lạnh. Anh vẫn xuống.', 'Sao mọi người bơi nhanh vậy? Tài thật 😮'] },
+            };
+
+        const FALLBACK_INTERACT = [
+                'Ê cưng, em làm gì ở đây vậy? 😳',
+                'Em đứng gần anh quá rồi đó nha. 😒',
+                'Tình cờ gặp em ở đây... kỳ thật. 🤨',
+                'Em cũng thích chỗ này à? Ừ thì... anh cũng vậy. 😶',
+                'Anh thấy em rồi đó. Đừng giả vờ không thấy anh. 👀',
+                'Ở đây mà có thêm em nữa... anh không biết nên vui hay không. 😅',
+            ];
+
+        function getOfflineSolo(charId, zone) {
+            const lines = FALLBACK_SOLO[charId]?.[zone];
+            if (lines?.length) return lines[Math.floor(Math.random() * lines.length)];
+            return 'Ở đây cũng hay đó~ 😊';
+        }
+
+        function getOfflineInteract() {
+            return FALLBACK_INTERACT[Math.floor(Math.random() * FALLBACK_INTERACT.length)];
+        }
+
+        // Lấy tất cả nhân vật đang được đặt trong các zone khác (ngoại trừ zone hiện tại)
+        function getCharsInOtherZones(currentZoneEl) {
+            const result = [];
+            document.querySelectorAll('.dp-zone').forEach(z => {
+                if (z === currentZoneEl) return;
+                const placements = zonePlacements.get(z) || [];
+                placements.forEach(p => {
+                    const charData = CHARACTERS.find(c => c.id === p.charId);
+                    if (charData) result.push({ charId: p.charId, name: charData.name, zone: z.dataset.zone, zoneName: z.dataset.zoneName });
+                });
+            });
+            return result;
         }
 
         // Track placed chars per zone: { zoneEl: [{charId, el}] }
         const zonePlacements = new WeakMap();
 
+        let zoneDropsConfigured = false;
+
+        function updateSidebarState() {
+            const placedIds = Array.from(document.querySelectorAll('.placed-char')).map(el => el.dataset.charId);
+            document.querySelectorAll('.char-card').forEach(card => {
+                if (placedIds.includes(card.dataset.charId)) {
+                    card.classList.add('in-use');
+                    card.draggable = false;
+                } else {
+                    card.classList.remove('in-use');
+                    card.draggable = true;
+                }
+            });
+        }
+
         function openDongPhong() {
             buildDpSidebar();
-            setupZoneDrops();
+            if (!zoneDropsConfigured) {
+                setupZoneDrops();
+                zoneDropsConfigured = true;
+            }
             document.getElementById('dongphong-scene').classList.add('active');
-            // clear all placed chars
+            // clear all placed chars + reset Tina
+            removeTinaFromScene();
             document.querySelectorAll('.dp-zone').forEach(z => {
                 z.querySelectorAll('.placed-char').forEach(c => c.remove());
                 zonePlacements.set(z, []);
             });
+            updateSidebarState();
+            // Setup Tina drag sau khi header đã render
+            setTimeout(setupTinaDrag, 100);
         }
 
         document.getElementById('dp-back-btn').addEventListener('click', () => {
+            removeTinaFromScene();
             document.getElementById('dongphong-scene').classList.remove('active');
         });
 
+        // ── Tina header avatar drag ──
+        document.addEventListener('DOMContentLoaded', () => {
+            // Setup sau khi DOM sẵn sàng — lấy element sau khi openDongPhong render
+        });
+
+       // Key cố định dùng nhất quán cho tina drag — tránh lỗi browser normalize case
+        const TINA_DRAG_KEY = 'text/tina-avatar';
+
+        function setupTinaDrag() {
+            const tinaAvatar = document.getElementById('tina-header-avatar');
+            if (!tinaAvatar || tinaAvatar._tinaDragReady) return;
+            tinaAvatar._tinaDragReady = true;
+
+            // Desktop drag
+            tinaAvatar.addEventListener('dragstart', e => {
+                e.dataTransfer.setData(TINA_DRAG_KEY, '1');
+                e.dataTransfer.effectAllowed = 'copy';
+            });
+
+            // Touch drag cho mobile
+            let touchDragging = false;
+            let tinaGhost = null;
+
+            tinaAvatar.addEventListener('touchstart', e => {
+                touchDragging = true;
+                tinaGhost = document.createElement('img');
+                tinaGhost.src = 'tina.png';
+                tinaGhost.style.cssText = 'position:fixed;width:56px;height:56px;border-radius:50%;object-fit:cover;object-position:center top;border:3px solid #e91e8c;box-shadow:0 4px 18px rgba(233,30,140,.5);pointer-events:none;z-index:99999;opacity:.85;transform:translate(-50%,-50%)';
+                document.body.appendChild(tinaGhost);
+            }, { passive: true });
+
+            tinaAvatar.addEventListener('touchmove', e => {
+                if (!touchDragging || !tinaGhost) return;
+                const t = e.touches[0];
+                tinaGhost.style.left = t.clientX + 'px';
+                tinaGhost.style.top  = t.clientY + 'px';
+                document.querySelectorAll('.dp-zone').forEach(z => z.classList.remove('tina-drag-over'));
+                const el = document.elementFromPoint(t.clientX, t.clientY);
+                const zone = el?.closest?.('.dp-zone');
+                if (zone) zone.classList.add('tina-drag-over');
+            }, { passive: true });
+
+            tinaAvatar.addEventListener('touchend', e => {
+                if (!touchDragging) return;
+                touchDragging = false;
+                if (tinaGhost) { tinaGhost.remove(); tinaGhost = null; }
+                document.querySelectorAll('.dp-zone').forEach(z => z.classList.remove('tina-drag-over'));
+                const t = e.changedTouches[0];
+                const el = document.elementFromPoint(t.clientX, t.clientY);
+                const zone = el?.closest?.('.dp-zone');
+                if (zone) {
+                    const zRect = zone.getBoundingClientRect();
+                    placeTinaInZone(zone, t.clientX - zRect.left, t.clientY - zRect.top);
+                }
+            }, { passive: true });
+
+            // Zone drop cho desktop — dùng TINA_DRAG_KEY nhất quán
+            document.querySelectorAll('.dp-zone').forEach(zone => {
+                zone.addEventListener('dragover', e => {
+                    if (e.dataTransfer.types.includes(TINA_DRAG_KEY)) {
+                        e.preventDefault();
+                        e.dataTransfer.dropEffect = 'copy';
+                        zone.classList.add('tina-drag-over');
+                    }
+                });
+                zone.addEventListener('dragleave', e => {
+                    // Chỉ xóa highlight khi rời hẳn zone, không phải khi hover vào child element
+                    if (!zone.contains(e.relatedTarget)) {
+                        zone.classList.remove('tina-drag-over');
+                    }
+                });
+                zone.addEventListener('drop', e => {
+                    zone.classList.remove('tina-drag-over');
+                    const val = e.dataTransfer.getData(TINA_DRAG_KEY);
+                    if (!val) return;
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const zRect = zone.getBoundingClientRect();
+                    placeTinaInZone(zone, e.clientX - zRect.left, e.clientY - zRect.top);
+                });
+            });
+        }
+
+        const LOCKED_CHARS = ['ohyul'];
+
         function buildDpSidebar() {
             const sidebar = document.getElementById('dp-sidebar');
-            // Remove existing char cards but keep h4
             sidebar.querySelectorAll('.char-card').forEach(c => c.remove());
             CHARACTERS.forEach(char => {
+                const isLocked = LOCKED_CHARS.includes(char.id);
                 const card = document.createElement('div');
-                card.className = 'char-card';
-                card.draggable = true;
+                card.className = 'char-card' + (isLocked ? ' char-locked' : '');
+                card.draggable = !isLocked;
                 card.dataset.charId = char.id;
-                card.innerHTML = `<img src="${char.img}" alt="${char.name}"><span>${char.name}</span>`;
-                card.addEventListener('dragstart', e => {
-                    e.dataTransfer.setData('charId', char.id);
-                    e.dataTransfer.effectAllowed = 'copy';
-                });
+
+                const lockedBadge = isLocked
+                    ? `<div class="locked-badge">🚫 Không thể chọn</div>`
+                    : '';
+                card.innerHTML = `<img src="${char.img}" alt="${char.name}"><span>${char.name}</span>${lockedBadge}`;
+
+                if (isLocked) {
+                    card.addEventListener('click', () => {
+                        // Hiện tooltip ngắn
+                        let tip = card.querySelector('.locked-tip');
+                        if (tip) return;
+                        tip = document.createElement('div');
+                        tip.className = 'locked-tip';
+                        tip.textContent = 'Nhân vật này không thể chọn!';
+                        card.appendChild(tip);
+                        setTimeout(() => tip.remove(), 1800);
+                    });
+                } else {
+                    card.addEventListener('dragstart', e => {
+                        if (card.classList.contains('in-use')) { e.preventDefault(); return; }
+                        e.dataTransfer.setData('charId', char.id);
+                        e.dataTransfer.effectAllowed = 'copyMove';
+                    });
+                }
                 sidebar.appendChild(card);
             });
         }
@@ -1613,7 +1988,7 @@
             document.querySelectorAll('.dp-zone').forEach(zone => {
                 if (!zonePlacements.has(zone)) zonePlacements.set(zone, []);
                 zone.addEventListener('dragover', e => {
-                    e.preventDefault(); e.dataTransfer.dropEffect = 'copy';
+                    e.preventDefault(); e.dataTransfer.dropEffect = 'move';
                     zone.classList.add('drag-over');
                 });
                 zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
@@ -1621,115 +1996,992 @@
                     e.preventDefault(); zone.classList.remove('drag-over');
                     const charId = e.dataTransfer.getData('charId');
                     if (!charId) return;
-                    const placements = zonePlacements.get(zone);
-                    // Allow multiple of same char
-                    dropCharIntoZone(charId, zone, e.offsetX, e.offsetY);
+                    
+                    const zRect = zone.getBoundingClientRect();
+                    const dropX = e.clientX - zRect.left;
+                    const dropY = e.clientY - zRect.top;
+
+                    moveOrPlaceChar(charId, zone, dropX, dropY);
                 });
             });
         }
 
-        function dropCharIntoZone(charId, zoneEl, dropX, dropY) {
+        function removeCharFromZone(charEl, charId) {
+            // Tìm zone chứa char
+            let ownerZone = null;
+            document.querySelectorAll('.dp-zone').forEach(z => {
+                if (z.contains(charEl)) ownerZone = z;
+            });
+
+            // Dừng chatter timer
+            if (charEl._chatterTimer) clearInterval(charEl._chatterTimer);
+
+            // Hiển thị lời kêu la trước khi xóa
+            charEl.querySelectorAll('.char-speech').forEach(s => s.remove());
+            const cry = document.createElement('div');
+            cry.className = 'char-speech';
+            cry.textContent = 'Đừng xóa anh mà aa~ 😭';
+            charEl.appendChild(cry);
+
+            setTimeout(() => {
+                if (ownerZone) {
+                    let placements = zonePlacements.get(ownerZone) || [];
+                    placements = placements.filter(p => p.charId !== charId);
+                    zonePlacements.set(ownerZone, placements);
+                }
+                charEl.remove();
+                updateSidebarState();
+            }, 900);
+        }
+
+        function moveOrPlaceChar(charId, zoneEl, dropX, dropY) {
             const char = CHARACTERS.find(c => c.id === charId);
             if (!char) return;
 
-            const el = document.createElement('div');
-            el.className = 'placed-char';
-            el.dataset.charId = charId;
+            let el = document.querySelector(`.placed-char[data-char-id="${charId}"]`);
+            
+            if (!el) {
+                el = document.createElement('div');
+                el.className = 'placed-char char-' + charId;
+                el.dataset.charId = charId;
+                el.draggable = true;
 
-            const img = document.createElement('img');
-            img.src = char.img; img.alt = char.name;
-            const nameEl = document.createElement('div');
-            nameEl.className = 'char-name'; nameEl.textContent = char.name;
-            el.appendChild(img); el.appendChild(nameEl);
+                const img = document.createElement('img');
+                img.src = char.img; img.alt = char.name;
+                const nameEl = document.createElement('div');
+                nameEl.className = 'char-name'; nameEl.textContent = char.name;
 
-            // Position
+                // Nút xóa ✕
+                const removeBtn = document.createElement('button');
+                removeBtn.className = 'char-remove-btn';
+                removeBtn.textContent = '✕';
+                removeBtn.title = 'Xóa khỏi zone';
+                removeBtn.addEventListener('click', e => {
+                    e.stopPropagation();
+                    removeCharFromZone(el, charId);
+                });
+                removeBtn.addEventListener('touchend', e => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    removeCharFromZone(el, charId);
+                });
+
+                el.appendChild(removeBtn);
+                el.appendChild(img);
+                el.appendChild(nameEl);
+
+                el.addEventListener('dragstart', e => {
+                    e.dataTransfer.setData('charId', charId);
+                    e.dataTransfer.effectAllowed = 'move';
+                    setTimeout(() => el.style.opacity = '0.4', 0);
+                });
+                el.addEventListener('dragend', () => {
+                    el.style.opacity = '1';
+                });
+            } else {
+                document.querySelectorAll('.dp-zone').forEach(z => {
+                    let placements = zonePlacements.get(z) || [];
+                    placements = placements.filter(p => p.charId !== charId);
+                    zonePlacements.set(z, placements);
+                });
+            }
+
             const zRect = zoneEl.getBoundingClientRect();
             let px = dropX - 28, py = dropY - 28;
             px = Math.max(4, Math.min(zRect.width - 70, px));
             py = Math.max(30, Math.min(zRect.height - 80, py));
             el.style.left = px + 'px'; el.style.top = py + 'px';
 
-            // Drag inside zone
-            makeDraggableInZone(el, zoneEl);
-
             zoneEl.appendChild(el);
+
             const placements = zonePlacements.get(zoneEl) || [];
             placements.push({ charId, el });
             zonePlacements.set(zoneEl, placements);
 
-            // Speech bubble with AI
-            showTypingThenSpeak(el, char, zoneEl);
+            // Glow home zone
+            const isHome = CHAR_HOME_ZONE[charId] === zoneEl.dataset.zone;
+            el.classList.toggle('home-zone', isHome);
+
+            updateSidebarState();
+            
+            // KIỂM TRA TINA: Nếu thả bạn trai vào khi Tina ĐÃ CÓ MẶT ở bất cứ đâu trong scene
+            if (tinaZoneEl) {
+                // Tự động kích hoạt mode đánh ghen, dịch chuyển tức thời về phía Tina
+                triggerTinaReaction(el, char, zoneEl);
+            } else {
+                // Nếu Tina chưa xuất hiện, hoạt động bình thường
+                showTypingThenSpeak(el, char, zoneEl);
+            }
         }
 
-        function makeDraggableInZone(charEl, zoneEl) {
-            let isDragging = false, startX, startY, origLeft, origTop;
-            charEl.addEventListener('mousedown', e => {
-                if (e.target.tagName === 'IMG' || e.target.classList.contains('char-name') || e.target === charEl) {
-                    isDragging = true;
-                    const zRect = zoneEl.getBoundingClientRect();
-                    startX = e.clientX; startY = e.clientY;
-                    origLeft = parseInt(charEl.style.left) || 0;
-                    origTop = parseInt(charEl.style.top) || 0;
-                    charEl.style.zIndex = 50; e.preventDefault();
-                }
-            });
-            document.addEventListener('mousemove', e => {
-                if (!isDragging) return;
-                const zRect = zoneEl.getBoundingClientRect();
-                let nx = origLeft + (e.clientX - startX);
-                let ny = origTop + (e.clientY - startY);
-                nx = Math.max(4, Math.min(zRect.width - 70, nx));
-                ny = Math.max(30, Math.min(zRect.height - 80, ny));
-                charEl.style.left = nx + 'px'; charEl.style.top = ny + 'px';
-            });
-            document.addEventListener('mouseup', () => { if (isDragging) { isDragging = false; charEl.style.zIndex = 10; } });
+        // Home zone — nơi nhân vật tỏa sáng nhất, cá gặp nước
+        const CHAR_HOME_ZONE = {
+            jaypark: 'park',
+            keonho:  'pool',
+        };
+
+        // Câu mẫu anchor — AI bám vào để không bị drift giọng
+        const CHAR_SAMPLE_LINES = {
+            keonho: [
+                'OMG bơi cùng anh đi cưng ơi! 🏊',
+                'Oa xịn ghê, anh thích chỗ này lắm! 🌸',
+                'Hehe~ anh nhìn em mà tự nhiên vui ghê! 💕',
+                'Em yêu chị Lam Lam 💕',
+            ],
+            jihoon: [
+                'Em ở đây... anh không nói gì, chỉ nhìn thôi.',
+                'Gió hôm nay lạ thật. 🌿',
+                '...Anh thấy em rồi.',
+            ],
+            sean: [
+                'Anh ở đây. Em cứ yên tâm.',
+                'Không cần vội. Anh đợi được.',
+                'Ngon không em? Anh gọi thêm cho.',
+            ],
+            jaypark: [
+                'Vibe ở đây chuẩn quá, anh approve. 😎',
+                'Không gian này level khác hẳn.',
+                'Anh không cần tranh — anh đã là nhân vật chính rồi, bé ơi. 👑',
+            ],
+            ryul: [
+                'Anh nằm đây kệ, hỏi gì vậy. 😒',
+                'Ừ thì đẹp đó. Anh không nói thêm đâu.',
+                'Seriously, em cứ làm gì thì làm, anh không quan tâm. — Nhưng anh đang nhìn đó.',
+            ],
+            mason: [
+                'Ôi trời em ơi, anh đẹp trai thêm khi đứng đây không? Hehe~ 😏',
+                'Anh bao hết nhé cục cưng, ăn no rồi tính! 🍜',
+                'Ahihi~ anh thả thính em từ nãy giờ em có biết không? 💕',
+            ],
+            negav: [
+                'Ừ chỗ này... ổn nhỉ? Ừ ổn. Anh đứng đây. 😶',
+                'Tự nhiên anh muốn ở đây. Không hiểu sao. Thôi kệ.',
+                'Bạn ơi— ý anh là... em ơi, em ăn chưa? 🍚',
+            ],
+        };
+
+        // Voice guide chi tiết + câu mẫu anchor
+        const CHAR_VOICE_GUIDE = {
+                keonho: `
+PHONG CÁCH: Năng động, rộn ràng, vô lo, hay kêu lên thán từ
+XƯNG HÔ: Xưng "anh", gọi "em" hoặc "cưng" — ngọt tự nhiên không gượng
+TỪ ĐẶC TRƯNG: "OMG", "Oa", "Ôi zời", "Hihi~", "Hehe~", "xịn ghê", "đáng yêu quá"
+CÂU MẪU THAM KHẢO (giọng này, không copy nguyên):
+  • "OMG bơi cùng anh đi cưng ơi! 🏊"
+  • "Oa hoa đẹp ghê, em thích không? 🌸"
+  • "Hehe~ anh nhìn em mà tự nhiên vui ghê! 💕"
+  • "Hà yêu chị Lam Lam không? Anh yêu lắm đó! 💕"
+ĐẶC BIỆT: Keonho thỉnh thoảng tự nhiên thốt ra "em yêu chị Lam Lam" hoặc biến thể tương tự — đây là câu cửa miệng đặc trưng của Keonho, dùng tự nhiên như một phản xạ vui vẻ
+KHI CÓ NGƯỜI CÙNG ZONE: hào hứng tranh vai chính kiểu đùa vui, hay rủ rê ầm ĩ, không nhường nhưng cười suốt
+KHI Ở ZONE KHÁC: kêu to sang hỏi, ghen kiểu trẻ con đáng yêu, vẫy tay rủi người kia sang`,
+
+            jihoon: `
+PHONG CÁCH: Trầm tĩnh, nội tâm, ít nói, quan sát — mỗi câu đều có trọng lượng
+XƯNG HÔ: Xưng "anh", gọi "em" — kiệm lời, không cần thêm biệt danh
+TỪ ĐẶC TRƯNG: "..." (bỏ lửng), không dùng thán từ, không cảm thán, hay bắt đầu bằng quan sát
+CÂU MẪU THAM KHẢO (giọng này, không copy nguyên):
+  • "Em ở đây... anh không nói gì, chỉ nhìn thôi."
+  • "Gió hôm nay lạ thật. 🌿"
+  • "...Anh thấy em rồi."
+KHI CÓ NGƯỜI CÙNG ZONE: im lặng quan sát, thỉnh thoảng thốt một câu đúng lúc khiến tim loạn, chemistry không lời
+KHI Ở ZONE KHÁC: liếc xéo im lặng, bỏ lửng một câu bóng gió nghe xong mới thấm`,
+
+            sean: `
+PHONG CÁCH: Điềm đạm, bí ẩn, chắc chắn — nói ít nhưng đủ, tự tin không cần chứng minh
+XƯNG HÔ: Xưng "anh", gọi "em" hoặc "người đẹp" — giọng trầm ấm che chở
+TỪ ĐẶC TRƯNG: Câu ngắn, ít dấu chấm than, không dùng thán từ, không hỏi nhiều
+CÂU MẪU THAM KHẢO (giọng này, không copy nguyên):
+  • "Anh ở đây. Em cứ yên tâm."
+  • "Không cần vội. Anh đợi được."
+  • "Ngon không em? Anh gọi thêm cho."
+KHI CÓ NGƯỜI CÙNG ZONE: nhường vị trí chính nhưng vẫn dẫn dắt âm thầm, vẻ bí ẩn càng tăng, chemistry chậm mà chắc
+KHI Ở ZONE KHÁC: đứng phía này nhưng ánh mắt hướng sang, nói câu bình thản ẩn ý sâu`,
+
+            jaypark: `
+PHONG CÁCH: Bản lĩnh, tự tin tuyệt đối, vibe boss, lãnh đạo tự nhiên — không cần tranh vì đã là nhân vật chính
+XƯNG HÔ: Xưng "anh", gọi "em" hoặc "bé" — tự nhiên như hít thở
+TỪ ĐẶC TRƯNG: "vibe", "approve", "level", "mood", "chuẩn", "khác hẳn" — tiếng Anh xen tự nhiên
+CÂU MẪU THAM KHẢO (giọng này, không copy nguyên):
+  • "Vibe ở đây chuẩn quá, anh approve. 😎"
+  • "Không gian này level khác hẳn."
+  • "Anh không cần tranh — anh đã là nhân vật chính rồi, bé ơi. 👑"
+KHI CÓ NGƯỜI CÙNG ZONE: tuyên bố chủ quyền nhẹ nhàng như hiển nhiên, liếc người kia kiểu "ổn đó" — lời khen cao nhất của jaypark
+KHI Ở ZONE KHÁC: không ghen lộ liễu, một câu cool ngầu bóng gió đủ thấy anh đang để ý`,
+
+            ryul: `
+PHONG CÁCH: Gai góc, thẳng thắn, chảnh — nhưng lộ tình cảm qua hành động nhỏ không ngờ
+XƯNG HÔ: Xưng "anh", gọi "em" hoặc "ê cưng" kiểu nửa chảnh nửa thương
+TỪ ĐẶC TRƯNG: "kệ", "thôi", "ừ thì", "seriously", "whatever", hay nói nước đôi — câu trước gai câu sau lại mềm
+CÂU MẪU THAM KHẢO (giọng này, không copy nguyên):
+  • "Ừ thì đẹp đó. Anh không nói thêm đâu."
+  • "Anh nằm đây kệ. Hỏi gì vậy. 😒"
+  • "Seriously, em làm gì thì làm — nhưng anh đang nhìn đó."
+KHI CÓ NGƯỜI CÙNG ZONE: tuyên bố thẳng mình là nhân vật chính, cuối câu lại có gì dịu bất ngờ
+KHI Ở ZONE KHÁC: không thèm nhìn nhưng nhớ từng chi tiết, châm chọc cay xèo rồi lộ hờn dỗi`,
+
+            mason: `
+PHONG CÁCH: Sôi nổi, lém lỉnh, thả thính vô tội vạ, năng lượng không giới hạn — đùa nhiều nhưng tình thật
+XƯNG HÔ: Xưng "anh", gọi "em" hoặc "cục cưng" — ngọt lịm không ngượng
+TỪ ĐẶC TRƯNG: "Hehe~", "ahihi", "ôi trời", "em ơi", hay kết câu bằng "không em?" hoặc "đúng không cục cưng?"
+CÂU MẪU THAM KHẢO (giọng này, không copy nguyên):
+  • "Ôi trời em ơi, anh đẹp trai thêm khi đứng đây không? Hehe~ 😏"
+  • "Anh bao hết nhé cục cưng, ăn no rồi tính! 🍜"
+  • "Ahihi~ anh thả thính em từ nãy giờ em có biết không? 💕"
+KHI CÓ NGƯỜI CÙNG ZONE: tranh vai chính hài hước bùng nổ, nhường kèm điều kiện đáng yêu
+KHI Ở ZONE KHÁC: ghen khuếch đại hài hước, kêu ầm kiểu "ê sao em không sang chỗ anh vậy"`,
+
+            negav: `
+PHONG CÁCH: Ngây ngô thật sự, hay lạc đề rồi tự nhận ra, meme walking — duyên đến từ sự vô tình
+XƯNG HÔ: Xưng "anh", hay quên dùng "bạn ơi" rồi tự sửa lại thành "em ơi"
+TỪ ĐẶC TRƯNG: "Ừ... thì...", "Tự nhiên anh...", "Không hiểu sao", "Thôi kệ", nói dở câu rồi chuyển hướng
+CÂU MẪU THAM KHẢO (giọng này, không copy nguyên):
+  • "Ừ chỗ này... ổn nhỉ? Ừ ổn. Anh đứng đây. 😶"
+  • "Tự nhiên anh muốn ở đây. Không hiểu sao."
+  • "Bạn ơi— ý anh là em ơi, em ăn chưa? 🍚"
+KHI CÓ NGƯỜI CÙNG ZONE: không hiểu đang tranh gì vẫn tranh, rồi nói ngẫu nhiên một câu làm người kia sững
+KHI Ở ZONE KHÁC: không hiểu sao cứ nhìn sang rồi tự hỏi to thành tiếng, vô tình lộ tình cảm`,
+        };
+
+        // Kịch bản cùng zone — gắn chặt với giọng từng nhân vật
+        const SAME_ZONE_SCENARIOS = {
+            keonho: [
+                'Keonho hào hứng tranh vai nhân vật chính với người kia bằng cách rủ rê ầm ĩ kiểu "bên anh vui hơn", không ai chịu thua nhưng cả hai cứ cười',
+                'Keonho đột ngột nhường vai chính nhưng kèm điều kiện kiểu đổi lấy một cái ôm hoặc kẹo, nói xong còn cười Hehe~',
+                'Keonho liếc người kia rồi tự nhiên đỏ mặt, kêu lên OMG rồi giả vờ nhìn đi chỗ khác — nảy sinh cảm tình kiểu vô tư',
+            ],
+            jihoon: [
+                'Jihoon đứng cạnh người kia trong im lặng, rồi bỏ lửng một câu quan sát tinh tế khiến người kia không biết phải phản ứng thế nào',
+                'Jihoon nhường vai chính bằng một cử chỉ rất nhỏ, không giải thích — người kia tự hiểu',
+                'Jihoon liếc người kia một cái rồi quay đi, câu thoại ngắn bỏ lửng nhưng đủ để tim loạn',
+            ],
+            sean: [
+                'Sean điềm tĩnh nhường vai chính nhưng cách anh đứng bên cạnh khiến rõ ràng anh mới đang kiểm soát tình huống',
+                'Sean nói một câu ngắn chắc nịch với người kia — câu đó nghe bình thường nhưng ẩn chứa sự quan tâm thật sự',
+                'Sean và người kia đứng cạnh nhau không nói gì nhiều — nhưng sự im lặng đó đủ nói lên tất cả',
+            ],
+            jaypark: [
+                'Jay Park tuyên bố mình là nhân vật chính không cần tranh, tự nhiên như hiển nhiên vậy — bằng một câu tiếng Anh xen tiếng Việt cool ngầu',
+                'Jay Park nhường vai chính với thái độ "anh không cần cái đó cũng được" — nhưng vẫn rõ ràng anh đang làm chủ',
+                'Jay Park liếc người kia rồi gật nhẹ kiểu "ổn đó" — đó là lời khen cao nhất từ Jay Park, dùng "vibe" hoặc "level" trong câu',
+            ],
+            ryul: [
+                'Ryul tuyên bố thẳng mình là nhân vật chính, câu trước gai góc nhưng câu sau lại có gì đó dịu bất ngờ',
+                'Ryul chảnh chọe rồi đột ngột nhường một cách không ai ngờ, nói xong còn cố tỏ ra không quan tâm',
+                'Ryul cạnh khóe người kia bằng câu thẳng nhưng cuối câu lại lộ ra là anh đang để ý người kia từ đầu',
+            ],
+            mason: [
+                'Mason tranh vai chính kiểu hài hước bùng nổ, thả thính luôn trong khi tranh, kết bằng "đúng không em" hoặc "hehe~"',
+                'Mason nhường vai chính nhưng kèm điều kiện đáng yêu kiểu "được rồi nhưng em phải mời anh ăn nhé cục cưng"',
+                'Mason thả thính lộ liễu rồi tự cười vào mặt mình, năng lượng bùng nổ không kiểm soát',
+            ],
+            negav: [
+                'Negav không hiểu đang tranh gì nhưng vẫn tranh nhiệt tình, rồi nói một câu ngẫu nhiên vô tình chính xác đến mức người kia sững người',
+                'Negav vô tình nhường vai chính mà không biết mình đang nhường — câu nói lạc đề nhưng lại đúng lúc',
+                'Negav ngây ngô hỏi một câu rồi tự nhận ra mình vừa lộ tình cảm, dùng "bạn ơi" rồi tự sửa thành "em ơi"',
+            ],
+        };
+
+        // Kịch bản khác zone — bám sát giọng riêng từng nhân vật
+        const OTHER_ZONE_REACTIONS = {
+            keonho: [
+                'Keonho kêu to sang zone kia hỏi bên đó có gì vui không, vừa hỏi vừa vẫy tay, kiểu trẻ con ghen tị nhưng đáng yêu',
+                'Keonho ghen kiểu rộn ràng khuếch đại — kêu "OMG sao em không sang chỗ anh" hoặc tương tự, vừa buồn cười vừa thật',
+                'Keonho để ý người kia từ xa rồi tự nhiên rủ sang bằng một câu vui vẻ hào hứng',
+            ],
+            jihoon: [
+                'Jihoon liếc xéo về zone kia trong im lặng, bỏ lửng một câu bóng gió nhẹ về người ở đó — nghe xong mới thấm',
+                'Jihoon ghen trong im lặng tuyệt đối, chỉ nói một câu quan sát ngắn rồi quay đi như không có chuyện gì',
+                'Jihoon nhận ra người kia đang ở zone khác, thốt ra một câu bỏ lửng "..." kiểu biết nhưng không nói thẳng',
+            ],
+            sean: [
+                'Sean đứng phía này nhưng nói một câu bình thản ẩn ý sâu — nghe thì bình thường nhưng rõ ràng anh đang nghĩ đến người ở zone kia',
+                'Sean để ý người kia từ xa, bộc lộ qua một hành động hoặc câu nói nhỏ — điềm tĩnh nhưng tình cảm thật',
+                'Sean nói một câu ngắn gọn chắc nịch, tự nhiên liên quan đến người ở zone kia mà không cần giải thích',
+            ],
+            jaypark: [
+                'Jay Park không ghen lộ liễu — thả một câu cool ngầu bằng tiếng Anh xen tiếng Việt kiểu "anh đang nhìn đó em" theo phong cách boss',
+                'Jay Park bóng gió về người ở zone kia với thái độ tự tin tuyệt đối, dùng "vibe" hoặc "level" hoặc "mood"',
+                'Jay Park liếc sang một cái rồi quay lại làm việc của mình — nhưng câu thoại để lộ khóe miệng hơi nhếch, dứt khoát',
+            ],
+            ryul: [
+                'Ryul không thèm nhìn nhưng câu thoại cho thấy anh biết từng chi tiết bên kia — châm chọc cay cay kiểu "ừ biết rồi, bên đó vui lắm nhỉ"',
+                'Ryul đá xéo thẳng thắn không vòng vo, câu nghe có vẻ gai nhưng lộ ra là hờn dỗi thật sự',
+                'Ryul hờn dỗi ngầm, dùng "kệ" hoặc "thôi" nhưng câu thoại rõ ràng anh đang ghen — không nói thẳng nhưng ai cũng hiểu',
+            ],
+            mason: [
+                'Mason ghen kiểu hài hước khuếch đại — kêu ầm lên rất buồn cười theo phong cách lém lỉnh, kết bằng "hehe~" hoặc "ahihi"',
+                'Mason bóng gió về người ở zone kia kiểu thả thính không thèm giấu, dùng "cục cưng" hoặc "em ơi"',
+                'Mason liếc sang rồi thả ngay một câu thính lộ liễu — năng lượng cao, không ngượng, cười xong vẫn thả tiếp',
+            ],
+            negav: [
+                'Negav không hiểu sao cứ nhìn sang zone kia, rồi tự hỏi to thành tiếng "ủa sao anh cứ nhìn bên đó vậy ta" — lộ tình cảm mà không biết',
+                'Negav nói một câu ngây ngô về người ở zone kia rồi tự nhận ra mình vừa lộ hết, lúc đó mới ý ơi thay "bạn ơi" bằng "em ơi"',
+                'Negav ghen theo kiểu không hiểu mình đang ghen — hỏi thật lòng một câu rồi giật mình vì câu đó nghe ra tình cảm quá',
+            ],
+        };
+
+        /* ═══════════════════════════════════════
+           TINA — TRANH GIÀNH
+        ═══════════════════════════════════════ */
+        let tinaZoneEl = null; // zone Tina đang ở
+
+        // Câu tranh giành Tina — fallback offline theo từng nhân vật
+        const TINA_FIGHT_LINES = {
+            keonho: [
+                'Tina ơi! Sang bên anh đi, anh vui hơn mấy ông kia nhiều! OMG! 💕',
+                'Oa Tina đẹp ghê! Anh chọn Tina! Hehe~ 🌸',
+                'OMG Tina! Anh thích Tina nhất luôn! Mấy ông kia tránh ra! 💕',
+                'Hehe~ Tina ơi keonho iêu Tina nha! 💙',
+            ],
+            jihoon: [
+                '...Tina. Anh thấy em rồi. Mấy người kia ồn quá.',
+                'Anh không tranh. Anh chờ. Tina tự khắc biết. 🌿',
+                '...Em chọn ai thì chọn. Anh vẫn ở đây.',
+            ],
+            sean: [
+                'Tina. Đứng đây. Mấy đứa kia không đáng tin bằng anh.',
+                'Anh không cần kêu ầm. Tina sẽ tự hiểu thôi.',
+                'Yên tâm đi Tina. Anh ở đây rồi.',
+            ],
+            jaypark: [
+                'Tina, anh approve em. Mấy thằng kia level không đủ. 😎',
+                'Vibe của Tina và anh — perfect match. Không bàn cãi. 👑',
+                'Ai tranh với anh thì tranh. Tina đã chọn xong rồi. 😎',
+            ],
+            ryul: [
+                'Ê Tina. Sang đây. Đừng nhìn mấy thằng kia. Seriously. 😒',
+                'Tina... anh không van xin ai. Nhưng anh muốn em ở đây. Kệ.',
+                'Ừ thì mấy ông kia cũng được đó. Nhưng anh hơn. Whatever. 😒',
+            ],
+            mason: [
+                'Tina ơi! Anh đẹp trai nhất đây nha cục cưng! Chọn anh đi! Hehe~ 😏',
+                'Ahihi~ Tina mà chọn anh là anh bao ăn cả tuần luôn! 💕',
+                'Ôi trời Tina ơi anh thả thính từ nãy giờ em có thấy không? 😂',
+            ],
+            negav: [
+                'Tina ơi— ý anh là... anh thích Tina. Không hiểu sao. Thôi kệ. 😶',
+                'Bạn ơi— ý anh là Tina ơi, sang đây với anh đi. Ừ đây. 🍚',
+                'Tự nhiên anh muốn Tina ở cạnh anh. Lạ thật. Thôi kệ. 😅',
+            ],
+        };
+
+        // Prompt AI để tạo lời thoại tranh giành Tina
+        function buildTinaFightPrompt(char, zoneEl) {
+            const zoneKey  = zoneEl.dataset.zone;
+            const zoneName = zoneEl.dataset.zoneName || 'đây';
+            const vibe     = ZONE_VIBES[zoneKey] || zoneName;
+            const voiceGuide = CHAR_VOICE_GUIDE[char.id] || '';
+
+            const samePlacements = zonePlacements.get(zoneEl) || [];
+            const rivals = samePlacements
+                .filter(p => p.charId !== char.id)
+                .map(p => CHARACTERS.find(c => c.id === p.charId)?.name)
+                .filter(Boolean);
+
+            const rivalNote = rivals.length > 0
+                ? `Đối thủ trong cùng zone đang cạnh tranh: ${rivals.join(', ')}.`
+                : 'Không có đối thủ trong zone này nhưng các zone khác đang tranh giành.';
+
+            return `Bạn là chuyên gia viết thoại nhân vật game sinh nhật vui vẻ bằng tiếng Việt.
+Tình huống đặc biệt: Tina vừa xuất hiện — tất cả các chàng trai đang tranh nhau để giành Tina!
+
+NHÂN VẬT: ${char.name}
+KHÔNG GIAN: ${vibe}
+${rivalNote}
+
+HƯỚNG DẪN GIỌNG NÓI:
+${voiceGuide}
+
+NHIỆM VỤ: Viết đúng 1 câu thoại của ${char.name} thể hiện việc tranh giành / tán tỉnh / đấu đá để giành Tina.
+- Gọi tên "Tina" trong câu
+- Dưới 18 từ tiếng Việt
+- Có 1-2 emoji
+- Giọng điệu phải rõ ràng là ${char.name} — không thể nhầm nhân vật khác
+- KHÔNG dùng tao/mày, chỉ anh/em
+- KHÔNG dấu ngoặc kép, KHÔNG giải thích — chỉ câu thoại`;
         }
 
-        async function showTypingThenSpeak(charEl, char, zoneEl) {
-            // Remove existing speech
+        async function triggerTinaReaction(charEl, char, zoneEl) {
             charEl.querySelectorAll('.char-speech').forEach(s => s.remove());
+            if (charEl._chatterTimer) clearInterval(charEl._chatterTimer);
 
-            // Show typing indicator
+            charEl.classList.add('chasing-tina');
+
+            let activeZone = zoneEl;
+            // KÉO HỘ KHẨU BẤT CHẤP ZONE: Nếu khác zone với Tina, tự động bay sang zone Tina!
+            if (tinaZoneEl && zoneEl !== tinaZoneEl) {
+                // Xóa khỏi data zone cũ
+                let oldPlacements = zonePlacements.get(zoneEl) || [];
+                zonePlacements.set(zoneEl, oldPlacements.filter(p => p.charId !== char.id));
+
+                // Chèn element vật lý sang zone của Tina
+                tinaZoneEl.appendChild(charEl);
+                let newPlacements = zonePlacements.get(tinaZoneEl) || [];
+                if (!newPlacements.some(p => p.charId === char.id)) {
+                    newPlacements.push({ charId: char.id, el: charEl });
+                    zonePlacements.set(tinaZoneEl, newPlacements);
+                }
+                
+                // Reset hào quang dựa theo zone mới
+                const isHome = CHAR_HOME_ZONE[char.id] === tinaZoneEl.dataset.zone;
+                charEl.classList.toggle('home-zone', isHome);
+                
+                activeZone = tinaZoneEl; // Bắt đầu tính thoại dựa theo zone hỗn chiến
+            }
+
+            // Lao vào giành giật
+            if (tinaZoneEl) {
+                animateChaseToTina(charEl, activeZone);
+            }
+
+            // Hiện typing
             const typing = document.createElement('div');
             typing.className = 'char-speech typing-dots';
             typing.innerHTML = '<span></span><span></span><span></span>';
             charEl.appendChild(typing);
 
-            const zoneName = zoneEl.dataset.zoneName || 'đây';
-            const zoneKey = zoneEl.dataset.zone;
-            const placements = (zonePlacements.get(zoneEl) || []);
-            const others = placements.filter(p => p.el !== charEl).map(p => p.charId);
-
             let line;
             try {
-                const prompt = `Bạn đang đóng vai ${char.name}, một bạn trai dễ thương người Hàn Quốc đang ở ${zoneName}. Hãy nói một câu ngắn (dưới 15 từ, tiếng Việt, có thêm emoji) thể hiện hành động hoặc cảm xúc phù hợp với không gian ${zoneName}. ${others.length > 0 ? `Trong ${zoneName} còn có ${others.map(id => CHARACTERS.find(c => c.id === id)?.name || id).join(', ')} cùng ở đây.` : ''} Chỉ trả lời câu thoại, không giải thích.`;
+                const prompt = buildTinaFightPrompt(char, activeZone);
                 const resp = await fetch('https://api.anthropic.com/v1/messages', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         model: 'claude-sonnet-4-20250514',
-                        max_tokens: 100,
+                        max_tokens: 120,
                         messages: [{ role: 'user', content: prompt }]
                     })
                 });
                 const data = await resp.json();
-                line = data.content?.[0]?.text?.trim() || getZoneDialogue(zoneKey, char.id, others);
-            } catch (err) {
-                line = getZoneDialogue(zoneKey, char.id, others);
+                line = data.content?.[0]?.text?.trim();
+                if (!line) throw new Error('empty');
+            } catch {
+                const lines = TINA_FIGHT_LINES[char.id] || TINA_FIGHT_LINES.mason;
+                line = lines[Math.floor(Math.random() * lines.length)];
             }
 
-            // Replace typing with speech
+            typing.remove();
+            const speech = document.createElement('div');
+            speech.className = 'char-speech';
+            speech.textContent = line;
+            // Pop lên trên cùng để dễ đọc khi đang loạn
+            speech.style.zIndex = 1000 + Math.floor(Math.random() * 100);
+            charEl.appendChild(speech);
+
+            // Chuyển sang mode gáy nhau liên tục
+            setTimeout(() => {
+                speech.remove();
+                startTinaChatter(charEl, char, activeZone);
+            }, 4500);
+        }
+
+        // DATA THOẠI TẤU HÀI CHO SỰ KIỆN GÓC RIÊNG
+        const SPECIAL_EVENT_LINES = {
+            fight: [
+                ["Ra góc kia đấm bo! Tina là của tao! 🥊", "Sợ mày chắc? Bước qua xác tao đã! 💥"],
+                ["Cái mỏ mày hỗn quá rồi đó! Ra kia giải quyết! 🤬", "Ngon nhào vô cắn tao nè! 🥊"],
+                ["Tao ghét mày từ nãy rồi, nhường đi không ăn đấm! 😒", "Mơ đi cưng, tao chấp mày 1 tay! 💥"],
+                ["Đừng có mập mờ với Tina nữa, solo đi! 🗡️", "Thằng cùi bắp, mày tuổi gì! 😤"]
+            ],
+            love: [
+                ["Đánh nhau mệt quá... hay mình yêu nhau đi? 🥺", "Ơ... tự nhiên tim đập thình thịch... Ừ yêu nhau đi! 💖"],
+                ["Thôi kệ Tina đi, tự nhiên tớ thấy cậu đẹp trai vãi... 😳", "Nói thật hả... Đồ ngốc này, nói muộn thế 💕😘"],
+                ["Mình bỏ trốn cùng nhau nhé? Kệ tụi kia đi. 🌈", "Đúng! Chỉ có đàn ông mới mang lại hạnh phúc cho nhau! 🌈"],
+                ["Sao nhìn cậu quen quen... giống chồng tương lai tớ ghê 😳", "Trời ơi, tớ cũng đang định nói thế... Lại đây ôm cái nào 💖"]
+            ]
+        };
+
+        // HÀM XỬ LÝ SỰ KIỆN KÉO NHAU RA GÓC RIÊNG
+        function executeSpecialBoyEvent(char1El, char2El, zoneEl) {
+            // Đánh dấu đang bận sự kiện đặc biệt để không bị hút về phía Tina nữa
+            char1El._specialEvent = true;
+            char2El._specialEvent = true;
+
+            // Xóa bộ đếm thoại hiện tại
+            if (char1El._chatterTimer) clearInterval(char1El._chatterTimer);
+            if (char2El._chatterTimer) clearInterval(char2El._chatterTimer);
+
+            // Dọn dẹp bong bóng thoại cũ
+            char1El.querySelectorAll('.char-speech').forEach(s => s.remove());
+            char2El.querySelectorAll('.char-speech').forEach(s => s.remove());
+
+            // Tìm 1 góc random trong phòng (tránh khu vực giữa)
+            const zRect = zoneEl.getBoundingClientRect();
+            const cornerX = Math.random() < 0.5 ? 20 : Math.max(20, zRect.width - 150);
+            const cornerY = Math.random() < 0.5 ? 20 : Math.max(20, zRect.height - 120);
+
+            // Dịch chuyển 2 đứa ra góc
+            char1El.style.transition = 'left 0.8s ease, top 0.8s ease';
+            char2El.style.transition = 'left 0.8s ease, top 0.8s ease';
+
+            char1El.style.left = cornerX + 'px';
+            char1El.style.top = cornerY + 'px';
+            // Cho đứa thứ 2 đứng sát cạnh, mặt đối mặt
+            char2El.style.left = (cornerX + 60) + 'px'; 
+            char2El.style.top = (cornerY + 10) + 'px';
+
+            char1El.style.zIndex = 2000;
+            char2El.style.zIndex = 2001;
+
+            // Random 50-50: Đấm nhau hay Yêu nhau?
+            const isLove = Math.random() < 0.5; 
+            
+            // Chỉnh hoạt ảnh: Yêu thì nhún nhảy nhẹ nhàng, đánh thì giật đùng đùng
+            char1El.style.animation = isLove ? 'charBob 2s ease-in-out infinite alternate' : 'chasingShake 0.12s ease-in-out infinite alternate';
+            char2El.style.animation = isLove ? 'charBob 2s ease-in-out infinite alternate' : 'chasingShake 0.12s ease-in-out infinite alternate';
+
+            const lines = isLove ? SPECIAL_EVENT_LINES.love : SPECIAL_EVENT_LINES.fight;
+            const pair = lines[Math.floor(Math.random() * lines.length)];
+
+            // Tung thoại
+            setTimeout(() => {
+                const speech1 = document.createElement('div');
+                speech1.className = 'char-speech';
+                speech1.textContent = pair[0];
+                speech1.style.zIndex = 2005;
+                char1El.appendChild(speech1);
+
+                setTimeout(() => {
+                    const speech2 = document.createElement('div');
+                    speech2.className = 'char-speech';
+                    speech2.textContent = pair[1];
+                    speech2.style.zIndex = 2006;
+                    char2El.appendChild(speech2);
+                }, 1500); // Đứa thứ 2 đáp lời sau 1.5s
+            }, 800);
+
+            // Xong việc giải tán sau 8 giây, cởi trói để tụi nó quay lại đuổi Tina
+            setTimeout(() => {
+                if (!document.contains(char1El) || !document.contains(char2El)) return;
+                char1El._specialEvent = false;
+                char2El._specialEvent = false;
+                char1El.style.animation = '';
+                char2El.style.animation = '';
+                
+                const c1 = CHARACTERS.find(c => c.id === char1El.dataset.charId);
+                const c2 = CHARACTERS.find(c => c.id === char2El.dataset.charId);
+                
+                if (c1) startTinaChatter(char1El, c1, zoneEl);
+                if (c2) startTinaChatter(char2El, c2, zoneEl);
+            }, 8000);
+        }
+
+        function startTinaChatter(charEl, char, zoneEl) {
+            if (charEl._chatterTimer) clearInterval(charEl._chatterTimer);
+            charEl._chatterTimer = setInterval(async () => {
+                if (!document.contains(charEl)) { clearInterval(charEl._chatterTimer); return; }
+                const currentZone = charEl.closest('.dp-zone') || zoneEl;
+                if (!tinaZoneEl) { clearInterval(charEl._chatterTimer); startPeriodicChatter(charEl, char, currentZone); return; }
+
+                // NẾU ĐANG BẬN EVENT YÊU/ĐÁNH Ở GÓC THÌ BỎ QUA CODE ĐUỔI TINA
+                if (charEl._specialEvent) return;
+
+                // XÁC SUẤT 30% RỦ NHAU RA GÓC SOLO HOẶC TỎ TÌNH
+                if (Math.random() < 0.30) {
+                    const allCharsInZone = Array.from(currentZone.querySelectorAll('.placed-char'));
+                    // Tìm 1 nạn nhân chưa mắc bận sự kiện nào
+                    const availableVictims = allCharsInZone.filter(c => c !== charEl && !c._specialEvent);
+                    if (availableVictims.length > 0) {
+                        const victimEl = availableVictims[Math.floor(Math.random() * availableVictims.length)];
+                        executeSpecialBoyEvent(charEl, victimEl, currentZone);
+                        return; // Bắt được kèo rồi thì dừng chu kỳ chạy theo Tina
+                    }
+                }
+
+                charEl.querySelectorAll('.char-speech').forEach(s => s.remove());
+                
+                // Trở về quỹ đạo bay quanh Tina
+                animateChaseToTina(charEl, currentZone);
+
+                let line;
+                try {
+                    const prompt = buildTinaFightPrompt(char, currentZone);
+                    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            model: 'claude-sonnet-4-20250514',
+                            max_tokens: 120,
+                            messages: [{ role: 'user', content: prompt }]
+                        })
+                    });
+                    const data = await resp.json();
+                    line = data.content?.[0]?.text?.trim();
+                    if (!line) throw new Error('empty');
+                } catch {
+                    const lines = TINA_FIGHT_LINES[char.id] || TINA_FIGHT_LINES.mason;
+                    line = lines[Math.floor(Math.random() * lines.length)];
+                }
+
+                const speech = document.createElement('div');
+                speech.className = 'char-speech';
+                speech.textContent = line;
+                speech.style.zIndex = 1000 + Math.floor(Math.random() * 100);
+                charEl.appendChild(speech);
+                setTimeout(() => speech.remove(), 3800);
+            }, 4000 + Math.random() * 3000); 
+        }
+
+        // Hỗn chiến giành Tina
+        function animateChaseToTina(charEl, charZoneEl) {
+            // Không hút về phía Tina nếu nhân vật đang dắt tay nhau ra góc tâm sự
+            if (charEl._specialEvent) return; 
+            
+            if (!tinaZoneEl) return;
+            const tinaAvatarEl = document.getElementById('tina-zone-avatar');
+            if (!tinaAvatarEl) return;
+
+            // Luôn đảm bảo check zone hiện tại của element do DOM quyết định
+            const currentZone = charEl.closest('.dp-zone') || charZoneEl;
+
+            if (currentZone === tinaZoneEl) {
+                const zRect = currentZone.getBoundingClientRect();
+                const tinaRect = tinaAvatarEl.getBoundingClientRect();
+                const tinaLocalX = tinaRect.left - zRect.left + tinaRect.width / 2;
+                const tinaLocalY = tinaRect.top  - zRect.top  + tinaRect.height / 2;
+
+                const allCharsInZone = Array.from(currentZone.querySelectorAll('.placed-char'));
+                const myIndex = allCharsInZone.indexOf(charEl);
+                const total   = allCharsInZone.length;
+                
+                // HIỆU ỨNG TRANH GIÀNH: Quây thành vòng tròn, chừa không gian cho Tina ở giữa
+                const baseAngle = (myIndex / Math.max(total, 1)) * Math.PI * 2;
+                const jitter    = (Math.random() - 0.5) * 0.5; // Giảm xáo trộn góc để chia đều chỗ đứng
+                const angle     = baseAngle + jitter;
+                const dist      = 80 + Math.random() * 20; // Khoảng cách giãn ra cho Tina thở
+
+                const tx = tinaLocalX - 28 + Math.cos(angle) * dist;
+                const ty = tinaLocalY - 28 + Math.sin(angle) * dist;
+
+                const clampedX = Math.max(4, Math.min(zRect.width  - 70, tx));
+                const clampedY = Math.max(30, Math.min(zRect.height - 80, ty));
+
+                // Speed lao tới nhanh mạnh
+                charEl.style.transition = 'left .4s cubic-bezier(.34,1.56,.64,1), top .4s cubic-bezier(.34,1.56,.64,1)';
+                charEl.style.left = clampedX + 'px';
+                charEl.style.top  = clampedY + 'px';
+                
+                // Đẩy z-index lung tung để tạo cảm giác đứa này đè đầu đứa kia
+                charEl.style.zIndex = 100 + Math.floor(Math.random() * 50);
+
+                setTimeout(() => { if (charEl.style.transition) charEl.style.transition = ''; }, 450);
+            } else {
+                // Nhân vật ở zone khác — rung lắc tại chỗ bày tỏ ghen tuông
+                charEl.style.transition = 'left .3s ease, top .3s ease';
+                const cx = parseFloat(charEl.style.left) || 0;
+                const cy = parseFloat(charEl.style.top)  || 0;
+                // Nhảy lắc nhỏ
+                charEl.style.left = (cx + (Math.random()-0.5)*14) + 'px';
+                charEl.style.top  = (cy + (Math.random()-0.5)*10) + 'px';
+                setTimeout(() => {
+                    charEl.style.left = cx + 'px';
+                    charEl.style.top  = cy + 'px';
+                    setTimeout(() => { charEl.style.transition = ''; }, 320);
+                }, 320);
+            }
+        }
+
+        // Đặt Tina vào zone và trigger tất cả nhân vật
+        function placeTinaInZone(zoneEl, dropX, dropY) {
+            // Xóa avatar cũ ở bất kỳ đâu
+            document.querySelectorAll('#tina-zone-avatar').forEach(el => el.remove());
+
+            tinaZoneEl = zoneEl;
+
+            // Tính vị trí drop nằm trong zone, fallback về giữa zone
+            const zRect = zoneEl.getBoundingClientRect();
+            const relX = (typeof dropX === 'number') ? dropX : zRect.width  / 2;
+            const relY = (typeof dropY === 'number') ? dropY : zRect.height / 2;
+
+            // Clamp để ava không bị cắt bởi overflow:hidden của zone
+            const AW = 68, AH = 84; // width + height xấp xỉ của wrapper (ava 62px + nametag)
+            const px = Math.max(4, Math.min(zRect.width  - AW - 4, relX - AW / 2));
+            const py = Math.max(30, Math.min(zRect.height - AH - 4, relY - AH / 2));
+
+            const wrapper = document.createElement('div');
+            wrapper.id = 'tina-zone-avatar';
+            wrapper.draggable = true; // Kích hoạt kéo thả
+
+            // Phải set position:absolute inline — không được chỉ dựa vào CSS class
+            // vì element được tạo động bằng JS
+            wrapper.style.cssText = [
+                'position:absolute',
+                'left:' + px + 'px',
+                'top:'  + py + 'px',
+                'display:flex',
+                'flex-direction:column',
+                'align-items:center',
+                'gap:3px',
+                'pointer-events:auto', // Đã sửa thành auto để tương tác được nút xóa và kéo thả
+                'z-index:999', // Tăng z-index hiển thị
+                'cursor:grab', // Icon tay cầm nắm khi hover
+                'animation:popIn .4s cubic-bezier(.34,1.56,.64,1)',
+            ].join(';');
+
+            // ── KÉO THẢ TRÊN MÁY TÍNH (DESKTOP) ──
+            wrapper.addEventListener('dragstart', e => {
+                e.dataTransfer.setData(TINA_DRAG_KEY, '1');
+                e.dataTransfer.effectAllowed = 'copyMove';
+                setTimeout(() => wrapper.style.opacity = '0.4', 0);
+            });
+            wrapper.addEventListener('dragend', () => {
+                wrapper.style.opacity = '1';
+            });
+
+            // ── KÉO THẢ TRÊN ĐIỆN THOẠI (MOBILE TOUCH) ──
+            let touchDragging = false;
+            let tinaGhost = null;
+
+            wrapper.addEventListener('touchstart', e => {
+                if (e.target.closest('.char-remove-btn')) return; // Bỏ qua nếu chạm vào nút tắt
+                touchDragging = true;
+                tinaGhost = document.createElement('img');
+                tinaGhost.src = 'tina.png';
+                tinaGhost.style.cssText = 'position:fixed;width:62px;height:62px;border-radius:50%;object-fit:cover;object-position:center top;border:3px solid #e91e8c;box-shadow:0 4px 18px rgba(233,30,140,.5);pointer-events:none;z-index:99999;opacity:.85;transform:translate(-50%,-50%)';
+                document.body.appendChild(tinaGhost);
+                wrapper.style.opacity = '0.4';
+            }, { passive: true });
+
+            wrapper.addEventListener('touchmove', e => {
+                if (!touchDragging || !tinaGhost) return;
+                const t = e.touches[0];
+                tinaGhost.style.left = t.clientX + 'px';
+                tinaGhost.style.top  = t.clientY + 'px';
+                document.querySelectorAll('.dp-zone').forEach(z => z.classList.remove('tina-drag-over'));
+                const el = document.elementFromPoint(t.clientX, t.clientY);
+                const zone = el?.closest?.('.dp-zone');
+                if (zone) zone.classList.add('tina-drag-over');
+            }, { passive: true });
+
+            wrapper.addEventListener('touchend', e => {
+                if (!touchDragging) return;
+                touchDragging = false;
+                wrapper.style.opacity = '1';
+                if (tinaGhost) { tinaGhost.remove(); tinaGhost = null; }
+                document.querySelectorAll('.dp-zone').forEach(z => z.classList.remove('tina-drag-over'));
+                const t = e.changedTouches[0];
+                const el = document.elementFromPoint(t.clientX, t.clientY);
+                const zone = el?.closest?.('.dp-zone');
+                if (zone) {
+                    const zRect = zone.getBoundingClientRect();
+                    placeTinaInZone(zone, t.clientX - zRect.left, t.clientY - zRect.top); // Logic sẽ tự xóa Tina cũ và chuyển sang zone mới
+                }
+            }, { passive: true });
+
+            // Nút xóa Tina
+            const removeBtn = document.createElement('button');
+            removeBtn.className = 'char-remove-btn';
+            removeBtn.textContent = '✕';
+            removeBtn.title = 'Xóa khỏi zone';
+            removeBtn.addEventListener('click', e => {
+                e.stopPropagation();
+                // Dừng mọi hiển thị thoại hiện tại
+                wrapper.querySelectorAll('.char-speech').forEach(s => s.remove());
+                
+                // Gái Hà Nội phải về trước 10h tối
+                const speech = document.createElement('div');
+                speech.className = 'char-speech';
+                speech.textContent = 'gái hà nội phải về trước 10h 💅';
+                speech.style.zIndex = '9999';
+                wrapper.appendChild(speech);
+                
+                // Chờ đọc xong câu rồi mới xóa
+                setTimeout(() => {
+                    removeTinaFromScene();
+                }, 1800);
+            });
+            removeBtn.addEventListener('touchend', e => {
+                e.stopPropagation();
+                e.preventDefault();
+                removeBtn.click();
+            });
+
+            const img = document.createElement('img');
+            img.src = 'tina.png';
+            img.alt = 'Tina';
+            img.style.cssText = [
+                'width:62px',
+                'height:62px',
+                'border-radius:50%',
+                'object-fit:cover',
+                'object-position:center top',
+                'border:3px solid #e91e8c',
+                'box-shadow:0 0 0 3px rgba(255,255,255,.5),0 0 18px 6px rgba(233,30,140,.45)',
+                'display:block',
+            ].join(';');
+
+            const nameTag = document.createElement('div');
+            nameTag.style.cssText = [
+                'text-align:center',
+                'font-size:.68rem',
+                'font-weight:900',
+                'color:#e91e8c',
+                'font-family:Nunito,sans-serif',
+                'text-shadow:0 1px 4px #fff,0 0 8px rgba(233,30,140,.5)',
+                'letter-spacing:.5px',
+                'line-height:1.2',
+            ].join(';');
+            nameTag.textContent = '💖 Tina';
+
+            wrapper.appendChild(removeBtn); // Gắn nút xóa
+            wrapper.appendChild(img);
+            wrapper.appendChild(nameTag);
+            zoneEl.appendChild(wrapper);
+
+            // Stagger trigger để không đổ về cùng lúc
+            let delay = 0;
+            document.querySelectorAll('.placed-char').forEach(charEl => {
+                const charId = charEl.dataset.charId;
+                const char = CHARACTERS.find(c => c.id === charId);
+                if (!char) return;
+
+                let charZone = null;
+                document.querySelectorAll('.dp-zone').forEach(z => {
+                    if (z.contains(charEl)) charZone = z;
+                });
+                if (!charZone) return;
+
+                charEl.classList.add('chasing-tina');
+                setTimeout(() => triggerTinaReaction(charEl, char, charZone), delay);
+                delay += 350;
+            });
+        }
+
+        // Khi Tina bị xóa (reset scene) thì nhân vật về trạng thái bình thường
+        function removeTinaFromScene() {
+            const old = document.getElementById('tina-zone-avatar');
+            if (old) old.remove();
+            tinaZoneEl = null;
+
+            document.querySelectorAll('.placed-char').forEach(charEl => {
+                charEl.classList.remove('chasing-tina');
+                const charId = charEl.dataset.charId;
+                const char = CHARACTERS.find(c => c.id === charId);
+                if (!char) return;
+                let charZone = null;
+                document.querySelectorAll('.dp-zone').forEach(z => { if (z.contains(charEl)) charZone = z; });
+                if (charZone) { if (charEl._chatterTimer) clearInterval(charEl._chatterTimer); startPeriodicChatter(charEl, char, charZone); }
+            });
+        }
+
+        function buildDialoguePrompt(char, zoneEl) {
+            const zoneKey  = zoneEl.dataset.zone;
+            const zoneName = zoneEl.dataset.zoneName || 'đây';
+            const vibe     = ZONE_VIBES[zoneKey] || zoneName;
+            const persona  = CHAR_PERSONAS[char.id] || 'dễ thương, thân thiện';
+            const voiceGuide = CHAR_VOICE_GUIDE[char.id] || '- Xưng "anh", gọi "em", tình cảm tự nhiên';
+
+            // Kiểm tra home zone — cá gặp nước
+            const isHomeZone = CHAR_HOME_ZONE[char.id] === zoneKey;
+            const homeZoneBoost = isHomeZone
+                ? `\n⭐ ĐÂY LÀ MÔI TRƯỜNG "CÁ GẶP NƯỚC" CỦA ${char.name.toUpperCase()}: ${char.name} đang ở đúng không gian mình tỏa sáng nhất — năng lượng cao hơn bình thường, câu thoại phải đặc biệt hơn, đậm chất hơn, như kiểu "sinh ra để ở đây" vậy. Thể hiện điều đó rõ trong câu thoại.\n`
+                : '';
+
+            const samePlacements = (zonePlacements.get(zoneEl) || []);
+            const sameOthers = samePlacements
+                .filter(p => p.el !== document.querySelector(`.placed-char[data-char-id="${char.id}"]`))
+                .map(p => CHARACTERS.find(c => c.id === p.charId))
+                .filter(Boolean);
+
+            const otherZoneChars = getCharsInOtherZones(zoneEl);
+
+            let situationBlock = '';
+
+            if (sameOthers.length > 0) {
+                const names = sameOthers.map(c => `${c.name} (giọng: ${CHAR_VOICE_GUIDE[c.id] ? c.name + ' — ' + CHAR_PERSONAS[c.id] : 'dễ thương'})`).join(', ');
+                const scenarios = SAME_ZONE_SCENARIOS[char.id] || SAME_ZONE_SCENARIOS.mason;
+                const scenario = scenarios[Math.floor(Math.random() * scenarios.length)];
+
+                situationBlock = `TÌNH HUỐNG — CÙNG ZONE:
+Trong ${zoneName} có thêm: ${sameOthers.map(c => c.name).join(', ')}.
+Kịch bản cụ thể: ${scenario}
+→ Viết đúng 1 câu thoại của ${char.name} theo kịch bản này. Câu phải rõ ràng là giọng ${char.name}, không thể nhầm với nhân vật khác.`;
+
+            } else if (otherZoneChars.length > 0) {
+                const picked = otherZoneChars[Math.floor(Math.random() * otherZoneChars.length)];
+                const reactions = OTHER_ZONE_REACTIONS[char.id] || OTHER_ZONE_REACTIONS.mason;
+                const reaction = reactions[Math.floor(Math.random() * reactions.length)];
+
+                situationBlock = `TÌNH HUỐNG — KHÁC ZONE:
+${char.name} đang ở ${zoneName}. ${picked.name} đang ở ${picked.zoneName} — zone khác hoàn toàn.
+Phản ứng của ${char.name}: ${reaction}
+→ Viết đúng 1 câu thoại thể hiện phản ứng đó. Câu phải rõ ràng là giọng ${char.name}. Không cần nhắc tên người kia.`;
+
+            } else {
+                situationBlock = `TÌNH HUỐNG — MỘT MÌNH:
+${char.name} đang một mình ở ${zoneName}.
+→ Viết đúng 1 câu thể hiện cảm xúc hoặc hành động phù hợp không gian. Câu phải rõ ràng là giọng ${char.name}, không thể nhầm với nhân vật khác.`;
+            }
+
+            return `Bạn là chuyên gia viết thoại nhân vật cho game sinh nhật vui vẻ bằng tiếng Việt.
+Nhiệm vụ: tạo 1 câu thoại duy nhất, đúng tính cách và giọng nói đặc trưng của nhân vật — đủ để người đọc nhận ra ngay đây là ai, không cần xem tên.
+
+━━━━━━━━━━━━━━━━━━━━━━
+NHÂN VẬT: ${char.name}
+TÍNH CÁCH: ${persona}
+KHÔNG GIAN: ${vibe}
+${homeZoneBoost}
+━━━━━━━━━━━━━━━━━━━━━━
+HƯỚNG DẪN GIỌNG NÓI — ĐỌC KỸ:
+${voiceGuide}
+
+━━━━━━━━━━━━━━━━━━━━━━
+${situationBlock}
+
+━━━━━━━━━━━━━━━━━━━━━━
+OUTPUT:
+- Đúng 1 câu thoại, dưới 18 từ tiếng Việt
+- Có 1-2 emoji phù hợp cảm xúc nhân vật
+- Giọng điệu PHẢI khớp với hướng dẫn — đọc xong biết ngay là ${char.name} nói
+- KHÔNG dùng "tao/mày" — chỉ "anh/em" hoặc biến thể theo hướng dẫn
+- KHÔNG dấu ngoặc kép, KHÔNG giải thích, KHÔNG tiêu đề — chỉ câu thoại`;
+        }
+
+        async function showTypingThenSpeak(charEl, char, zoneEl) {
+            charEl.querySelectorAll('.char-speech').forEach(s => s.remove());
+
+            const typing = document.createElement('div');
+            typing.className = 'char-speech typing-dots';
+            typing.innerHTML = '<span></span><span></span><span></span>';
+            charEl.appendChild(typing);
+
+            const zoneKey = zoneEl.dataset.zone;
+            const samePlacements = (zonePlacements.get(zoneEl) || []);
+            const others = samePlacements
+                .filter(p => p.el !== charEl)
+                .map(p => p.charId);
+
+            let line;
+            try {
+                const prompt = buildDialoguePrompt(char, zoneEl);
+                const resp = await fetch('https://api.anthropic.com/v1/messages', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        model: 'claude-sonnet-4-20250514',
+                        max_tokens: 120,
+                        messages: [{ role: 'user', content: prompt }]
+                    })
+                });
+                const data = await resp.json();
+                line = data.content?.[0]?.text?.trim();
+                if (!line) throw new Error('empty');
+            } catch (err) {
+                line = others.length > 0
+                    ? getOfflineInteract()
+                    : getOfflineSolo(char.id, zoneKey);
+            }
+
             typing.remove();
             const speech = document.createElement('div');
             speech.className = 'char-speech';
             speech.textContent = line;
             charEl.appendChild(speech);
 
-            // Auto-hide after 4s then periodic random chatter
             setTimeout(() => {
                 speech.remove();
                 startPeriodicChatter(charEl, char, zoneEl);
-            }, 4000);
+            }, 4500);
         }
 
         function startPeriodicChatter(charEl, char, zoneEl) {
@@ -1737,15 +2989,38 @@
             charEl._chatterTimer = setInterval(async () => {
                 if (!document.contains(charEl)) { clearInterval(charEl._chatterTimer); return; }
                 charEl.querySelectorAll('.char-speech').forEach(s => s.remove());
+
                 const zoneKey = zoneEl.dataset.zone;
-                const placements = (zonePlacements.get(zoneEl) || []);
-                const others = placements.filter(p => p.el !== charEl).map(p => p.charId);
-                const line = getZoneDialogue(zoneKey, char.id, others);
+                const samePlacements = (zonePlacements.get(zoneEl) || []);
+                const others = samePlacements.filter(p => p.el !== charEl).map(p => p.charId);
+
+                let line;
+                try {
+                    const prompt = buildDialoguePrompt(char, zoneEl);
+                    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            model: 'claude-sonnet-4-20250514',
+                            max_tokens: 120,
+                            messages: [{ role: 'user', content: prompt }]
+                        })
+                    });
+                    const data = await resp.json();
+                    line = data.content?.[0]?.text?.trim();
+                    if (!line) throw new Error('empty');
+                } catch (err) {
+                    line = others.length > 0
+                        ? getOfflineInteract()
+                        : getOfflineSolo(char.id, zoneKey);
+                }
+
                 const speech = document.createElement('div');
-                speech.className = 'char-speech'; speech.textContent = line;
+                speech.className = 'char-speech';
+                speech.textContent = line;
                 charEl.appendChild(speech);
-                setTimeout(() => speech.remove(), 3500);
-            }, 6000 + Math.random() * 4000);
+                setTimeout(() => speech.remove(), 3800);
+            }, 7000 + Math.random() * 5000);
         }
     </script>
 </body>
