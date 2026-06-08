@@ -264,62 +264,7 @@
             width: 100%;
         }
 
-        /* ── TIM CỐ ĐỊNH VIỀN MODAL — CSS thuần, không JS ── */
-        #modal-wrapper::before,
-        #modal-wrapper::after {
-            content: '🩷💗💖💕❤️🩵💙💚💛🧡💜🤍🩷💗💖💕❤️🩵💙💚💛🧡💜🤍🩷💗💖💕';
-            position: absolute;
-            font-size: 1.6rem;
-            line-height: 2.2rem;
-            letter-spacing: 2px;
-            pointer-events: none;
-            z-index: 3;
-            word-break: break-all;
-            overflow: hidden;
-            animation: hrFloat 2s ease-in-out infinite alternate;
-        }
-        /* Hàng trên */
-        #modal-wrapper::before {
-            top: 4px;
-            left: 12px;
-            right: 12px;
-            height: 2.4rem;
-            white-space: nowrap;
-            overflow: hidden;
-        }
-        /* Hàng dưới */
-        #modal-wrapper::after {
-            bottom: 4px;
-            left: 12px;
-            right: 12px;
-            height: 2.4rem;
-            white-space: nowrap;
-            overflow: hidden;
-            animation-delay: .4s;
-        }
-        /* Cột trái và phải dùng 2 pseudo element trên #modal-box */
-        #modal-box::before,
-        #modal-box::after {
-            content: '🩷\A💗\A💖\A💕\A❤️\A🩵\A💙\A💚\A💛\A🧡\A💜\A🤍\A🩷\A💗\A💖\A💕\A❤️\A🩵\A💙\A💚';
-            position: absolute;
-            font-size: 1.5rem;
-            line-height: 2.1rem;
-            white-space: pre;
-            pointer-events: none;
-            z-index: 3;
-            top: 8px;
-            bottom: 8px;
-            overflow: hidden;
-            animation: hrFloat 2.2s ease-in-out infinite alternate;
-        }
-        #modal-box::before {
-            left: -2.2rem;
-            animation-delay: .2s;
-        }
-        #modal-box::after {
-            right: -2.2rem;
-            animation-delay: .6s;
-        }
+        /* heart ring dùng JS, không cần CSS pseudo element */
 
         .highlight-text {
             color: #e91e8c;
@@ -1511,7 +1456,7 @@
     <div id="modal-overlay">
         <div id="modal-wrapper">
             <div id="modal-box">
-                <!-- heart-ring được thay bằng CSS ::before/::after cố định, xóa div này -->
+                <div id="heart-ring"></div>
                 <img id="mason-img" src="images/mason.png" alt="Mason Nguyễn" fetchpriority="high" loading="eager" />
                 <div class="modal-text-content">
                     <div id="modal-icons">
@@ -1648,8 +1593,47 @@
         });
 
         /* ═══════════════════════════════════════
-           HEART RING — CSS cố định, không dùng JS
+           HEART RING — build 1 lần, cố định mãi
         ═══════════════════════════════════════ */
+        function buildHeartBorder() {
+            const ring = document.getElementById('heart-ring'), box = document.getElementById('modal-box');
+            if (!ring || !box) return;
+            const W = box.offsetWidth, H = box.offsetHeight;
+            if (!W || !H) return;
+
+            ring.innerHTML = '';
+            const EMOJIS = ['🩷', '💗', '💖', '💕', '❤️', '🩵', '💙', '💚', '💛', '🧡', '💜', '🤍'];
+            let idx = 0;
+            const frag = document.createDocumentFragment();
+            function placeHeart(px, py, rotDeg, szMulti) {
+                const el = document.createElement('span');
+                el.className = 'hr-heart';
+                el.textContent = EMOJIS[idx % EMOJIS.length];
+                const sz = (1.5 + (idx % 5) * 0.3) * szMulti;
+                el.style.cssText = `font-size:${sz}rem;left:${px}px;top:${py}px;transform:rotate(${rotDeg}deg);animation-duration:${(1.8 + (idx % 7) * 0.3).toFixed(1)}s;animation-delay:${((idx % 13) * 0.15).toFixed(2)}s;z-index:${Math.floor(Math.random() * 4)};`;
+                frag.appendChild(el);
+                idx++;
+            }
+            const halfEm = 18;
+            for (let layer = 0; layer < 3; layer++) {
+                const density = 30 - layer * 6, szMulti = 1 - layer * 0.15, offset = layer * 16;
+                const topN = Math.max(5, Math.round(W / density));
+                for (let i = 0; i <= topN; i++) placeHeart((i / topN) * W - halfEm + rand(-15, 15), -halfEm - offset + rand(-12, 12), rand(-45, 45), szMulti);
+                for (let i = 0; i <= topN; i++) placeHeart((i / topN) * W - halfEm + rand(-15, 15), H - halfEm + offset + rand(-12, 12), rand(-45, 45), szMulti);
+                const sideN = Math.max(4, Math.round(H / density));
+                for (let i = 0; i <= sideN; i++) placeHeart(-halfEm - offset + rand(-12, 12), (i / sideN) * H - halfEm + rand(-15, 15), rand(-45, 45), szMulti);
+                for (let i = 0; i <= sideN; i++) placeHeart(W - halfEm + offset + rand(-12, 12), (i / sideN) * H - halfEm + rand(-15, 15), rand(-45, 45), szMulti);
+            }
+            ring.appendChild(frag);
+        }
+
+        // Build đúng 1 lần sau khi font + layout sẵn sàng — không bao giờ rebuild lại
+        if (document.fonts) {
+            document.fonts.ready.then(() => setTimeout(buildHeartBorder, 50));
+        } else {
+            setTimeout(buildHeartBorder, 100);
+        }
+
         function showGreetingModal() {
             const ov = document.getElementById('modal-overlay');
             ov.style.transition = 'none';
