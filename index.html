@@ -1576,12 +1576,17 @@
         /* ═══════════════════════════════════════
            HEART RING
         ═══════════════════════════════════════ */
+        let lastBoxW = 0, lastBoxH = 0;
         function buildHeartBorder() {
             const ring = document.getElementById('heart-ring'), box = document.getElementById('modal-box');
             if (!ring || !box) return;
+            const W = box.offsetWidth, H = box.offsetHeight;
+            // Fix lag: Bỏ qua render lại nếu kích thước không đổi đáng kể (tránh ResizeObserver lặp vô hạn)
+            if (Math.abs(W - lastBoxW) < 5 && Math.abs(H - lastBoxH) < 5) return;
+            lastBoxW = W; lastBoxH = H;
+            
             ring.innerHTML = '';
             const EMOJIS = ['🩷', '💗', '💖', '💕', '❤️', '🩵', '💙', '💚', '💛', '🧡', '💜', '🤍'];
-            const W = box.offsetWidth, H = box.offsetHeight;
             const RW = W, RH = H; // Bám sát viền bảng
             let idx = 0;
             function placeHeart(px, py, rotDeg, szMulti) {
@@ -1627,7 +1632,8 @@
             ov.style.opacity = '0';
             if (!window._sceneStarted) {
                 window._sceneStarted = true;
-                startScene(); // Render ngay khi bảng bắt đầu mờ để tạo cảm giác phản hồi lập tức
+                // Fix lag: Chờ modal ẩn xong hoàn toàn (150ms) mới load bong bóng nặng
+                setTimeout(startScene, 150);
             }
             setTimeout(() => { ov.style.display = 'none'; }, 150);
         });
@@ -1639,18 +1645,20 @@
         ═══════════════════════════════════════ */
         function triggerRain(emoji, count = 80) {
             const W = window.innerWidth;
+            const frag = document.createDocumentFragment();
             for (let i = 0; i < count; i++) {
-                setTimeout(() => {
-                    const el = document.createElement('div'); el.className = 'rain-item';
-                    el.textContent = emoji;
-                    el.style.fontSize = rand(1.2, 2.8).toFixed(2) + 'rem';
-                    el.style.left = rand(0, W - 40) + 'px';
-                    el.style.animationDuration = rand(1.4, 3.2).toFixed(2) + 's';
-                    el.style.animationDelay = '0s';
-                    document.body.appendChild(el);
-                    el.addEventListener('animationend', () => el.remove());
-                }, i * rand(0, 40));
+                const el = document.createElement('div'); 
+                el.className = 'rain-item';
+                el.textContent = emoji;
+                el.style.fontSize = rand(1.2, 2.8).toFixed(2) + 'rem';
+                el.style.left = rand(0, W - 40) + 'px';
+                el.style.animationDuration = rand(1.4, 3.2).toFixed(2) + 's';
+                // Fix lag: Chuyển delay từ JS SetTimeout sang CSS animation-delay
+                el.style.animationDelay = rand(0, 1.5).toFixed(2) + 's'; 
+                frag.appendChild(el);
+                el.addEventListener('animationend', () => el.remove());
             }
+            document.body.appendChild(frag);
         }
         // Sửa lỗi lag tooltip: Giảm số lượng icon rơi xuống theo thiết bị
         const rainCount = window.innerWidth < 600 ? 25 : 60;
@@ -1671,9 +1679,12 @@
 
             const VARIANTS = ['v0', 'v1', 'v2', 'v3', 'v4'];
             
-            // Hiển thị ĐẦY ĐỦ toàn bộ tin nhắn
             const safeMsgs = (typeof MESSAGES !== 'undefined' && Array.isArray(MESSAGES)) ? MESSAGES : ['Lỗi load tin nhắn'];
-            const shuffled = [...safeMsgs].sort(() => Math.random() - .5);
+            let shuffled = [...safeMsgs].sort(() => Math.random() - .5);
+            
+            // Fix lag: Giới hạn số bong bóng hiển thị (mobile render quá nhiều DOM + RequestAnimationFrame = Treo máy)
+            const maxBubbles = isMobile ? 35 : 80;
+            shuffled = shuffled.slice(0, maxBubbles);
 
             function estimateSize(text) {
                 const charsPerLine = isMobile ? 15 : 17;
