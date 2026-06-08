@@ -1708,7 +1708,11 @@
         ═══════════════════════════════════════ */
         function startScene() {
             const scene = document.getElementById('scene');
-            scene.classList.add('active'); // Dùng class để kích hoạt mượt mà
+            scene.classList.add('active');
+
+            // Defer toàn bộ việc tạo DOM nặng sang sau 1 frame — để browser paint
+            // animation mờ modal trước, tránh block main thread gây khựng nút
+            setTimeout(() => {
 
             const VW = window.visualViewport ? window.visualViewport.width : window.innerWidth;
             const VH = window.visualViewport ? window.visualViewport.height : window.innerHeight;
@@ -1719,7 +1723,6 @@
             const safeMsgs = (typeof MESSAGES !== 'undefined' && Array.isArray(MESSAGES)) ? MESSAGES : ['Lỗi load tin nhắn'];
             let shuffled = [...safeMsgs].sort(() => Math.random() - .5);
 
-            // Fix lag: Giới hạn số bong bóng hiển thị (mobile render quá nhiều DOM + RequestAnimationFrame = Treo máy)
             const maxBubbles = isMobile ? 35 : 80;
             shuffled = shuffled.slice(0, maxBubbles);
 
@@ -1793,8 +1796,6 @@
             }
 
             function tick() {
-                // Loại bỏ HOÀN TOÀN logic check va chạm đẩy nhau
-                // Chỉ update vị trí đong đưa quanh điểm neo gốc (x, y) để siêu nhẹ mượt
                 for (let i = 0; i < objects.length; i++) {
                     const o = objects[i];
                     o.wobble += o.wobbleSpeed;
@@ -1805,6 +1806,8 @@
                 requestAnimationFrame(tick);
             }
             requestAnimationFrame(tick);
+
+            }, 80); // end defer setTimeout — bubble DOM tạo sau khi modal đã fade xong
         }
 
         /* ═══════════════════════════════════════
