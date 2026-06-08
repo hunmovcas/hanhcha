@@ -1627,11 +1627,11 @@
             ring.appendChild(frag);
         }
 
-        // Build đúng 1 lần sau khi font + layout sẵn sàng — không bao giờ rebuild lại
-        if (document.fonts) {
-            document.fonts.ready.then(() => setTimeout(buildHeartBorder, 50));
+        // Build tim lúc browser rảnh — không chặn nút Okie
+        if (window.requestIdleCallback) {
+            requestIdleCallback(() => buildHeartBorder(), { timeout: 2000 });
         } else {
-            setTimeout(buildHeartBorder, 100);
+            setTimeout(buildHeartBorder, 500);
         }
 
         function showGreetingModal() {
