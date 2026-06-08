@@ -5,7 +5,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>💌 MỪNG THỌ BẢO BỐI</title>
-        <link rel="preload" href="images/mason.png" as="image" fetchpriority="high">
+    <link rel="preload" href="images/mason.png" as="image" fetchpriority="high">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Nunito:wght@400;600;700&display=swap"
@@ -163,10 +163,9 @@
             position: absolute;
             font-size: 2.1rem;
             line-height: 1;
-            /* Đã tắt drop-shadow vì nó gây giật khung hình khi kết hợp animation trên mobile */
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, .12));
             animation: hrFloat ease-in-out infinite alternate;
             transform-origin: center;
-            will-change: transform; /* Nhắc GPU tối ưu trước chuyển động */
         }
 
         @keyframes hrFloat {
@@ -509,6 +508,7 @@
             transition: transform .2s;
             position: relative;
             filter: drop-shadow(0 2px 6px rgba(0, 0, 0, .18));
+            touch-action: manipulation;
         }
 
         .tool-btn:hover {
@@ -560,14 +560,14 @@
             word-break: break-word;
             cursor: default;
             user-select: none;
-            filter: drop-shadow(0 4px 10px rgba(233, 30, 140, .13));
-            transition: filter .2s;
+            box-shadow: 0 4px 10px rgba(233, 30, 140, .13);
+            transition: box-shadow .2s, transform .2s;
             z-index: 2;
             will-change: transform;
         }
 
         .bubble:hover {
-            filter: drop-shadow(0 6px 18px rgba(233, 30, 140, .32));
+            box-shadow: 0 6px 18px rgba(233, 30, 140, .32);
             z-index: 100;
         }
 
@@ -640,7 +640,8 @@
             z-index: 9000;
             font-size: 2rem;
             animation: rainFall linear forwards;
-            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, .15));
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+            will-change: transform;
         }
 
         @keyframes rainFall {
@@ -679,9 +680,11 @@
         #dtmf-box {
             background: linear-gradient(160deg, #fff5fc 0%, #fdf0ff 60%, #fff9fb 100%);
             border-radius: 36px;
-            padding: 32px 20px; /* Giảm padding trên mobile */
+            padding: 32px 20px;
+            /* Giảm padding trên mobile */
             max-width: 480px;
-            width: 90%; /* Thu hẹp lại một chút để không chạm mép màn hình */
+            width: 90%;
+            /* Thu hẹp lại một chút để không chạm mép màn hình */
             text-align: center;
             box-shadow: 0 24px 70px rgba(180, 0, 120, .35), inset 0 1px 0 rgba(255, 255, 255, .9);
             animation: popIn .45s cubic-bezier(.34, 1.56, .64, 1);
@@ -719,23 +722,27 @@
             display: flex;
             gap: 8px;
             margin-bottom: 14px;
-            width: 100%; /* Ép rộng hết cỡ bảng */
+            width: 100%;
+            /* Ép rộng hết cỡ bảng */
         }
 
         #dtmf-input {
             flex: 1;
-            padding: 12px 10px; /* Giảm padding ngang để tránh tràn */
+            padding: 12px 10px;
+            /* Giảm padding ngang để tránh tràn */
             border-radius: 50px;
             border: 2px solid #f9a8d4;
             font-family: 'Nunito', sans-serif;
-            font-size: 1rem; /* Nhỏ lại chút cho vừa */
+            font-size: 1rem;
+            /* Nhỏ lại chút cho vừa */
             font-weight: 700;
             color: #4a1042;
             background: #fff8fd;
             outline: none;
             letter-spacing: 2px;
             text-align: center;
-            min-width: 0; /* Quan trọng để flex không bị tràn */
+            min-width: 0;
+            /* Quan trọng để flex không bị tràn */
         }
 
         #dtmf-input:focus {
@@ -1582,12 +1589,13 @@
             const ring = document.getElementById('heart-ring'), box = document.getElementById('modal-box');
             if (!ring || !box) return;
             const W = box.offsetWidth, H = box.offsetHeight;
+            // Fix lag: Bỏ qua render lại nếu kích thước không đổi đáng kể (tránh ResizeObserver lặp vô hạn)
             if (Math.abs(W - lastBoxW) < 5 && Math.abs(H - lastBoxH) < 5) return;
             lastBoxW = W; lastBoxH = H;
-            
+
             ring.innerHTML = '';
             const EMOJIS = ['🩷', '💗', '💖', '💕', '❤️', '🩵', '💙', '💚', '💛', '🧡', '💜', '🤍'];
-            const RW = W, RH = H; 
+            const RW = W, RH = H; // Bám sát viền bảng
             let idx = 0;
             function placeHeart(px, py, rotDeg, szMulti) {
                 const el = document.createElement('span'); el.className = 'hr-heart';
@@ -1597,16 +1605,15 @@
                 ring.appendChild(el); idx++;
             }
             const halfEm = 18;
-            const isMobile = window.innerWidth < 600;
-            
-            // Fix lag: Rút gọn chỉ vẽ 1 vòng tĩnh duy nhất quanh viền, bỏ hẳn các vòng sinh sôi chồng chéo
-            const density = isMobile ? 45 : 30; // Mobile đặt thưa ra để giảm node
-            const topN = Math.max(5, Math.round(RW / density));
-            for (let i = 0; i <= topN; i++) placeHeart((i / topN) * RW - halfEm + rand(-10, 10), -halfEm + rand(-5, 5), rand(-30, 30), 1);
-            for (let i = 0; i <= topN; i++) placeHeart((i / topN) * RW - halfEm + rand(-10, 10), RH - halfEm + rand(-5, 5), rand(-30, 30), 1);
-            const sideN = Math.max(4, Math.round(RH / density));
-            for (let i = 0; i <= sideN; i++) placeHeart(-halfEm + rand(-5, 5), (i / sideN) * RH - halfEm + rand(-10, 10), rand(-30, 30), 1);
-            for (let i = 0; i <= sideN; i++) placeHeart(RW - halfEm + rand(-5, 5), (i / sideN) * RH - halfEm + rand(-10, 10), rand(-30, 30), 1);
+            for (let layer = 0; layer < 3; layer++) {
+                const density = 30 - layer * 6, szMulti = 1 - layer * 0.15, offset = layer * 16;
+                const topN = Math.max(5, Math.round(RW / density));
+                for (let i = 0; i <= topN; i++) placeHeart((i / topN) * RW - halfEm + rand(-15, 15), -halfEm - offset + rand(-12, 12), rand(-45, 45), szMulti);
+                for (let i = 0; i <= topN; i++) placeHeart((i / topN) * RW - halfEm + rand(-15, 15), RH - halfEm + offset + rand(-12, 12), rand(-45, 45), szMulti);
+                const sideN = Math.max(4, Math.round(RH / density));
+                for (let i = 0; i <= sideN; i++) placeHeart(-halfEm - offset + rand(-12, 12), (i / sideN) * RH - halfEm + rand(-15, 15), rand(-45, 45), szMulti);
+                for (let i = 0; i <= sideN; i++) placeHeart(RW - halfEm + offset + rand(-12, 12), (i / sideN) * RH - halfEm + rand(-15, 15), rand(-45, 45), szMulti);
+            }
         }
         function showGreetingModal() {
             const ov = document.getElementById('modal-overlay');
@@ -1614,30 +1621,24 @@
             buildHeartBorder();
         }
 
-        // Tự động tính toán lại viền tim ngay khi kích thước hộp thoại thay đổi (do load ảnh hoặc load font)
-        const boxElement = document.getElementById('modal-box');
-        if (boxElement) {
-            const resizeObserver = new ResizeObserver(() => {
-                buildHeartBorder();
-            });
-            resizeObserver.observe(boxElement);
-        }
+        // Thay thế ResizeObserver bằng window resize với debounce để tránh lặp vô hạn gây lag (Layout Thrashing)
+        let heartResizeTimer;
+        window.addEventListener('resize', () => {
+            clearTimeout(heartResizeTimer);
+            heartResizeTimer = setTimeout(buildHeartBorder, 200);
+        });
 
         // Đảm bảo tim cập nhật ngay lập tức khi Google Fonts được tải xong
         if (document.fonts) {
             document.fonts.ready.then(() => buildHeartBorder());
         }
         document.getElementById('close-btn').addEventListener('click', () => {
-            // Bí quyết chí mạng: Xóa trắng toàn bộ số tim đang bay ngay khoảnh khắc ấn nút, 
-            // nhờ vậy trình duyệt không mất sức tính toán hiệu ứng mờ dần (fade out) cho đống tim đó nữa.
-            const ring = document.getElementById('heart-ring');
-            if (ring) ring.innerHTML = '';
-
             const ov = document.getElementById('modal-overlay');
             ov.style.transition = 'opacity .15s ease';
             ov.style.opacity = '0';
             if (!window._sceneStarted) {
                 window._sceneStarted = true;
+                // Fix lag: Chờ modal ẩn xong hoàn toàn (150ms) mới load bong bóng nặng
                 setTimeout(startScene, 150);
             }
             setTimeout(() => { ov.style.display = 'none'; }, 150);
@@ -1652,14 +1653,14 @@
             const W = window.innerWidth;
             const frag = document.createDocumentFragment();
             for (let i = 0; i < count; i++) {
-                const el = document.createElement('div'); 
+                const el = document.createElement('div');
                 el.className = 'rain-item';
                 el.textContent = emoji;
                 el.style.fontSize = rand(1.2, 2.8).toFixed(2) + 'rem';
                 el.style.left = rand(0, W - 40) + 'px';
                 el.style.animationDuration = rand(1.4, 3.2).toFixed(2) + 's';
                 // Fix lag: Chuyển delay từ JS SetTimeout sang CSS animation-delay
-                el.style.animationDelay = rand(0, 1.5).toFixed(2) + 's'; 
+                el.style.animationDelay = rand(0, 1.5).toFixed(2) + 's';
                 frag.appendChild(el);
                 el.addEventListener('animationend', () => el.remove());
             }
@@ -1678,15 +1679,15 @@
             const scene = document.getElementById('scene');
             scene.style.display = 'block';
 
-            const VW = window.visualViewport ? window.visualViewport.width  : window.innerWidth;
+            const VW = window.visualViewport ? window.visualViewport.width : window.innerWidth;
             const VH = window.visualViewport ? window.visualViewport.height : window.innerHeight;
             const isMobile = VW < 600;
 
             const VARIANTS = ['v0', 'v1', 'v2', 'v3', 'v4'];
-            
+
             const safeMsgs = (typeof MESSAGES !== 'undefined' && Array.isArray(MESSAGES)) ? MESSAGES : ['Lỗi load tin nhắn'];
             let shuffled = [...safeMsgs].sort(() => Math.random() - .5);
-            
+
             // Fix lag: Giới hạn số bong bóng hiển thị (mobile render quá nhiều DOM + RequestAnimationFrame = Treo máy)
             const maxBubbles = isMobile ? 35 : 80;
             shuffled = shuffled.slice(0, maxBubbles);
@@ -1704,7 +1705,7 @@
             const tbX = VW - 74, tbY = 0, tbW = 74, tbH = VH;
 
             function inSafeZone(x, y, w, h) {
-                const inTitle   = !(x + w < CX - SAFE_W / 2 || x > CX + SAFE_W / 2 || y + h < CY - SAFE_H / 2 || y > CY + SAFE_H / 2);
+                const inTitle = !(x + w < CX - SAFE_W / 2 || x > CX + SAFE_W / 2 || y + h < CY - SAFE_H / 2 || y > CY + SAFE_H / 2);
                 const inToolbar = !(x + w < tbX || x > tbX + tbW || y + h < tbY || y > tbY + tbH);
                 return inTitle || inToolbar;
             }
@@ -1717,14 +1718,14 @@
 
                 const { w, h } = estimateSize(msg);
                 let x, y, tries = 0;
-                
+
                 // Cố định ngay vị trí ngẫu nhiên lúc sinh ra, bỏ qua logic đẩy nhau nặng nề
-                do { 
-                    x = rand(6, VW - w - 6); 
-                    y = rand(6, VH - h - 6); 
-                    tries++; 
+                do {
+                    x = rand(6, VW - w - 6);
+                    y = rand(6, VH - h - 6);
+                    tries++;
                 } while (inSafeZone(x, y, w, h) && tries < 15);
-                
+
                 el.style.transform = `translate(${x}px,${y}px)`;
                 frag.appendChild(el);
 
