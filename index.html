@@ -1635,31 +1635,28 @@
         }
         const closeBtn = document.getElementById('close-btn');
         const handleCloseModal = (e) => {
-            // Ngăn chặn nổi bọt sự kiện để tránh trình duyệt xử lý click đúp gây lag thêm
             if (e && e.cancelable) e.preventDefault();
-            
             const ov = document.getElementById('modal-overlay');
-            if (ov.style.display === 'none') return; // Chặn việc bấm 2 lần
-            
-            // 1. Ẩn modal ngay lập tức
+            if (ov.style.display === 'none') return;
+
+            // 1. Ẩn modal NGAY LẬP TỨC
             ov.style.display = 'none';
             
-            // 2. Xóa sạch HTML của thẻ tim bay để trình duyệt không phải tính toán render chìm nữa
+            // 2. Dọn rác
             const heartRing = document.getElementById('heart-ring');
             if (heartRing) heartRing.innerHTML = '';
 
             if (!window._sceneStarted) {
                 window._sceneStarted = true;
-                // 3. Tăng thời gian chờ lên 250ms. Mức này đủ dài để UI trên điện thoại 
-                // kịp Repaint (xóa lớp mờ backdrop-filter siêu nặng) trước khi 
-                // nhồi hàng chục bong bóng vào DOM, giúp thao tác bấm có cảm giác "ăn" ngay.
-                setTimeout(() => {
-                    requestAnimationFrame(startScene);
-                }, 250);
+                // 3. Dùng requestAnimationFrame kết hợp setTimeout(0) để ép trình duyệt 
+                // vẽ lại màn hình (xóa cái modal đi) NGAY LẬP TỨC, sau đó mới load bong bóng.
+                // Điều này tạo cảm giác bấm phát chuyển trang luôn (0ms delay).
+                requestAnimationFrame(() => {
+                    setTimeout(startScene, 0);
+                });
             }
         };
 
-        // Bắt thêm sự kiện touchend để điện thoại phản hồi chạm siêu nhạy
         closeBtn.addEventListener('touchend', handleCloseModal, { passive: false });
         closeBtn.addEventListener('click', handleCloseModal);
         document.getElementById('btn-greeting').addEventListener('click', showGreetingModal);
@@ -1729,20 +1726,28 @@
                 return inTitle || inToolbar;
             }
 
-            let highestBubbleZ = 100; // Khởi tạo biến đếm z-index
+            let activeBubble = null; // Biến lưu trữ bong bóng đang được chạm
             const frag = document.createDocumentFragment();
             const objects = shuffled.map((msg, i) => {
                 const el = document.createElement('div');
                 el.className = 'bubble ' + VARIANTS[i % VARIANTS.length];
                 el.textContent = msg;
 
-                // Xử lý đưa bong bóng lên trên cùng khi chạm/click
-                const bringToFront = () => {
-                    highestBubbleZ += 1;
-                    el.style.zIndex = highestBubbleZ;
+                // Xử lý hành vi giống y hệt hover trên máy tính
+                const focusBubble = () => {
+                    // Trả bong bóng cũ (nếu có) về vị trí chìm ban đầu
+                    if (activeBubble && activeBubble !== el) {
+                        activeBubble.style.zIndex = '';
+                        activeBubble.style.boxShadow = '';
+                    }
+                    // Kéo bong bóng hiện tại lên trên cùng và thêm viền bóng đổ
+                    el.style.zIndex = '100';
+                    el.style.boxShadow = '0 6px 18px rgba(233, 30, 140, .32)';
+                    activeBubble = el; // Ghi nhớ lại bong bóng này
                 };
-                el.addEventListener('touchstart', bringToFront, { passive: true });
-                el.addEventListener('mousedown', bringToFront);
+
+                el.addEventListener('touchstart', focusBubble, { passive: true });
+                el.addEventListener('mousedown', focusBubble);
 
                 const { w, h } = estimateSize(msg);
                 let x, y, tries = 0;
