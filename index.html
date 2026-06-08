@@ -159,6 +159,25 @@
             overflow: visible;
         }
 
+        .hr-heart {
+            position: absolute;
+            font-size: 2.1rem;
+            line-height: 1;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, .12));
+            animation: hrFloat ease-in-out infinite alternate;
+            transform-origin: center;
+        }
+
+        @keyframes hrFloat {
+            0% {
+                transform: translateY(0) scale(1) rotate(-8deg)
+            }
+
+            100% {
+                transform: translateY(-6px) scale(1.12) rotate(8deg)
+            }
+        }
+
         #modal-box {
             background: linear-gradient(170deg, #fff9fb 0%, #fffafa 55%, #fef0f7 100%);
             border-radius: 40px;
@@ -441,6 +460,7 @@
             z-index: 1;
             transition: opacity 0.25s ease, visibility 0.25s ease;
         }
+
         #scene.active {
             opacity: 1;
             visibility: visible;
@@ -1451,6 +1471,7 @@
                     <p>Anh eo em bét nhòe. 🥰
                     <p>Rep tin nhắn a nha cục cưng,
                     <p class="highlight-text">click okie để nhận quà khủng 💖</p>
+                    <p style="font-size: 0.85rem; color: #d81b60; font-style: italic; margin-bottom: -5px;">Mở trên laptop hoặc máy có cấu hình khủng nhé cục cưng, đồ họa blink blink nên CPU mobile có thể hơi lag nhẹ khi nhấn Okie á 🥺</p>
                     <button id="close-btn">Okie anh ❤️</button>
                 </div>
             </div>
@@ -1574,70 +1595,45 @@
         });
 
         /* ═══════════════════════════════════════
-           HEART RING — Canvas, zero DOM nodes
+           HEART RING — build 1 lần, cố định mãi
         ═══════════════════════════════════════ */
         function buildHeartBorder() {
-            const ring = document.getElementById('heart-ring');
-            const box  = document.getElementById('modal-box');
+            const ring = document.getElementById('heart-ring'), box = document.getElementById('modal-box');
             if (!ring || !box) return;
             const W = box.offsetWidth, H = box.offsetHeight;
             if (!W || !H) return;
 
             ring.innerHTML = '';
-
-            const DPR = Math.min(window.devicePixelRatio || 1, 2);
-            const PAD = 40; // vùng vẽ rộng hơn box để tim không bị cắt
-
-            const canvas = document.createElement('canvas');
-            canvas.width  = (W + PAD * 2) * DPR;
-            canvas.height = (H + PAD * 2) * DPR;
-            canvas.style.cssText = `position:absolute;left:${-PAD}px;top:${-PAD}px;width:${W + PAD*2}px;height:${H + PAD*2}px;pointer-events:none;`;
-
-            const ctx = canvas.getContext('2d');
-            ctx.scale(DPR, DPR);
-
-            const EMOJIS = ['🩷','💗','💖','💕','❤️','🩵','💙','💚','💛','🧡','💜','🤍'];
+            const EMOJIS = ['🩷', '💗', '💖', '💕', '❤️', '🩵', '💙', '💚', '💛', '🧡', '💜', '🤍'];
             let idx = 0;
-
-            function drawHeart(px, py, rotDeg, fontSize) {
-                ctx.save();
-                ctx.translate(PAD + px, PAD + py);
-                ctx.rotate(rotDeg * Math.PI / 180);
-                ctx.font = `${fontSize}px serif`;
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                ctx.globalAlpha = 0.88;
-                ctx.fillText(EMOJIS[idx % EMOJIS.length], 0, 0);
-                ctx.restore();
+            const frag = document.createDocumentFragment();
+            function placeHeart(px, py, rotDeg, szMulti) {
+                const el = document.createElement('span');
+                el.className = 'hr-heart';
+                el.textContent = EMOJIS[idx % EMOJIS.length];
+                const sz = (1.5 + (idx % 5) * 0.3) * szMulti;
+                el.style.cssText = `font-size:${sz}rem;left:${px}px;top:${py}px;transform:rotate(${rotDeg}deg);animation-duration:${(1.8 + (idx % 7) * 0.3).toFixed(1)}s;animation-delay:${((idx % 13) * 0.15).toFixed(2)}s;z-index:${Math.floor(Math.random() * 4)};`;
+                frag.appendChild(el);
                 idx++;
             }
-
             const halfEm = 18;
             for (let layer = 0; layer < 3; layer++) {
-                const density  = 30 - layer * 6;
-                const offset   = layer * 16;
-                const fontSize = (layer === 0 ? 30 : layer === 1 ? 25 : 20);
-
+                const density = 30 - layer * 6, szMulti = 1 - layer * 0.15, offset = layer * 16;
                 const topN = Math.max(5, Math.round(W / density));
-                for (let i = 0; i <= topN; i++) {
-                    drawHeart((i / topN) * W - halfEm + rand(-15,15), -halfEm - offset + rand(-12,12), rand(-45,45), fontSize);
-                    drawHeart((i / topN) * W - halfEm + rand(-15,15),  H - halfEm + offset + rand(-12,12), rand(-45,45), fontSize);
-                }
+                for (let i = 0; i <= topN; i++) placeHeart((i / topN) * W - halfEm + rand(-15, 15), -halfEm - offset + rand(-12, 12), rand(-45, 45), szMulti);
+                for (let i = 0; i <= topN; i++) placeHeart((i / topN) * W - halfEm + rand(-15, 15), H - halfEm + offset + rand(-12, 12), rand(-45, 45), szMulti);
                 const sideN = Math.max(4, Math.round(H / density));
-                for (let i = 0; i <= sideN; i++) {
-                    drawHeart(-halfEm - offset + rand(-12,12), (i / sideN) * H - halfEm + rand(-15,15), rand(-45,45), fontSize);
-                    drawHeart( W - halfEm + offset + rand(-12,12), (i / sideN) * H - halfEm + rand(-15,15), rand(-45,45), fontSize);
-                }
+                for (let i = 0; i <= sideN; i++) placeHeart(-halfEm - offset + rand(-12, 12), (i / sideN) * H - halfEm + rand(-15, 15), rand(-45, 45), szMulti);
+                for (let i = 0; i <= sideN; i++) placeHeart(W - halfEm + offset + rand(-12, 12), (i / sideN) * H - halfEm + rand(-15, 15), rand(-45, 45), szMulti);
             }
-
-            ring.appendChild(canvas);
+            ring.appendChild(frag);
         }
 
-        // Chạy lúc browser rảnh — 1 lần duy nhất, không bao giờ chặn main thread
+        // Build tim lúc browser rảnh — không chặn nút Okie
         if (window.requestIdleCallback) {
-            requestIdleCallback(buildHeartBorder, { timeout: 3000 });
+            requestIdleCallback(() => buildHeartBorder(), { timeout: 2000 });
         } else {
-            setTimeout(buildHeartBorder, 600);
+            setTimeout(buildHeartBorder, 500);
         }
 
         function showGreetingModal() {
@@ -1721,98 +1717,98 @@
             // Tạo bubble DOM sau 120ms — đủ thời gian để browser render scene background trước
             setTimeout(() => {
 
-            const VW = window.visualViewport ? window.visualViewport.width : window.innerWidth;
-            const VH = window.visualViewport ? window.visualViewport.height : window.innerHeight;
-            const isMobile = VW < 600;
+                const VW = window.visualViewport ? window.visualViewport.width : window.innerWidth;
+                const VH = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+                const isMobile = VW < 600;
 
-            const VARIANTS = ['v0', 'v1', 'v2', 'v3', 'v4'];
+                const VARIANTS = ['v0', 'v1', 'v2', 'v3', 'v4'];
 
-            const safeMsgs = (typeof MESSAGES !== 'undefined' && Array.isArray(MESSAGES)) ? MESSAGES : ['Lỗi load tin nhắn'];
-            let shuffled = [...safeMsgs].sort(() => Math.random() - .5);
+                const safeMsgs = (typeof MESSAGES !== 'undefined' && Array.isArray(MESSAGES)) ? MESSAGES : ['Lỗi load tin nhắn'];
+                let shuffled = [...safeMsgs].sort(() => Math.random() - .5);
 
-            const maxBubbles = isMobile ? 35 : 80;
-            shuffled = shuffled.slice(0, maxBubbles);
+                const maxBubbles = isMobile ? 35 : 80;
+                shuffled = shuffled.slice(0, maxBubbles);
 
-            function estimateSize(text) {
-                const charsPerLine = isMobile ? 15 : 17;
-                const lines = Math.ceil(text.length / charsPerLine);
-                const w = Math.min(isMobile ? 115 : 215, Math.max(isMobile ? 60 : 85, text.length * (isMobile ? 5.5 : 7.8)));
-                const h = (isMobile ? 16 : 24) + lines * (isMobile ? 16 : 22);
-                return { w, h };
-            }
+                function estimateSize(text) {
+                    const charsPerLine = isMobile ? 15 : 17;
+                    const lines = Math.ceil(text.length / charsPerLine);
+                    const w = Math.min(isMobile ? 115 : 215, Math.max(isMobile ? 60 : 85, text.length * (isMobile ? 5.5 : 7.8)));
+                    const h = (isMobile ? 16 : 24) + lines * (isMobile ? 16 : 22);
+                    return { w, h };
+                }
 
-            const CX = VW / 2, CY = VH / 2;
-            const SAFE_W = isMobile ? 200 : 340, SAFE_H = isMobile ? 80 : 130;
-            const tbX = VW - 74, tbY = 0, tbW = 74, tbH = VH;
+                const CX = VW / 2, CY = VH / 2;
+                const SAFE_W = isMobile ? 200 : 340, SAFE_H = isMobile ? 80 : 130;
+                const tbX = VW - 74, tbY = 0, tbW = 74, tbH = VH;
 
-            function inSafeZone(x, y, w, h) {
-                const inTitle = !(x + w < CX - SAFE_W / 2 || x > CX + SAFE_W / 2 || y + h < CY - SAFE_H / 2 || y > CY + SAFE_H / 2);
-                const inToolbar = !(x + w < tbX || x > tbX + tbW || y + h < tbY || y > tbY + tbH);
-                return inTitle || inToolbar;
-            }
+                function inSafeZone(x, y, w, h) {
+                    const inTitle = !(x + w < CX - SAFE_W / 2 || x > CX + SAFE_W / 2 || y + h < CY - SAFE_H / 2 || y > CY + SAFE_H / 2);
+                    const inToolbar = !(x + w < tbX || x > tbX + tbW || y + h < tbY || y > tbY + tbH);
+                    return inTitle || inToolbar;
+                }
 
-            let activeBubble = null; // Biến lưu trữ bong bóng đang được chạm
-            const frag = document.createDocumentFragment();
-            const objects = shuffled.map((msg, i) => {
-                const el = document.createElement('div');
-                el.className = 'bubble ' + VARIANTS[i % VARIANTS.length];
-                el.textContent = msg;
+                let activeBubble = null; // Biến lưu trữ bong bóng đang được chạm
+                const frag = document.createDocumentFragment();
+                const objects = shuffled.map((msg, i) => {
+                    const el = document.createElement('div');
+                    el.className = 'bubble ' + VARIANTS[i % VARIANTS.length];
+                    el.textContent = msg;
 
-                // Xử lý hành vi giống y hệt hover trên máy tính
-                const focusBubble = () => {
-                    // Trả bong bóng cũ (nếu có) về vị trí chìm ban đầu
-                    if (activeBubble && activeBubble !== el) {
-                        activeBubble.style.zIndex = '';
-                        activeBubble.style.boxShadow = '';
+                    // Xử lý hành vi giống y hệt hover trên máy tính
+                    const focusBubble = () => {
+                        // Trả bong bóng cũ (nếu có) về vị trí chìm ban đầu
+                        if (activeBubble && activeBubble !== el) {
+                            activeBubble.style.zIndex = '';
+                            activeBubble.style.boxShadow = '';
+                        }
+                        // Kéo bong bóng hiện tại lên trên cùng và thêm viền bóng đổ
+                        el.style.zIndex = '100';
+                        el.style.boxShadow = '0 6px 18px rgba(233, 30, 140, .32)';
+                        activeBubble = el; // Ghi nhớ lại bong bóng này
+                    };
+
+                    el.addEventListener('touchstart', focusBubble, { passive: true });
+                    el.addEventListener('mousedown', focusBubble);
+
+                    const { w, h } = estimateSize(msg);
+                    let x, y, tries = 0;
+
+                    // Cố định ngay vị trí ngẫu nhiên lúc sinh ra, bỏ qua logic đẩy nhau nặng nề
+                    do {
+                        x = rand(6, VW - w - 6);
+                        y = rand(6, VH - h - 6);
+                        tries++;
+                    } while (inSafeZone(x, y, w, h) && tries < 15);
+
+                    el.style.transform = `translate(${x}px,${y}px)`;
+                    frag.appendChild(el);
+
+                    // Giữ lại hiệu ứng rung đong đưa
+                    return { el, w, h, x, y, wobble: rand(0, Math.PI * 2), wobbleSpeed: rand(0.008, 0.018), wobbleAmp: rand(0.3, 0.9) };
+                });
+                scene.appendChild(frag);
+
+                const SPARKS = ['✨', '🌸', '💗', '💕', '🌷', '⭐', '💖', '🎀', '🩷'];
+                for (let s = 0; s < (isMobile ? 8 : 18); s++) {
+                    const sp = document.createElement('div'); sp.className = 'spark';
+                    sp.textContent = SPARKS[randInt(0, SPARKS.length - 1)];
+                    sp.style.left = rand(2, 90) + 'vw'; sp.style.top = rand(5, 88) + 'vh';
+                    sp.style.fontSize = rand(.75, 1.3).toFixed(2) + 'rem';
+                    sp.style.animation = `sparkFade ${rand(3, 7).toFixed(1)}s ${rand(0, 8).toFixed(1)}s ease-in-out infinite`;
+                    scene.appendChild(sp);
+                }
+
+                function tick() {
+                    for (let i = 0; i < objects.length; i++) {
+                        const o = objects[i];
+                        o.wobble += o.wobbleSpeed;
+                        const currentX = o.x + Math.cos(o.wobble) * o.wobbleAmp * 5;
+                        const currentY = o.y + Math.sin(o.wobble) * o.wobbleAmp * 12;
+                        o.el.style.transform = `translate(${currentX}px,${currentY}px)`;
                     }
-                    // Kéo bong bóng hiện tại lên trên cùng và thêm viền bóng đổ
-                    el.style.zIndex = '100';
-                    el.style.boxShadow = '0 6px 18px rgba(233, 30, 140, .32)';
-                    activeBubble = el; // Ghi nhớ lại bong bóng này
-                };
-
-                el.addEventListener('touchstart', focusBubble, { passive: true });
-                el.addEventListener('mousedown', focusBubble);
-
-                const { w, h } = estimateSize(msg);
-                let x, y, tries = 0;
-
-                // Cố định ngay vị trí ngẫu nhiên lúc sinh ra, bỏ qua logic đẩy nhau nặng nề
-                do {
-                    x = rand(6, VW - w - 6);
-                    y = rand(6, VH - h - 6);
-                    tries++;
-                } while (inSafeZone(x, y, w, h) && tries < 15);
-
-                el.style.transform = `translate(${x}px,${y}px)`;
-                frag.appendChild(el);
-
-                // Giữ lại hiệu ứng rung đong đưa
-                return { el, w, h, x, y, wobble: rand(0, Math.PI * 2), wobbleSpeed: rand(0.008, 0.018), wobbleAmp: rand(0.3, 0.9) };
-            });
-            scene.appendChild(frag);
-
-            const SPARKS = ['✨', '🌸', '💗', '💕', '🌷', '⭐', '💖', '🎀', '🩷'];
-            for (let s = 0; s < (isMobile ? 8 : 18); s++) {
-                const sp = document.createElement('div'); sp.className = 'spark';
-                sp.textContent = SPARKS[randInt(0, SPARKS.length - 1)];
-                sp.style.left = rand(2, 90) + 'vw'; sp.style.top = rand(5, 88) + 'vh';
-                sp.style.fontSize = rand(.75, 1.3).toFixed(2) + 'rem';
-                sp.style.animation = `sparkFade ${rand(3, 7).toFixed(1)}s ${rand(0, 8).toFixed(1)}s ease-in-out infinite`;
-                scene.appendChild(sp);
-            }
-
-            function tick() {
-                for (let i = 0; i < objects.length; i++) {
-                    const o = objects[i];
-                    o.wobble += o.wobbleSpeed;
-                    const currentX = o.x + Math.cos(o.wobble) * o.wobbleAmp * 5;
-                    const currentY = o.y + Math.sin(o.wobble) * o.wobbleAmp * 12;
-                    o.el.style.transform = `translate(${currentX}px,${currentY}px)`;
+                    requestAnimationFrame(tick);
                 }
                 requestAnimationFrame(tick);
-            }
-            requestAnimationFrame(tick);
 
             }, 120); // end defer — bubble DOM tạo sau khi modal ẩn xong
         }
@@ -2100,7 +2096,7 @@
                     card.addEventListener('touchstart', e => {
                         if (card.classList.contains('in-use')) return;
                         touchDragging = true;
-                        
+
                         ghost = document.createElement('img');
                         ghost.src = char.img;
                         ghost.style.cssText = 'position:fixed;width:70px;height:70px;border-radius:50%;object-fit:cover;border:2px solid #f472b6;pointer-events:none;z-index:99999;opacity:0.85;transform:translate(-50%,-50%)';
@@ -2112,7 +2108,7 @@
                         const t = e.touches[0];
                         ghost.style.left = t.clientX + 'px';
                         ghost.style.top = t.clientY + 'px';
-                        
+
                         document.querySelectorAll('.dp-zone').forEach(z => z.classList.remove('drag-over'));
                         const el = document.elementFromPoint(t.clientX, t.clientY);
                         const zone = el?.closest?.('.dp-zone');
@@ -2122,14 +2118,14 @@
                     card.addEventListener('touchend', e => {
                         if (!touchDragging) return;
                         touchDragging = false;
-                        
+
                         if (ghost) { ghost.remove(); ghost = null; }
                         document.querySelectorAll('.dp-zone').forEach(z => z.classList.remove('drag-over'));
-                        
+
                         const t = e.changedTouches[0];
                         const el = document.elementFromPoint(t.clientX, t.clientY);
                         const zone = el?.closest?.('.dp-zone');
-                        
+
                         if (zone) {
                             const zRect = zone.getBoundingClientRect();
                             moveOrPlaceChar(char.id, zone, t.clientX - zRect.left, t.clientY - zRect.top);
@@ -2244,7 +2240,7 @@
                     if (e.target.closest('.char-remove-btn')) return; // Bỏ qua nếu đang chạm vào nút X
                     touchDragging = true;
                     el.style.opacity = '0.4';
-                    
+
                     ghost = document.createElement('img');
                     ghost.src = char.img;
                     ghost.style.cssText = 'position:fixed;width:56px;height:56px;border-radius:50%;object-fit:cover;border:2px solid #e91e8c;pointer-events:none;z-index:99999;opacity:0.85;transform:translate(-50%,-50%)';
@@ -2256,7 +2252,7 @@
                     const t = e.touches[0];
                     ghost.style.left = t.clientX + 'px';
                     ghost.style.top = t.clientY + 'px';
-                    
+
                     document.querySelectorAll('.dp-zone').forEach(z => z.classList.remove('drag-over'));
                     const targetEl = document.elementFromPoint(t.clientX, t.clientY);
                     const zone = targetEl?.closest?.('.dp-zone');
@@ -2267,14 +2263,14 @@
                     if (!touchDragging) return;
                     touchDragging = false;
                     el.style.opacity = '1';
-                    
+
                     if (ghost) { ghost.remove(); ghost = null; }
                     document.querySelectorAll('.dp-zone').forEach(z => z.classList.remove('drag-over'));
-                    
+
                     const t = e.changedTouches[0];
                     const targetEl = document.elementFromPoint(t.clientX, t.clientY);
                     const zone = targetEl?.closest?.('.dp-zone');
-                    
+
                     if (zone) {
                         const zRect = zone.getBoundingClientRect();
                         moveOrPlaceChar(charId, zone, t.clientX - zRect.left, t.clientY - zRect.top);
