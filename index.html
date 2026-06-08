@@ -316,6 +316,7 @@
             box-shadow: 0 5px 24px rgba(233, 30, 140, .42);
             transition: transform .18s, box-shadow .18s;
             letter-spacing: .6px;
+            touch-action: manipulation;
         }
 
         #close-btn:hover {
@@ -1634,14 +1635,16 @@
         }
         document.getElementById('close-btn').addEventListener('click', () => {
             const ov = document.getElementById('modal-overlay');
-            ov.style.transition = 'opacity .15s ease';
-            ov.style.opacity = '0';
+            // Ẩn modal ngay lập tức, xoá bỏ hiệu ứng mờ dần làm đơ máy
+            ov.style.display = 'none'; 
+            
             if (!window._sceneStarted) {
                 window._sceneStarted = true;
-                // Fix lag: Chờ modal ẩn xong hoàn toàn (150ms) mới load bong bóng nặng
-                setTimeout(startScene, 150);
+                // Dùng requestAnimationFrame ép trình duyệt ưu tiên xoá modal khỏi màn hình trước rồi mới load bong bóng
+                requestAnimationFrame(() => {
+                    setTimeout(startScene, 50);
+                });
             }
-            setTimeout(() => { ov.style.display = 'none'; }, 150);
         });
         document.getElementById('btn-greeting').addEventListener('click', showGreetingModal);
         document.getElementById('btn-poem').addEventListener('click', showPoemModal);
