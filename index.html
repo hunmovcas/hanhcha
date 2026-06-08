@@ -1619,6 +1619,11 @@
         function showGreetingModal() {
             const ov = document.getElementById('modal-overlay');
             ov.style.opacity = '1'; ov.style.transition = ''; ov.style.display = 'flex';
+            
+            // Hiển thị lại viền tim đã bị ẩn
+            const heartRing = document.getElementById('heart-ring');
+            if (heartRing) heartRing.style.display = 'block'; 
+            
             buildHeartBorder();
         }
 
@@ -1642,18 +1647,18 @@
             // 1. Ẩn modal NGAY LẬP TỨC
             ov.style.display = 'none';
             
-            // 2. Dọn rác
+            // 2. Chỉ ẨN viền tim thay vì xóa hẳn HTML. Đỡ tốn công CPU sinh lại DOM -> giảm lag đáng kể.
             const heartRing = document.getElementById('heart-ring');
-            if (heartRing) heartRing.innerHTML = '';
+            if (heartRing) heartRing.style.display = 'none';
 
             if (!window._sceneStarted) {
                 window._sceneStarted = true;
-                // 3. Dùng requestAnimationFrame kết hợp setTimeout(0) để ép trình duyệt 
-                // vẽ lại màn hình (xóa cái modal đi) NGAY LẬP TỨC, sau đó mới load bong bóng.
-                // Điều này tạo cảm giác bấm phát chuyển trang luôn (0ms delay).
-                requestAnimationFrame(() => {
-                    setTimeout(startScene, 0);
-                });
+                // 3. Cho trình duyệt một nhịp thở (100ms) để chắc chắn nó ĐÃ KỊP XÓA BẢNG
+                // khỏi màn hình điện thoại, sau đó mới render bong bóng.
+                // Thao tác này giúp nút nhấn không bị cảm giác đơ/khựng.
+                setTimeout(() => {
+                    requestAnimationFrame(startScene);
+                }, 100);
             }
         };
 
