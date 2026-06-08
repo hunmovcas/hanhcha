@@ -1594,27 +1594,31 @@
            HEART RING
         ═══════════════════════════════════════ */
         let lastBoxW = 0, lastBoxH = 0;
+        let _heartBuilt = false;
         function buildHeartBorder() {
             const ring = document.getElementById('heart-ring'), box = document.getElementById('modal-box');
             if (!ring || !box) return;
             const W = box.offsetWidth, H = box.offsetHeight;
-            // Fix lag: Bỏ qua render lại nếu kích thước không đổi đáng kể (tránh ResizeObserver lặp vô hạn)
             if (Math.abs(W - lastBoxW) < 5 && Math.abs(H - lastBoxH) < 5) return;
             lastBoxW = W; lastBoxH = H;
+            _heartBuilt = true;
 
             ring.innerHTML = '';
             const EMOJIS = ['🩷', '💗', '💖', '💕', '❤️', '🩵', '💙', '💚', '💛', '🧡', '💜', '🤍'];
-            const RW = W, RH = H; // Bám sát viền bảng
+            const RW = W, RH = H;
             let idx = 0;
+            // Dùng DocumentFragment để tránh nhiều lần reflow
+            const frag = document.createDocumentFragment();
             function placeHeart(px, py, rotDeg, szMulti) {
                 const el = document.createElement('span'); el.className = 'hr-heart';
                 el.textContent = EMOJIS[idx % EMOJIS.length];
                 const sz = (1.5 + (idx % 5) * 0.3) * szMulti;
                 el.style.cssText = `font-size:${sz}rem;left:${px}px;top:${py}px;transform:rotate(${rotDeg}deg);animation-duration:${(1.8 + (idx % 7) * 0.3).toFixed(1)}s;animation-delay:${((idx % 13) * 0.15).toFixed(2)}s;z-index:${Math.floor(Math.random() * 4)};`;
-                ring.appendChild(el); idx++;
+                frag.appendChild(el); idx++;
             }
             const halfEm = 18;
-            for (let layer = 0; layer < 3; layer++) {
+            // Giảm layers từ 3 xuống 1 để tạo ít DOM nodes hơn — vẫn đẹp, nhanh hơn nhiều
+            for (let layer = 0; layer < 1; layer++) {
                 const density = 30 - layer * 6, szMulti = 1 - layer * 0.15, offset = layer * 16;
                 const topN = Math.max(5, Math.round(RW / density));
                 for (let i = 0; i <= topN; i++) placeHeart((i / topN) * RW - halfEm + rand(-15, 15), -halfEm - offset + rand(-12, 12), rand(-45, 45), szMulti);
@@ -1623,56 +1627,60 @@
                 for (let i = 0; i <= sideN; i++) placeHeart(-halfEm - offset + rand(-12, 12), (i / sideN) * RH - halfEm + rand(-15, 15), rand(-45, 45), szMulti);
                 for (let i = 0; i <= sideN; i++) placeHeart(RW - halfEm + offset + rand(-12, 12), (i / sideN) * RH - halfEm + rand(-15, 15), rand(-45, 45), szMulti);
             }
+            ring.appendChild(frag);
         }
         function showGreetingModal() {
             const ov = document.getElementById('modal-overlay');
             ov.style.opacity = '1'; ov.style.transition = ''; ov.style.display = 'flex';
-            ov.style.pointerEvents = 'auto'; // Reset lại tương tác
-            
-            // Hiển thị lại viền tim đã bị ẩn
+            ov.style.pointerEvents = 'auto';
             const heartRing = document.getElementById('heart-ring');
-            if (heartRing) heartRing.style.display = 'block'; 
-            
-            buildHeartBorder();
+            if (heartRing) heartRing.style.display = 'block';
+            // Defer buildHeartBorder ra khỏi critical path — không cần chạy ngay
+            if (!_heartBuilt) setTimeout(buildHeartBorder, 50);
         }
 
-        // Thay thế ResizeObserver bằng window resize với debounce để tránh lặp vô hạn gây lag (Layout Thrashing)
         let heartResizeTimer;
         window.addEventListener('resize', () => {
             clearTimeout(heartResizeTimer);
             heartResizeTimer = setTimeout(buildHeartBorder, 200);
         });
 
-        // Đảm bảo tim cập nhật ngay lập tức khi Google Fonts được tải xong
+        // Defer fonts.ready ra khỏi critical path hoàn toàn
         if (document.fonts) {
-            document.fonts.ready.then(() => buildHeartBorder());
+            document.fonts.ready.then(() => setTimeout(buildHeartBorder, 100));
         }
         const closeBtn = document.getElementById('close-btn');
-        const handleCloseModal = (e) => {
-            if (e && e.cancelable) e.preventDefault();
-            const ov = document.getElementById('modal-overlay');
-            if (ov.style.opacity === '0') return;
+        let _modalClosing = false;
+        const handleCloseModal = () => {
+            if (_modalClosing) return;
+            _modalClosing = true;
 
-            // Chuyển mượt mà bằng CSS opacity (tận dụng GPU) thay vì display: none gây khựng/lag
-            ov.style.transition = 'opacity 0.25s ease';
+            const ov = document.getElementById('modal-overlay');
+            // Ẩn NGAY bằng visibility để browser không paint nữa — nhanh hơn opacity transition
+            ov.style.transition = 'none';
             ov.style.opacity = '0';
             ov.style.pointerEvents = 'none';
+            ov.style.visibility = 'hidden';
 
-            if (!window._sceneStarted) {
-                window._sceneStarted = true;
-                // Bắt đầu ngay lập tức không cần đợi
-                startScene();
-            }
-
-            // Dọn dẹp DOM trong nền sau khi đã mờ hẳn
+            // Defer startScene hoàn toàn ra sau — không chạy gì nặng trong event handler
             setTimeout(() => {
                 ov.style.display = 'none';
                 const heartRing = document.getElementById('heart-ring');
                 if (heartRing) heartRing.style.display = 'none';
-            }, 260);
+            }, 0);
+
+            setTimeout(() => {
+                if (!window._sceneStarted) {
+                    window._sceneStarted = true;
+                    startScene();
+                }
+            }, 50);
         };
 
-        closeBtn.addEventListener('touchstart', handleCloseModal, { passive: false });
+        closeBtn.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            handleCloseModal();
+        }, { passive: false });
         closeBtn.addEventListener('click', handleCloseModal);
         document.getElementById('btn-greeting').addEventListener('click', showGreetingModal);
         document.getElementById('btn-poem').addEventListener('click', showPoemModal);
@@ -1710,8 +1718,7 @@
             const scene = document.getElementById('scene');
             scene.classList.add('active');
 
-            // Defer toàn bộ việc tạo DOM nặng sang sau 1 frame — để browser paint
-            // animation mờ modal trước, tránh block main thread gây khựng nút
+            // Tạo bubble DOM sau 120ms — đủ thời gian để browser render scene background trước
             setTimeout(() => {
 
             const VW = window.visualViewport ? window.visualViewport.width : window.innerWidth;
@@ -1807,7 +1814,7 @@
             }
             requestAnimationFrame(tick);
 
-            }, 80); // end defer setTimeout — bubble DOM tạo sau khi modal đã fade xong
+            }, 120); // end defer — bubble DOM tạo sau khi modal ẩn xong
         }
 
         /* ═══════════════════════════════════════
