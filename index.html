@@ -264,6 +264,63 @@
             width: 100%;
         }
 
+        /* ── TIM CỐ ĐỊNH VIỀN MODAL — CSS thuần, không JS ── */
+        #modal-wrapper::before,
+        #modal-wrapper::after {
+            content: '🩷💗💖💕❤️🩵💙💚💛🧡💜🤍🩷💗💖💕❤️🩵💙💚💛🧡💜🤍🩷💗💖💕';
+            position: absolute;
+            font-size: 1.6rem;
+            line-height: 2.2rem;
+            letter-spacing: 2px;
+            pointer-events: none;
+            z-index: 3;
+            word-break: break-all;
+            overflow: hidden;
+            animation: hrFloat 2s ease-in-out infinite alternate;
+        }
+        /* Hàng trên */
+        #modal-wrapper::before {
+            top: 4px;
+            left: 12px;
+            right: 12px;
+            height: 2.4rem;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+        /* Hàng dưới */
+        #modal-wrapper::after {
+            bottom: 4px;
+            left: 12px;
+            right: 12px;
+            height: 2.4rem;
+            white-space: nowrap;
+            overflow: hidden;
+            animation-delay: .4s;
+        }
+        /* Cột trái và phải dùng 2 pseudo element trên #modal-box */
+        #modal-box::before,
+        #modal-box::after {
+            content: '🩷\A💗\A💖\A💕\A❤️\A🩵\A💙\A💚\A💛\A🧡\A💜\A🤍\A🩷\A💗\A💖\A💕\A❤️\A🩵\A💙\A💚';
+            position: absolute;
+            font-size: 1.5rem;
+            line-height: 2.1rem;
+            white-space: pre;
+            pointer-events: none;
+            z-index: 3;
+            top: 8px;
+            bottom: 8px;
+            overflow: hidden;
+            animation: hrFloat 2.2s ease-in-out infinite alternate;
+        }
+        #modal-box::before {
+            left: -2.2rem;
+            animation-delay: .2s;
+        }
+        #modal-box::after {
+            right: -2.2rem;
+            animation-delay: .6s;
+        }
+
         .highlight-text {
             color: #e91e8c;
             font-weight: 800;
@@ -1454,7 +1511,7 @@
     <div id="modal-overlay">
         <div id="modal-wrapper">
             <div id="modal-box">
-                <div id="heart-ring"></div>
+                <!-- heart-ring được thay bằng CSS ::before/::after cố định, xóa div này -->
                 <img id="mason-img" src="images/mason.png" alt="Mason Nguyễn" fetchpriority="high" loading="eager" />
                 <div class="modal-text-content">
                     <div id="modal-icons">
@@ -1591,63 +1648,15 @@
         });
 
         /* ═══════════════════════════════════════
-           HEART RING
+           HEART RING — CSS cố định, không dùng JS
         ═══════════════════════════════════════ */
-        let lastBoxW = 0, lastBoxH = 0;
-        let _heartBuilt = false;
-        function buildHeartBorder() {
-            const ring = document.getElementById('heart-ring'), box = document.getElementById('modal-box');
-            if (!ring || !box) return;
-            const W = box.offsetWidth, H = box.offsetHeight;
-            if (Math.abs(W - lastBoxW) < 5 && Math.abs(H - lastBoxH) < 5) return;
-            lastBoxW = W; lastBoxH = H;
-            _heartBuilt = true;
-
-            ring.innerHTML = '';
-            const EMOJIS = ['🩷', '💗', '💖', '💕', '❤️', '🩵', '💙', '💚', '💛', '🧡', '💜', '🤍'];
-            const RW = W, RH = H;
-            let idx = 0;
-            // Dùng DocumentFragment để tránh nhiều lần reflow
-            const frag = document.createDocumentFragment();
-            function placeHeart(px, py, rotDeg, szMulti) {
-                const el = document.createElement('span'); el.className = 'hr-heart';
-                el.textContent = EMOJIS[idx % EMOJIS.length];
-                const sz = (1.5 + (idx % 5) * 0.3) * szMulti;
-                el.style.cssText = `font-size:${sz}rem;left:${px}px;top:${py}px;transform:rotate(${rotDeg}deg);animation-duration:${(1.8 + (idx % 7) * 0.3).toFixed(1)}s;animation-delay:${((idx % 13) * 0.15).toFixed(2)}s;z-index:${Math.floor(Math.random() * 4)};`;
-                frag.appendChild(el); idx++;
-            }
-            const halfEm = 18;
-            // Giảm layers từ 3 xuống 1 để tạo ít DOM nodes hơn — vẫn đẹp, nhanh hơn nhiều
-            for (let layer = 0; layer < 1; layer++) {
-                const density = 30 - layer * 6, szMulti = 1 - layer * 0.15, offset = layer * 16;
-                const topN = Math.max(5, Math.round(RW / density));
-                for (let i = 0; i <= topN; i++) placeHeart((i / topN) * RW - halfEm + rand(-15, 15), -halfEm - offset + rand(-12, 12), rand(-45, 45), szMulti);
-                for (let i = 0; i <= topN; i++) placeHeart((i / topN) * RW - halfEm + rand(-15, 15), RH - halfEm + offset + rand(-12, 12), rand(-45, 45), szMulti);
-                const sideN = Math.max(4, Math.round(RH / density));
-                for (let i = 0; i <= sideN; i++) placeHeart(-halfEm - offset + rand(-12, 12), (i / sideN) * RH - halfEm + rand(-15, 15), rand(-45, 45), szMulti);
-                for (let i = 0; i <= sideN; i++) placeHeart(RW - halfEm + offset + rand(-12, 12), (i / sideN) * RH - halfEm + rand(-15, 15), rand(-45, 45), szMulti);
-            }
-            ring.appendChild(frag);
-        }
         function showGreetingModal() {
             const ov = document.getElementById('modal-overlay');
-            ov.style.opacity = '1'; ov.style.transition = ''; ov.style.display = 'flex';
+            ov.style.transition = 'none';
+            ov.style.opacity = '1';
+            ov.style.visibility = 'visible';
+            ov.style.display = 'flex';
             ov.style.pointerEvents = 'auto';
-            const heartRing = document.getElementById('heart-ring');
-            if (heartRing) heartRing.style.display = 'block';
-            // Defer buildHeartBorder ra khỏi critical path — không cần chạy ngay
-            if (!_heartBuilt) setTimeout(buildHeartBorder, 50);
-        }
-
-        let heartResizeTimer;
-        window.addEventListener('resize', () => {
-            clearTimeout(heartResizeTimer);
-            heartResizeTimer = setTimeout(buildHeartBorder, 200);
-        });
-
-        // Defer fonts.ready ra khỏi critical path hoàn toàn
-        if (document.fonts) {
-            document.fonts.ready.then(() => setTimeout(buildHeartBorder, 100));
         }
         const closeBtn = document.getElementById('close-btn');
         let _modalClosing = false;
@@ -1656,17 +1665,13 @@
             _modalClosing = true;
 
             const ov = document.getElementById('modal-overlay');
-            // Ẩn NGAY bằng visibility để browser không paint nữa — nhanh hơn opacity transition
             ov.style.transition = 'none';
             ov.style.opacity = '0';
             ov.style.pointerEvents = 'none';
             ov.style.visibility = 'hidden';
 
-            // Defer startScene hoàn toàn ra sau — không chạy gì nặng trong event handler
             setTimeout(() => {
                 ov.style.display = 'none';
-                const heartRing = document.getElementById('heart-ring');
-                if (heartRing) heartRing.style.display = 'none';
             }, 0);
 
             setTimeout(() => {
@@ -1677,12 +1682,17 @@
             }, 50);
         };
 
+        // Nút bánh sinh nhật mở lại modal — reset _modalClosing để có thể đóng lại lần nữa
+        document.getElementById('btn-greeting').addEventListener('click', () => {
+            _modalClosing = false;
+            showGreetingModal();
+        });
+
         closeBtn.addEventListener('touchstart', (e) => {
             e.preventDefault();
             handleCloseModal();
         }, { passive: false });
         closeBtn.addEventListener('click', handleCloseModal);
-        document.getElementById('btn-greeting').addEventListener('click', showGreetingModal);
         document.getElementById('btn-poem').addEventListener('click', showPoemModal);
 
         /* ═══════════════════════════════════════
