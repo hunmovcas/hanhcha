@@ -163,9 +163,10 @@
             position: absolute;
             font-size: 2.1rem;
             line-height: 1;
-            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, .12));
+            /* Đã tắt drop-shadow vì nó gây giật khung hình khi kết hợp animation trên mobile */
             animation: hrFloat ease-in-out infinite alternate;
             transform-origin: center;
+            will-change: transform; /* Nhắc GPU tối ưu trước chuyển động */
         }
 
         @keyframes hrFloat {
@@ -1581,13 +1582,12 @@
             const ring = document.getElementById('heart-ring'), box = document.getElementById('modal-box');
             if (!ring || !box) return;
             const W = box.offsetWidth, H = box.offsetHeight;
-            // Fix lag: Bỏ qua render lại nếu kích thước không đổi đáng kể (tránh ResizeObserver lặp vô hạn)
             if (Math.abs(W - lastBoxW) < 5 && Math.abs(H - lastBoxH) < 5) return;
             lastBoxW = W; lastBoxH = H;
             
             ring.innerHTML = '';
             const EMOJIS = ['🩷', '💗', '💖', '💕', '❤️', '🩵', '💙', '💚', '💛', '🧡', '💜', '🤍'];
-            const RW = W, RH = H; // Bám sát viền bảng
+            const RW = W, RH = H; 
             let idx = 0;
             function placeHeart(px, py, rotDeg, szMulti) {
                 const el = document.createElement('span'); el.className = 'hr-heart';
@@ -1597,15 +1597,16 @@
                 ring.appendChild(el); idx++;
             }
             const halfEm = 18;
-            for (let layer = 0; layer < 3; layer++) {
-                const density = 30 - layer * 6, szMulti = 1 - layer * 0.15, offset = layer * 16;
-                const topN = Math.max(5, Math.round(RW / density));
-                for (let i = 0; i <= topN; i++) placeHeart((i / topN) * RW - halfEm + rand(-15, 15), -halfEm - offset + rand(-12, 12), rand(-45, 45), szMulti);
-                for (let i = 0; i <= topN; i++) placeHeart((i / topN) * RW - halfEm + rand(-15, 15), RH - halfEm + offset + rand(-12, 12), rand(-45, 45), szMulti);
-                const sideN = Math.max(4, Math.round(RH / density));
-                for (let i = 0; i <= sideN; i++) placeHeart(-halfEm - offset + rand(-12, 12), (i / sideN) * RH - halfEm + rand(-15, 15), rand(-45, 45), szMulti);
-                for (let i = 0; i <= sideN; i++) placeHeart(RW - halfEm + offset + rand(-12, 12), (i / sideN) * RH - halfEm + rand(-15, 15), rand(-45, 45), szMulti);
-            }
+            const isMobile = window.innerWidth < 600;
+            
+            // Fix lag: Rút gọn chỉ vẽ 1 vòng tĩnh duy nhất quanh viền, bỏ hẳn các vòng sinh sôi chồng chéo
+            const density = isMobile ? 45 : 30; // Mobile đặt thưa ra để giảm node
+            const topN = Math.max(5, Math.round(RW / density));
+            for (let i = 0; i <= topN; i++) placeHeart((i / topN) * RW - halfEm + rand(-10, 10), -halfEm + rand(-5, 5), rand(-30, 30), 1);
+            for (let i = 0; i <= topN; i++) placeHeart((i / topN) * RW - halfEm + rand(-10, 10), RH - halfEm + rand(-5, 5), rand(-30, 30), 1);
+            const sideN = Math.max(4, Math.round(RH / density));
+            for (let i = 0; i <= sideN; i++) placeHeart(-halfEm + rand(-5, 5), (i / sideN) * RH - halfEm + rand(-10, 10), rand(-30, 30), 1);
+            for (let i = 0; i <= sideN; i++) placeHeart(RW - halfEm + rand(-5, 5), (i / sideN) * RH - halfEm + rand(-10, 10), rand(-30, 30), 1);
         }
         function showGreetingModal() {
             const ov = document.getElementById('modal-overlay');
@@ -1627,12 +1628,16 @@
             document.fonts.ready.then(() => buildHeartBorder());
         }
         document.getElementById('close-btn').addEventListener('click', () => {
+            // Bí quyết chí mạng: Xóa trắng toàn bộ số tim đang bay ngay khoảnh khắc ấn nút, 
+            // nhờ vậy trình duyệt không mất sức tính toán hiệu ứng mờ dần (fade out) cho đống tim đó nữa.
+            const ring = document.getElementById('heart-ring');
+            if (ring) ring.innerHTML = '';
+
             const ov = document.getElementById('modal-overlay');
             ov.style.transition = 'opacity .15s ease';
             ov.style.opacity = '0';
             if (!window._sceneStarted) {
                 window._sceneStarted = true;
-                // Fix lag: Chờ modal ẩn xong hoàn toàn (150ms) mới load bong bóng nặng
                 setTimeout(startScene, 150);
             }
             setTimeout(() => { ov.style.display = 'none'; }, 150);
