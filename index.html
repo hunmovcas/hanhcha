@@ -159,25 +159,6 @@
             overflow: visible;
         }
 
-        .hr-heart {
-            position: absolute;
-            font-size: 2.1rem;
-            line-height: 1;
-            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, .12));
-            animation: hrFloat ease-in-out infinite alternate;
-            transform-origin: center;
-        }
-
-        @keyframes hrFloat {
-            0% {
-                transform: translateY(0) scale(1) rotate(-8deg)
-            }
-
-            100% {
-                transform: translateY(-6px) scale(1.12) rotate(8deg)
-            }
-        }
-
         #modal-box {
             background: linear-gradient(170deg, #fff9fb 0%, #fffafa 55%, #fef0f7 100%);
             border-radius: 40px;
@@ -1593,45 +1574,70 @@
         });
 
         /* ═══════════════════════════════════════
-           HEART RING — build 1 lần, cố định mãi
+           HEART RING — Canvas, zero DOM nodes
         ═══════════════════════════════════════ */
         function buildHeartBorder() {
-            const ring = document.getElementById('heart-ring'), box = document.getElementById('modal-box');
+            const ring = document.getElementById('heart-ring');
+            const box  = document.getElementById('modal-box');
             if (!ring || !box) return;
             const W = box.offsetWidth, H = box.offsetHeight;
             if (!W || !H) return;
 
             ring.innerHTML = '';
-            const EMOJIS = ['🩷', '💗', '💖', '💕', '❤️', '🩵', '💙', '💚', '💛', '🧡', '💜', '🤍'];
+
+            const DPR = Math.min(window.devicePixelRatio || 1, 2);
+            const PAD = 40; // vùng vẽ rộng hơn box để tim không bị cắt
+
+            const canvas = document.createElement('canvas');
+            canvas.width  = (W + PAD * 2) * DPR;
+            canvas.height = (H + PAD * 2) * DPR;
+            canvas.style.cssText = `position:absolute;left:${-PAD}px;top:${-PAD}px;width:${W + PAD*2}px;height:${H + PAD*2}px;pointer-events:none;`;
+
+            const ctx = canvas.getContext('2d');
+            ctx.scale(DPR, DPR);
+
+            const EMOJIS = ['🩷','💗','💖','💕','❤️','🩵','💙','💚','💛','🧡','💜','🤍'];
             let idx = 0;
-            const frag = document.createDocumentFragment();
-            function placeHeart(px, py, rotDeg, szMulti) {
-                const el = document.createElement('span');
-                el.className = 'hr-heart';
-                el.textContent = EMOJIS[idx % EMOJIS.length];
-                const sz = (1.5 + (idx % 5) * 0.3) * szMulti;
-                el.style.cssText = `font-size:${sz}rem;left:${px}px;top:${py}px;transform:rotate(${rotDeg}deg);animation-duration:${(1.8 + (idx % 7) * 0.3).toFixed(1)}s;animation-delay:${((idx % 13) * 0.15).toFixed(2)}s;z-index:${Math.floor(Math.random() * 4)};`;
-                frag.appendChild(el);
+
+            function drawHeart(px, py, rotDeg, fontSize) {
+                ctx.save();
+                ctx.translate(PAD + px, PAD + py);
+                ctx.rotate(rotDeg * Math.PI / 180);
+                ctx.font = `${fontSize}px serif`;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.globalAlpha = 0.88;
+                ctx.fillText(EMOJIS[idx % EMOJIS.length], 0, 0);
+                ctx.restore();
                 idx++;
             }
+
             const halfEm = 18;
             for (let layer = 0; layer < 3; layer++) {
-                const density = 30 - layer * 6, szMulti = 1 - layer * 0.15, offset = layer * 16;
+                const density  = 30 - layer * 6;
+                const offset   = layer * 16;
+                const fontSize = (layer === 0 ? 30 : layer === 1 ? 25 : 20);
+
                 const topN = Math.max(5, Math.round(W / density));
-                for (let i = 0; i <= topN; i++) placeHeart((i / topN) * W - halfEm + rand(-15, 15), -halfEm - offset + rand(-12, 12), rand(-45, 45), szMulti);
-                for (let i = 0; i <= topN; i++) placeHeart((i / topN) * W - halfEm + rand(-15, 15), H - halfEm + offset + rand(-12, 12), rand(-45, 45), szMulti);
+                for (let i = 0; i <= topN; i++) {
+                    drawHeart((i / topN) * W - halfEm + rand(-15,15), -halfEm - offset + rand(-12,12), rand(-45,45), fontSize);
+                    drawHeart((i / topN) * W - halfEm + rand(-15,15),  H - halfEm + offset + rand(-12,12), rand(-45,45), fontSize);
+                }
                 const sideN = Math.max(4, Math.round(H / density));
-                for (let i = 0; i <= sideN; i++) placeHeart(-halfEm - offset + rand(-12, 12), (i / sideN) * H - halfEm + rand(-15, 15), rand(-45, 45), szMulti);
-                for (let i = 0; i <= sideN; i++) placeHeart(W - halfEm + offset + rand(-12, 12), (i / sideN) * H - halfEm + rand(-15, 15), rand(-45, 45), szMulti);
+                for (let i = 0; i <= sideN; i++) {
+                    drawHeart(-halfEm - offset + rand(-12,12), (i / sideN) * H - halfEm + rand(-15,15), rand(-45,45), fontSize);
+                    drawHeart( W - halfEm + offset + rand(-12,12), (i / sideN) * H - halfEm + rand(-15,15), rand(-45,45), fontSize);
+                }
             }
-            ring.appendChild(frag);
+
+            ring.appendChild(canvas);
         }
 
-        // Build tim lúc browser rảnh — không chặn nút Okie
+        // Chạy lúc browser rảnh — 1 lần duy nhất, không bao giờ chặn main thread
         if (window.requestIdleCallback) {
-            requestIdleCallback(() => buildHeartBorder(), { timeout: 2000 });
+            requestIdleCallback(buildHeartBorder, { timeout: 3000 });
         } else {
-            setTimeout(buildHeartBorder, 500);
+            setTimeout(buildHeartBorder, 600);
         }
 
         function showGreetingModal() {
