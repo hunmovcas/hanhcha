@@ -451,9 +451,17 @@
         #scene {
             position: fixed;
             inset: 0;
-            display: none;
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
             overflow: hidden;
             z-index: 1;
+            transition: opacity 0.25s ease, visibility 0.25s ease;
+        }
+        #scene.active {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
         }
 
         #title {
@@ -1619,6 +1627,7 @@
         function showGreetingModal() {
             const ov = document.getElementById('modal-overlay');
             ov.style.opacity = '1'; ov.style.transition = ''; ov.style.display = 'flex';
+            ov.style.pointerEvents = 'auto'; // Reset lại tương tác
             
             // Hiển thị lại viền tim đã bị ẩn
             const heartRing = document.getElementById('heart-ring');
@@ -1642,24 +1651,25 @@
         const handleCloseModal = (e) => {
             if (e && e.cancelable) e.preventDefault();
             const ov = document.getElementById('modal-overlay');
-            if (ov.style.display === 'none') return;
+            if (ov.style.opacity === '0') return;
 
-            // 1. Ẩn modal NGAY LẬP TỨC
-            ov.style.display = 'none';
-            
-            // 2. Chỉ ẨN viền tim thay vì xóa hẳn HTML. Đỡ tốn công CPU sinh lại DOM -> giảm lag đáng kể.
-            const heartRing = document.getElementById('heart-ring');
-            if (heartRing) heartRing.style.display = 'none';
+            // Chuyển mượt mà bằng CSS opacity (tận dụng GPU) thay vì display: none gây khựng/lag
+            ov.style.transition = 'opacity 0.25s ease';
+            ov.style.opacity = '0';
+            ov.style.pointerEvents = 'none';
 
             if (!window._sceneStarted) {
                 window._sceneStarted = true;
-                // 3. Cho trình duyệt một nhịp thở (100ms) để chắc chắn nó ĐÃ KỊP XÓA BẢNG
-                // khỏi màn hình điện thoại, sau đó mới render bong bóng.
-                // Thao tác này giúp nút nhấn không bị cảm giác đơ/khựng.
-                setTimeout(() => {
-                    requestAnimationFrame(startScene);
-                }, 100);
+                // Bắt đầu ngay lập tức không cần đợi
+                startScene();
             }
+
+            // Dọn dẹp DOM trong nền sau khi đã mờ hẳn
+            setTimeout(() => {
+                ov.style.display = 'none';
+                const heartRing = document.getElementById('heart-ring');
+                if (heartRing) heartRing.style.display = 'none';
+            }, 260);
         };
 
         closeBtn.addEventListener('touchend', handleCloseModal, { passive: false });
@@ -1698,7 +1708,7 @@
         ═══════════════════════════════════════ */
         function startScene() {
             const scene = document.getElementById('scene');
-            scene.style.display = 'block';
+            scene.classList.add('active'); // Dùng class để kích hoạt mượt mà
 
             const VW = window.visualViewport ? window.visualViewport.width : window.innerWidth;
             const VH = window.visualViewport ? window.visualViewport.height : window.innerHeight;
@@ -2066,11 +2076,55 @@
                         setTimeout(() => tip.remove(), 1800);
                     });
                 } else {
+                    // Kéo thả cho máy tính
                     card.addEventListener('dragstart', e => {
                         if (card.classList.contains('in-use')) { e.preventDefault(); return; }
                         e.dataTransfer.setData('charId', char.id);
                         e.dataTransfer.effectAllowed = 'copyMove';
                     });
+
+                    // Kéo thả cảm ứng cho Điện thoại (Mobile Touch)
+                    let touchDragging = false;
+                    let ghost = null;
+
+                    card.addEventListener('touchstart', e => {
+                        if (card.classList.contains('in-use')) return;
+                        touchDragging = true;
+                        
+                        ghost = document.createElement('img');
+                        ghost.src = char.img;
+                        ghost.style.cssText = 'position:fixed;width:70px;height:70px;border-radius:50%;object-fit:cover;border:2px solid #f472b6;pointer-events:none;z-index:99999;opacity:0.85;transform:translate(-50%,-50%)';
+                        document.body.appendChild(ghost);
+                    }, { passive: true });
+
+                    card.addEventListener('touchmove', e => {
+                        if (!touchDragging || !ghost) return;
+                        const t = e.touches[0];
+                        ghost.style.left = t.clientX + 'px';
+                        ghost.style.top = t.clientY + 'px';
+                        
+                        document.querySelectorAll('.dp-zone').forEach(z => z.classList.remove('drag-over'));
+                        const el = document.elementFromPoint(t.clientX, t.clientY);
+                        const zone = el?.closest?.('.dp-zone');
+                        if (zone) zone.classList.add('drag-over');
+                    }, { passive: true });
+
+                    card.addEventListener('touchend', e => {
+                        if (!touchDragging) return;
+                        touchDragging = false;
+                        
+                        if (ghost) { ghost.remove(); ghost = null; }
+                        document.querySelectorAll('.dp-zone').forEach(z => z.classList.remove('drag-over'));
+                        
+                        const t = e.changedTouches[0];
+                        const el = document.elementFromPoint(t.clientX, t.clientY);
+                        const zone = el?.closest?.('.dp-zone');
+                        
+                        if (zone) {
+                            const zRect = zone.getBoundingClientRect();
+                            moveOrPlaceChar(char.id, zone, t.clientX - zRect.left, t.clientY - zRect.top);
+                        }
+                    }, { passive: true });
                 }
                 sidebar.appendChild(card);
             });
@@ -2162,6 +2216,7 @@
                 el.appendChild(img);
                 el.appendChild(nameEl);
 
+                // Di chuyển cho máy tính
                 el.addEventListener('dragstart', e => {
                     e.dataTransfer.setData('charId', charId);
                     e.dataTransfer.effectAllowed = 'move';
@@ -2170,6 +2225,52 @@
                 el.addEventListener('dragend', () => {
                     el.style.opacity = '1';
                 });
+
+                // Di chuyển cảm ứng cho Điện thoại (Mobile Touch)
+                let touchDragging = false;
+                let ghost = null;
+
+                el.addEventListener('touchstart', e => {
+                    if (e.target.closest('.char-remove-btn')) return; // Bỏ qua nếu đang chạm vào nút X
+                    touchDragging = true;
+                    el.style.opacity = '0.4';
+                    
+                    ghost = document.createElement('img');
+                    ghost.src = char.img;
+                    ghost.style.cssText = 'position:fixed;width:56px;height:56px;border-radius:50%;object-fit:cover;border:2px solid #e91e8c;pointer-events:none;z-index:99999;opacity:0.85;transform:translate(-50%,-50%)';
+                    document.body.appendChild(ghost);
+                }, { passive: true });
+
+                el.addEventListener('touchmove', e => {
+                    if (!touchDragging || !ghost) return;
+                    const t = e.touches[0];
+                    ghost.style.left = t.clientX + 'px';
+                    ghost.style.top = t.clientY + 'px';
+                    
+                    document.querySelectorAll('.dp-zone').forEach(z => z.classList.remove('drag-over'));
+                    const targetEl = document.elementFromPoint(t.clientX, t.clientY);
+                    const zone = targetEl?.closest?.('.dp-zone');
+                    if (zone) zone.classList.add('drag-over');
+                }, { passive: true });
+
+                el.addEventListener('touchend', e => {
+                    if (!touchDragging) return;
+                    touchDragging = false;
+                    el.style.opacity = '1';
+                    
+                    if (ghost) { ghost.remove(); ghost = null; }
+                    document.querySelectorAll('.dp-zone').forEach(z => z.classList.remove('drag-over'));
+                    
+                    const t = e.changedTouches[0];
+                    const targetEl = document.elementFromPoint(t.clientX, t.clientY);
+                    const zone = targetEl?.closest?.('.dp-zone');
+                    
+                    if (zone) {
+                        const zRect = zone.getBoundingClientRect();
+                        moveOrPlaceChar(charId, zone, t.clientX - zRect.left, t.clientY - zRect.top);
+                    }
+                }, { passive: true });
+
             } else {
                 document.querySelectorAll('.dp-zone').forEach(z => {
                     let placements = zonePlacements.get(z) || [];
