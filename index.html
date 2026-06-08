@@ -1633,19 +1633,35 @@
         if (document.fonts) {
             document.fonts.ready.then(() => buildHeartBorder());
         }
-        document.getElementById('close-btn').addEventListener('click', () => {
-            const ov = document.getElementById('modal-overlay');
-            // Ẩn modal ngay lập tức, xoá bỏ hiệu ứng mờ dần làm đơ máy
-            ov.style.display = 'none'; 
+        const closeBtn = document.getElementById('close-btn');
+        const handleCloseModal = (e) => {
+            // Ngăn chặn nổi bọt sự kiện để tránh trình duyệt xử lý click đúp gây lag thêm
+            if (e && e.cancelable) e.preventDefault();
             
+            const ov = document.getElementById('modal-overlay');
+            if (ov.style.display === 'none') return; // Chặn việc bấm 2 lần
+            
+            // 1. Ẩn modal ngay lập tức
+            ov.style.display = 'none';
+            
+            // 2. Xóa sạch HTML của thẻ tim bay để trình duyệt không phải tính toán render chìm nữa
+            const heartRing = document.getElementById('heart-ring');
+            if (heartRing) heartRing.innerHTML = '';
+
             if (!window._sceneStarted) {
                 window._sceneStarted = true;
-                // Dùng requestAnimationFrame ép trình duyệt ưu tiên xoá modal khỏi màn hình trước rồi mới load bong bóng
-                requestAnimationFrame(() => {
-                    setTimeout(startScene, 50);
-                });
+                // 3. Tăng thời gian chờ lên 250ms. Mức này đủ dài để UI trên điện thoại 
+                // kịp Repaint (xóa lớp mờ backdrop-filter siêu nặng) trước khi 
+                // nhồi hàng chục bong bóng vào DOM, giúp thao tác bấm có cảm giác "ăn" ngay.
+                setTimeout(() => {
+                    requestAnimationFrame(startScene);
+                }, 250);
             }
-        });
+        };
+
+        // Bắt thêm sự kiện touchend để điện thoại phản hồi chạm siêu nhạy
+        closeBtn.addEventListener('touchend', handleCloseModal, { passive: false });
+        closeBtn.addEventListener('click', handleCloseModal);
         document.getElementById('btn-greeting').addEventListener('click', showGreetingModal);
         document.getElementById('btn-poem').addEventListener('click', showPoemModal);
 
@@ -1713,11 +1729,20 @@
                 return inTitle || inToolbar;
             }
 
+            let highestBubbleZ = 100; // Khởi tạo biến đếm z-index
             const frag = document.createDocumentFragment();
             const objects = shuffled.map((msg, i) => {
                 const el = document.createElement('div');
                 el.className = 'bubble ' + VARIANTS[i % VARIANTS.length];
                 el.textContent = msg;
+
+                // Xử lý đưa bong bóng lên trên cùng khi chạm/click
+                const bringToFront = () => {
+                    highestBubbleZ += 1;
+                    el.style.zIndex = highestBubbleZ;
+                };
+                el.addEventListener('touchstart', bringToFront, { passive: true });
+                el.addEventListener('mousedown', bringToFront);
 
                 const { w, h } = estimateSize(msg);
                 let x, y, tries = 0;
