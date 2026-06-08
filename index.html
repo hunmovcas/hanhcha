@@ -1672,7 +1672,7 @@
             }, 260);
         };
 
-        closeBtn.addEventListener('touchend', handleCloseModal, { passive: false });
+        closeBtn.addEventListener('touchstart', handleCloseModal, { passive: false });
         closeBtn.addEventListener('click', handleCloseModal);
         document.getElementById('btn-greeting').addEventListener('click', showGreetingModal);
         document.getElementById('btn-poem').addEventListener('click', showPoemModal);
